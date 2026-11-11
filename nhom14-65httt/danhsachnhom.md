@@ -31,9 +31,6 @@ Nhóm cần xác nhận một nhóm trưởng, phân công chính thức và t�
 | :--- | :--- |
 | [README.md](README.md) | Tổng quan đề tài, phạm vi, công nghệ dự kiến và hướng dẫn lấy tài liệu |
 | [docs/De_cuong_Vi_Viet.docx](docs/De_cuong_Vi_Viet.docx) | Bản đề cương đã có trên nhánh nhóm |
-| [docs/NGUON_DU_LIEU.md](docs/NGUON_DU_LIEU.md) | Nguồn ViFoodRec, nguồn bổ sung và quy trình chuẩn bị dữ liệu |
-| [docs/KE_HOACH_THUC_HIEN.md](docs/KE_HOACH_THUC_HIEN.md) | Kế hoạch 8 tuần, đầu ra và tiêu chí đánh giá dự kiến |
-| [docs/CHECKLIST_NOP_BAI.md](docs/CHECKLIST_NOP_BAI.md) | Kiểm tra hồ sơ nộp và những việc chưa hoàn thành |
 | [src/backend/](src/backend/README.md) | Vị trí dự kiến cho API nghiệp vụ, gợi ý và xử lý sự kiện |
 | [src/frontend/](src/frontend/README.md) | Vị trí dự kiến cho giao diện web ba vai trò |
 | [src/database/](src/database/README.md) | Vị trí dự kiến cho thiết kế, migration, dữ liệu mẫu và mô hình BI |
