@@ -17,11 +17,11 @@ Tên thành viên và mã sinh viên dưới đây được đối chiếu với
 
 | STT | Họ và tên | Mã sinh viên | Lớp sinh hoạt | Vai trò | Nhiệm vụ phân công dự kiến | Tỷ lệ đóng góp (%) | Email |
 | :-: | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| 1 | Đinh Văn Mạnh | 23511065 [Cần bổ sung phần còn thiếu] | [Cần xác nhận] | [Nhóm trưởng hoặc Thành viên] | Dự kiến: phân tích nghiệp vụ, đặc tả yêu cầu, tổng hợp báo cáo và theo dõi tiến độ | [Cần xác nhận] | [Cần bổ sung] |
-| 2 | Đỗ Đình Đức | 2351106510 | [Cần xác nhận] | [Nhóm trưởng hoặc Thành viên] | Dự kiến: giao diện khách hàng, tìm món, bản đồ, giỏ hàng và tích hợp API | [Cần xác nhận] | [Cần bổ sung] |
-| 3 | Phạm Hồng Thái | 2351160551 | [Cần xác nhận] | [Nhóm trưởng hoặc Thành viên] | Dự kiến: backend, xác thực, phân quyền, quản lý quán, thực đơn và đơn hàng | [Cần xác nhận] | [Cần bổ sung] |
-| 4 | Nguyễn Mạnh Đức | 23511065 [Cần bổ sung phần còn thiếu] | [Cần xác nhận] | [Nhóm trưởng hoặc Thành viên] | Dự kiến: xử lý ViFoodRec, chuẩn hóa đặc trưng món, mô hình gợi ý và đối chứng | [Cần xác nhận] | [Cần bổ sung] |
-| 5 | Phạm Trọng Sang | 23511065 [Cần bổ sung phần còn thiếu] | [Cần xác nhận] | [Nhóm trưởng hoặc Thành viên] | Dự kiến: thiết kế cơ sở dữ liệu, ETL, dashboard BI và phối hợp kiểm thử | [Cần xác nhận] | [Cần bổ sung] |
+| 1 | Đinh Văn Mạnh | 2351106536 | 65HTTT | Nhóm trưởng | Dự kiến: phân tích nghiệp vụ, đặc tả yêu cầu, tổng hợp báo cáo và theo dõi tiến độ |   | 2351106536@e.tlu.edu.vn |
+| 2 | Đỗ Đình Đức | 2351106510 | 65HTTT | Thành viên | Dự kiến: giao diện khách hàng, tìm món, bản đồ, giỏ hàng và tích hợp API |   | 2351106510@e.tlu.edu.vn |
+| 3 | Phạm Hồng Thái | 2351160551 | 65HTTT | Thành viên | Dự kiến: backend, xác thực, phân quyền, quản lý quán, thực đơn và đơn hàng |   | 2351106551@e.tlu.edu.vn |
+| 4 | Nguyễn Mạnh Đức | 2351106511 | 65HTTT | Thành viên | Dự kiến: xử lý ViFoodRec, chuẩn hóa đặc trưng món, mô hình gợi ý và đối chứng |   | 2351106511@e.tlu.edu.vn |
+| 5 | Phạm Trọng Sang | 2351106545 | 65HTTT | Thành viên | Dự kiến: thiết kế cơ sở dữ liệu, ETL, dashboard BI và phối hợp kiểm thử |   | 2351106545@e.tlu.edu.vn |
 
 Nhóm cần xác nhận một nhóm trưởng, phân công chính thức và tỷ lệ đóng góp dựa trên kết quả thực hiện. Không dùng các mã sinh viên đang thiếu làm định danh tài khoản hoặc dữ liệu nghiệp vụ.
 
