@@ -4,8 +4,8 @@
 
 - **Tên nhóm và nhánh làm việc:** `nhom14-65httt`.
 - **Học phần:** Hệ thống kinh doanh thông minh.
-- **Lớp của nhóm:** 65HTTT; **mã lớp học phần:** [Cần xác nhận nếu khác lớp sinh hoạt].
-- **Tên đề tài:** Xây dựng website đặt món trực tuyến tích hợp trí tuệ nhân tạo gợi ý ẩm thực Việt Nam theo sở thích và vị trí người dùng.
+- **Lớp của nhóm:** 65HTTT.
+- **Tên đề tài:** Xây dựng website đặt món trực tuyến tích hợp trí tuệ nhân tạo gợi ý ẩm thực Việt Nam.
 - **Tên website:** Vị Việt.
 - **Giảng viên hướng dẫn:** TS. Đỗ Oanh Cường.
 - **Trường:** Trường Đại học Thuỷ Lợi, Khoa Công nghệ thông tin.
