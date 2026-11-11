@@ -1,6 +1,6 @@
 # Vị Việt
 
-Website đặt món trực tuyến tích hợp trí tuệ nhân tạo gợi ý ẩm thực Việt Nam theo sở thích và vị trí người dùng.
+Website đặt món trực tuyến tích hợp trí tuệ nhân tạo gợi ý ẩm thực Việt Nam.
 
 **Nhóm:** 14, lớp 65HTTT. **Học phần:** Hệ thống kinh doanh thông minh. **Nhánh làm việc:** `nhom14-65httt`.
 
