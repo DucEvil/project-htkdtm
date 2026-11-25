@@ -6,7 +6,7 @@ Website đặt món trực tuyến tích hợp trí tuệ nhân tạo gợi ý �
 
 ## Trạng thái hiện tại
 
-Repository đang ở giai đoạn đề cương. Đã có tài liệu đề xuất; các hướng dẫn và thư mục nguồn được chuẩn bị để phát triển tiếp. Chưa có website chạy được, cơ sở dữ liệu triển khai, mô hình đã huấn luyện hoặc dashboard đã nghiệm thu.
+Đang triển khai theo từng phần của [thiết kế cấu trúc](docs/THIET_KE_CAU_TRUC.md) để nhóm commit riêng từng nội dung. Mã nguồn hiện tại chỉ gồm **Phase 0**: nền tảng FastAPI, React/Vite/TypeScript, cấu hình môi trường và Docker. Các model, nghiệp vụ, AI, ETL và dashboard sẽ được bổ sung ở các lượt sau. Xem [tiến độ](docs/TIEN_DO_TRIEN_KHAI.md).
 
 Thông tin thành viên được ghi tại [danhsachnhom.md](danhsachnhom.md). Cần hoàn thiện các trường đang đánh dấu trước khi xác nhận hồ sơ nộp đầy đủ.
 
@@ -37,13 +37,13 @@ ViFoodRec là nguồn chính cho đặc trưng món ăn. Dữ liệu quán, th�
 
 | Thành phần | Công nghệ dự kiến | Tình trạng |
 | :--- | :--- | :--- |
-| Giao diện web | React | Chưa triển khai |
-| API nghiệp vụ và dịch vụ gợi ý | FastAPI/Python | Chưa triển khai |
-| Cơ sở dữ liệu | PostgreSQL | Chưa triển khai |
+| Giao diện web | React/Vite/TypeScript | Có ứng dụng tối thiểu; chưa có trang nghiệp vụ |
+| API nghiệp vụ và dịch vụ gợi ý | FastAPI/Python | Có `/health`, cấu trúc lỗi và middleware; chưa có API nghiệp vụ |
+| Cơ sở dữ liệu | PostgreSQL | Có cấu hình kết nối/Compose/Alembic; chưa có model và migration |
 | Xử lý đặc trưng và gợi ý | scikit-learn | Chưa triển khai |
 | Báo cáo phân tích | Power BI | Chưa triển khai |
 
-Phiên bản môi trường và thư viện sẽ được ghi lại khi nhóm bắt đầu lập trình.
+Yêu cầu Python >=3.11, Node.js >=20; frontend có `package-lock.json`. Các phụ thuộc backend nằm trong `src/backend/requirements*.txt`.
 
 ## Các tài liệu và thư mục
 
@@ -67,7 +67,7 @@ git checkout nhom14-65httt
 git pull --ff-only origin nhom14-65httt
 ```
 
-Mở tài liệu trong `nhom14-65httt/docs/`. Hiện chưa có lệnh chạy ứng dụng. Hướng dẫn cài phụ thuộc, cấu hình, tạo cơ sở dữ liệu và chạy từng thành phần sẽ được bổ sung sau khi có mã nguồn và được kiểm tra thực tế.
+Xem [hướng dẫn cài đặt Phase 0](docs/HUONG_DAN_CAI_DAT.md) để chạy local hoặc Docker. Frontend dùng cổng 5173, backend dùng cổng 8000. PostgreSQL/Docker và các chức năng ở phase sau chưa được nghiệm thu.
 
 ## Cập nhật và nộp bài
 

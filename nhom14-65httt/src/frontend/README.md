@@ -1,6 +1,6 @@
 # Frontend Vị Việt
 
-Thư mục dành cho giao diện web khi bắt đầu triển khai. Hiện chưa có ứng dụng hoặc lệnh khởi chạy.
+Đã có ứng dụng tối thiểu React/Vite/TypeScript (Phase 0), trang chủ, trang 404 và liên kết kiểm tra kết nối backend. Các màn hình nghiệp vụ dưới đây chưa được đưa vào mã nguồn; chúng sẽ được triển khai theo từng phần để commit riêng.
 
 ## Các màn hình dự kiến
 
@@ -20,7 +20,11 @@ Thư mục dành cho giao diện web khi bắt đầu triển khai. Hiện chưa
 
 ## Công nghệ và đầu ra khi lập trình
 
-Dự kiến React. Cần bổ sung `package.json`, cấu hình mẫu, danh sách biến môi trường, lệnh cài phụ thuộc/chạy/biên dịch đã kiểm tra và tài liệu tích hợp API. Không đưa khóa bí mật vào mã nguồn trình duyệt.
+Node.js >=20, React 18, Vite 5 và TypeScript 5.6. Từ thư mục này chạy `npm ci`, `npm run dev`; kiểm tra biên dịch bằng `npm run build`. Dùng `npm run format` để định dạng và `npm run format:check` để kiểm tra định dạng.
+
+`VITE_API_BASE_URL` mặc định `/api/v1`; Vite chuyển `/api` và `/health` tới backend. Chạy local dùng `http://127.0.0.1:8000`; Docker đặt `API_PROXY_TARGET=http://backend:8000`. Không đưa khóa bí mật vào biến môi trường có tiền tố `VITE_` vì chúng có thể xuất hiện trong mã trình duyệt.
+
+Xem [hướng dẫn cài đặt](../../docs/HUONG_DAN_CAI_DAT.md) và [tiến độ từng phần](../../docs/TIEN_DO_TRIEN_KHAI.md).
 
 Xem [README nhóm](../../README.md) và [kế hoạch](../../docs/KE_HOACH_THUC_HIEN.md).
 

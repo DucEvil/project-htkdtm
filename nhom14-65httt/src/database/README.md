@@ -1,6 +1,6 @@
 # Cơ sở dữ liệu Vị Việt
 
-Thư mục dành cho thiết kế chi tiết, migration, dữ liệu mẫu và mô hình phân tích khi triển khai. Hiện chưa có script SQL hoặc cơ sở dữ liệu chạy được. Hệ quản trị dự kiến là PostgreSQL.
+Thư mục dành cho tài liệu dữ liệu, seed, ánh xạ nguồn, truy vấn BI và tài liệu Power BI. Migration được quản lý duy nhất tại `src/backend/alembic/versions/`, không đặt ở đây. Hiện mới hoàn thành nền tảng Phase 0, chưa đưa seed, SQL BI hoặc schema nghiệp vụ vào mã nguồn. Hệ quản trị chính là PostgreSQL.
 
 ## Dữ liệu giao dịch dự kiến
 
@@ -34,7 +34,7 @@ Các chiều dùng chung: ngày, người dùng đã ẩn danh, quán và món; 
 ## Đầu ra cần bổ sung
 
 - ERD, ràng buộc và từ điển dữ liệu đã thống nhất.
-- Migration có thứ tự và hướng dẫn tạo schema.
+- Liên kết tới migration có thứ tự trong backend và hướng dẫn tạo schema.
 - Seed có phân biệt dữ liệu mô phỏng và dữ liệu thật.
 - Quy trình nhập dữ liệu, ánh xạ nguồn, báo cáo làm sạch và cách chạy ETL.
 - Truy vấn hoặc mô hình phục vụ BI, quy tắc quy thuộc và đối soát.

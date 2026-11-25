@@ -1,6 +1,6 @@
 # Backend Vị Việt
 
-Thư mục dành cho mã nguồn backend khi bắt đầu triển khai. Hiện chỉ có tài liệu định hướng, chưa có API hay ứng dụng chạy được.
+Đã có nền tảng FastAPI (Phase 0): `/health`, tài liệu OpenAPI tại `/docs`, cấu hình môi trường, SQLAlchemy, Alembic, middleware request ID/CORS/logging và định dạng lỗi thống nhất. Chưa có models, migration revision hoặc API nghiệp vụ.
 
 ## Phạm vi dự kiến
 
@@ -20,7 +20,9 @@ Thư mục dành cho mã nguồn backend khi bắt đầu triển khai. Hiện c
 
 ## Công nghệ và đầu ra khi lập trình
 
-Dự kiến FastAPI/Python, PostgreSQL và scikit-learn. Khi triển khai cần bổ sung mã nguồn, dependency manifest, cấu hình mẫu không có khóa bí mật, tài liệu API, lệnh chạy và hướng dẫn kiểm tra. Phiên bản công nghệ sẽ được chốt khi thực hiện.
+Python >=3.11, FastAPI, SQLAlchemy, PostgreSQL và scikit-learn. Phụ thuộc được khai báo trong `requirements.txt` và `requirements-dev.txt`. Chạy từ thư mục này: `python -m uvicorn app.main:app --reload`; kiểm tra: `python -m pytest tests -q`. Xem [hướng dẫn cài đặt](../../docs/HUONG_DAN_CAI_DAT.md) để tạo môi trường trước khi chạy.
+
+Các module sẽ được thêm theo từng phần, bắt đầu từ `users/models.py`. Alembic trong backend là nguồn schema duy nhất; chỉ thêm migration sau khi các models liên quan được chốt.
 
 Xem [README nhóm](../../README.md), [nguồn dữ liệu](../../docs/NGUON_DU_LIEU.md) và [kế hoạch](../../docs/KE_HOACH_THUC_HIEN.md).
 
