@@ -1,6 +1,6 @@
 # Backend Vị Việt
 
-Đã có nền tảng FastAPI: `/health`, tài liệu OpenAPI tại `/docs`, cấu hình môi trường, SQLAlchemy, Alembic, middleware request ID/CORS/logging và định dạng lỗi thống nhất. Đã bổ sung models tài khoản, khẩu vị, quán/người quản lý, món chuẩn/thực đơn/nguyên liệu, đơn hàng và đánh giá món; chưa có migration revision hoặc API nghiệp vụ.
+Đã có nền tảng FastAPI: `/health`, tài liệu OpenAPI tại `/docs`, cấu hình môi trường, SQLAlchemy, Alembic, middleware request ID/CORS/logging và định dạng lỗi thống nhất. Đã khai báo các models OLTP liệt kê ở bước F.5, gồm tracking; chưa có migration revision hoặc API nghiệp vụ.
 
 ## Model tài khoản đã bổ sung
 
@@ -110,6 +110,24 @@ UNIQUE trên `(order_id, menu_item_id)` ngăn đánh giá trùng một món tron
 
 Model chưa kiểm tra người gửi có sở hữu đơn hoặc đơn đã hoàn tất. Hai điều kiện đó thuộc `reviews/service.py` và auth khi triển khai mục F.10; hiện chưa có API gửi đánh giá. Các giới hạn điểm/nhận xét, thời điểm và cờ mô phỏng là chi tiết dữ liệu được ghi để dùng thống nhất. Chưa tạo migration.
 
+## Models yêu cầu gợi ý, hiển thị và tương tác đã bổ sung
+
+Theo mục C.5, D.6/7/20/21, E.5 và F.5 của [thiết kế](../../docs/THIET_KE_CAU_TRUC.md), `app/tracking/models.py` định nghĩa ba model. Chúng lưu nguồn dữ liệu; chưa có API tiếp nhận sự kiện hoặc ETL/KPI.
+
+| Model | Dữ liệu/ràng buộc |
+| :--- | :--- |
+| `RecommendationRequest` | ID UUID v4 được backend/ORM sinh, tài khoản, session UUID v4, phiên bản thuật toán bắt buộc tối đa 40 ký tự, thời điểm tạo |
+| `RecommendationImpression` | Request, món được trả về, thứ hạng 1–5; không lặp món hoặc thứ hạng trong cùng request; `displayed_at` mặc định NULL |
+| `InteractionEvent` | `event_id` UUID v4 do client cấp là khóa chính chống trùng; tài khoản/session, loại sự kiện, request/món tùy ngữ cảnh, giá trị feedback, thời điểm phát sinh/tiếp nhận |
+
+Mã sự kiện được lưu thống nhất: `impression`, `click`, `add_to_cart`, `feedback`, `session_start`, `session_end`. Các tên `rec_*` ở bản đặc tả frontend trước đây được thống nhất về các mã trên; chưa có API chuyển đổi alias. `impression`/`click`/`feedback` cần request và món; `add_to_cart` cần món nhưng có thể không đến từ gợi ý; sự kiện phiên không mang request/món. Chỉ feedback có giá trị, nhận số nguyên 0 hoặc 1. Các quy tắc ngữ cảnh có CHECK constraint ở DB.
+
+FK ghép đảm bảo sự kiện có request phải khớp tài khoản/session của request, và món thuộc danh sách đã trả về trong request đó. Request và Impression được truy cập từ event qua quan hệ chỉ đọc để tránh tự sửa chủ sở hữu khi gán quan hệ. FK chặn xóa các bản ghi đang được tracking tham chiếu. Mỗi model có `is_simulated`, mặc định false.
+
+Việc tạo dòng RecommendationImpression khi trả danh sách chưa chứng minh món đã hiện trên màn hình. Chỉ khi service nhận sự kiện hiển thị hợp lệ mới ghi `displayed_at`; KPI sau này phải loại các dòng chưa có giá trị này. Nhiều click khác `event_id` vẫn được lưu riêng; CTR sẽ đếm impression có click, không lấy số dòng click làm mẫu số hoặc số lần hiển thị.
+
+`occurred_at` là thời điểm phát sinh do client gửi kèm múi giờ; `received_at` do máy chủ/ORM cấp mặc định. Thời điểm gán qua ORM được chuẩn hóa UTC. Kiểm tra đồng hồ client, cửa sổ tiếp nhận, thứ tự hiển thị trước click, xác thực người gửi và xử lý HTTP khi gửi lại vẫn chờ service/auth. Model hiện chỉ bảo vệ cấu trúc dữ liệu; không tự đánh dấu hiển thị, kết thúc phiên hoặc quy thuộc đơn hàng.
+
 ## Phạm vi dự kiến
 
 - Xác thực và phân quyền khách hàng, chủ quán, quản trị viên.
@@ -130,7 +148,7 @@ Model chưa kiểm tra người gửi có sở hữu đơn hoặc đơn đã ho�
 
 Python >=3.11, FastAPI, SQLAlchemy, PostgreSQL và scikit-learn. Phụ thuộc được khai báo trong `requirements.txt` và `requirements-dev.txt`. Chạy từ thư mục này: `python -m uvicorn app.main:app --reload`; kiểm tra: `python -m pytest tests -q`. Xem [hướng dẫn cài đặt](../../docs/HUONG_DAN_CAI_DAT.md) để tạo môi trường trước khi chạy.
 
-Các module được thêm theo từng phần; tiếp theo là `tracking/models.py` với RecommendationRequest, RecommendationImpression và InteractionEvent. Alembic trong backend là nguồn schema duy nhất; chỉ thêm migration sau khi các models liên quan được chốt.
+Các models của bước F.5 đã được khai báo. Tiếp theo là bước F.6: migration ban đầu, sau đó ERD/từ điển dữ liệu ở F.7. Alembic trong backend là nguồn schema duy nhất; chưa đưa các model BI hoặc đánh giá mù của phần sau vào migration hiện tại.
 
 Xem [README nhóm](../../README.md), [nguồn dữ liệu](../../docs/NGUON_DU_LIEU.md) và [kế hoạch](../../docs/KE_HOACH_THUC_HIEN.md).
 

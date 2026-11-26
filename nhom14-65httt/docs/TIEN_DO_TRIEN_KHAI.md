@@ -13,7 +13,7 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | Phase 1.4 | `menu/models.py`: món chuẩn, món bán, nguyên liệu | Đã bổ sung bốn model và kiểm thử; chưa có migration/API |
 | Phase 1.5 | `orders/models.py`: đơn, món đặt và lịch sử | Đã bổ sung ba model và kiểm thử; chưa có migration/service/API |
 | Phase 1.6 | `reviews/models.py`: đánh giá món | Đã bổ sung model và kiểm thử; chưa có migration/service/API |
-| Phase 1.7 | `tracking/models.py`: yêu cầu gợi ý, hiển thị, sự kiện | Chưa đưa vào mã nguồn hiện tại |
+| Phase 1.7 | `tracking/models.py`: yêu cầu gợi ý, hiển thị, sự kiện | Đã bổ sung ba model và kiểm thử; chưa có migration/service/API |
 | Phase 1.8 | Migration ban đầu, ERD và từ điển dữ liệu | Chờ các model được chốt |
 | Phase 1.9 | Auth backend, frontend và kiểm thử | Chờ models/migration |
 | Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Chưa đưa vào mã nguồn hiện tại |
@@ -32,7 +32,7 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Backend: 5 kiểm thử đạt (health/request ID, định dạng lỗi, CORS, cấu hình URL DB).
 - Frontend: `npm run build` và `npm run format:check` đạt.
 - Chưa kiểm chứng Docker/PostgreSQL vì môi trường phát triển không có Docker CLI.
-- Bộ khung, phần hợp nhất tài liệu và models tài khoản/khẩu vị/quán/thực đơn/đơn hàng đã được commit. Sau Review là riêng các models trong `tracking/models.py`; mỗi lượt chỉ thêm một phần.
+- Bộ khung, phần hợp nhất tài liệu và models từ tài khoản đến Review đã được commit. Các models tracking là phần cuối của F.5; tiếp theo là migration F.6 rồi ERD/từ điển dữ liệu F.7, mỗi lượt tách riêng để commit.
 
 ## Phần tài khoản và vai trò
 
@@ -95,11 +95,21 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Quan hệ đọc OrderItem giữ liên kết với tên/giá snapshot của lần mua. FK bảo vệ dữ liệu giao dịch đang được đánh giá tham chiếu.
 - Kết quả: 252 kiểm thử đạt, gồm 33 ca Review và 219 ca đã có. Kiểm thử dữ liệu dùng SQLite; chưa kiểm chứng PostgreSQL.
 - Chưa có migration/API đánh giá hoặc kiểm tra đơn hoàn tất/người gửi sở hữu đơn; service/auth sẽ thực hiện ở mục F.10. Không trộn Review với feedback gợi ý.
-- Chưa tự commit/push; chưa thêm tracking vào lượt này.
+- Phần Review đã được người dùng commit; không gộp tracking vào commit đó.
+
+## Phần yêu cầu gợi ý, hiển thị và tương tác
+
+- Theo C.5, D.6/7/20/21, E.5 và F.5, thêm đúng ba model RecommendationRequest, RecommendationImpression và InteractionEvent tại `src/backend/app/tracking/models.py`, đăng ký metadata với Alembic.
+- Request có UUID do backend sinh và phiên bản thuật toán; Impression không lặp món/thứ hạng trong Top 5. `displayed_at` mặc định NULL để tách món được trả về khỏi món thực sự được nhìn thấy.
+- `event_id` do client cấp là PK; FK ghép bảo vệ chủ sở hữu/session/request và món trong danh sách gợi ý. Cart ngoài gợi ý và sự kiện phiên không bắt buộc request. Feedback nhận 0/1, độc lập Review.
+- Chốt sáu mã sự kiện theo nội dung tracking trong Markdown; thống nhất ba tên `rec_*` từng được đề xuất trong README frontend thành `impression`, `click`, `feedback`, và mô tả riêng occurred_at/received_at. Chưa có client hoặc API tracking thực thi.
+- Kết quả: 318 kiểm thử đạt, gồm 66 ca tracking và 252 ca đã có. Kiểm thử dữ liệu dùng SQLite; chưa kiểm chứng PostgreSQL.
+- Đã khai báo đủ các models liệt kê ở F.5. Chưa tạo migration F.6, API tiếp nhận, kiểm tra thời gian/hiển thị, ETL/quy thuộc/KPI hoặc model đánh giá mù ở phần AI sau.
+- Chưa tự commit/push; giữ migration cho lượt riêng sau khi models được người dùng commit.
 
 ## Dọn bản nháp cục bộ
 
 - Theo yêu cầu người dùng, chỉ dọn bản nháp khi bản chính tương ứng đã được tích hợp, kiểm thử, commit và không có thay đổi chưa commit.
-- Đã xóa năm bản `models.py` cũ trong `.runtime/pending-implementation/src/backend/app/users/`, `preferences/`, `restaurants/`, `menu/`, `orders/`. Bản chính của chúng vẫn nằm trong `src/` và lịch sử Git.
-- Các schema/service/router chưa tích hợp và công cụ Python/uv đang dùng để kiểm tra vẫn được giữ lại. Bản nháp Review sẽ chỉ dọn sau khi phần Review được người dùng commit.
+- Đã xóa sáu bản `models.py` cũ trong `.runtime/pending-implementation/src/backend/app/users/`, `preferences/`, `restaurants/`, `menu/`, `orders/`, `reviews/`. Bản chính của chúng vẫn nằm trong `src/` và lịch sử Git.
+- Các schema/service/router chưa tích hợp và công cụ Python/uv đang dùng để kiểm tra vẫn được giữ lại. Bản nháp tracking chỉ dọn sau khi phần tracking được commit và đã bảo toàn phần BlindEvaluation chưa tích hợp cùng nằm trong file nháp đó.
 - Không xóa toàn bộ `.runtime/` trong lúc công cụ ở đó vẫn phục vụ kiểm thử; không thêm bản nháp vào commit.

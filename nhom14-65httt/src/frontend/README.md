@@ -76,15 +76,16 @@ Dữ liệu cho `Fact_RecImpression` và `Fact_Session` ([database](../database/
 
 | Sự kiện | Khi nào ghi | Trường tối thiểu |
 | :--- | :--- | :--- |
-| `rec_impression` | Mục gợi ý thực sự hiển thị trên màn hình | `event_id`, `session_id`, `request_id`, `menu_item_id`, `rank`, thời điểm |
-| `rec_click` | Khách mở chi tiết món từ danh sách gợi ý | `event_id`, `session_id`, `request_id`, `menu_item_id` |
+| `impression` | Mục gợi ý thực sự hiển thị trên màn hình | `event_id`, `session_id`, `request_id`, `menu_item_id`, thời điểm |
+| `click` | Khách mở chi tiết món từ danh sách gợi ý | `event_id`, `session_id`, `request_id`, `menu_item_id` |
 | `add_to_cart` | Thêm món vào giỏ | `event_id`, `session_id`, `menu_item_id`, `request_id` nếu đến từ gợi ý |
-| `rec_feedback` | Bấm phù hợp/không phù hợp | `event_id`, `request_id`, `menu_item_id`, giá trị |
-| `session_start` / `session_end` | Mở phiên / hết phiên | `session_id`, kênh truy cập |
+| `feedback` | Bấm phù hợp/không phù hợp | `event_id`, `session_id`, `request_id`, `menu_item_id`, giá trị 0/1 |
+| `session_start` / `session_end` | Mở phiên / hết phiên | `event_id`, `session_id`, thời điểm |
 
 Quy tắc:
 
-- `event_id` sinh ở client (UUID) để backend loại trùng khi gửi lại; thời điểm chuẩn lấy ở server.
+- `event_id` sinh ở client (UUID v4) và giữ nguyên khi gửi lại để backend loại trùng. `occurred_at` là thời điểm phát sinh kèm múi giờ; `received_at` do máy chủ cấp. Service sẽ kiểm tra sai lệch đồng hồ và cửa sổ tiếp nhận khi được triển khai.
+- Mã sự kiện thống nhất với model tracking là `impression`, `click`, `add_to_cart`, `feedback`, `session_start`, `session_end`. Thứ hạng lấy từ RecommendationImpression đã lưu tại backend, không cần client gửi lại.
 - `request_id` và phiên bản thuật toán do API gợi ý trả về; frontend chỉ chuyển tiếp, không gắn nhãn thuật toán trên giao diện.
 - Khi tạo đơn, gửi kèm `session_id` để backend quy thuộc theo quy tắc 30 phút.
 - Gom và gửi theo lô, thử lại khi lỗi mạng; không để việc ghi sự kiện làm chậm thao tác người dùng.

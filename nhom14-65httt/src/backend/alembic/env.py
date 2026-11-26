@@ -12,6 +12,7 @@ from app.orders.models import Order, OrderItem, OrderStatusHistory  # noqa: F401
 from app.preferences.models import Preference  # noqa: F401 - đăng ký bảng preferences
 from app.restaurants.models import Restaurant, RestaurantMembership  # noqa: F401
 from app.reviews.models import Review  # noqa: F401 - đăng ký bảng reviews
+from app.tracking.models import InteractionEvent, RecommendationImpression, RecommendationRequest  # noqa: F401
 from app.users.models import User  # noqa: F401 - đăng ký bảng users vào Base.metadata
 
 # Alembic Config object
