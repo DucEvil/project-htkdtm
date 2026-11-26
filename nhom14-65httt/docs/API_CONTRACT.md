@@ -1,6 +1,6 @@
 # Hợp đồng API Vị Việt
 
-Tài liệu hiện mô tả auth F.8, hồ sơ/duyệt quán F.10.1, thực đơn F.10.2, tìm kiếm F.10.3 và đơn COD F.10.4–F.10.5. API khẩu vị, đánh giá và tracking chưa triển khai. OpenAPI tại `http://localhost:8000/docs` phản ánh request/response đang chạy.
+Tài liệu hiện mô tả auth F.8, hồ sơ/duyệt quán F.10.1, thực đơn F.10.2, tìm kiếm F.10.3, đơn COD F.10.4–F.10.5 và đánh giá F.10.6. API khẩu vị và tracking chưa triển khai. OpenAPI tại `http://localhost:8000/docs` phản ánh request/response đang chạy.
 
 ## Quy ước chung
 
@@ -439,4 +439,18 @@ PATCH reject nhận `{"reason":"Hết nguyên liệu"}`, trim 1–500; các PATC
 | 409 | INVALID_STATE_TRANSITION / ORDER_STATE_CHANGED | Sai thứ tự hoặc trạng thái thay đổi cạnh tranh |
 | 422 | VALIDATION_ERROR | Body/query/path sai giới hạn/kiểu hoặc thiếu/thừa trường |
 
-Schema vẫn revision 001. Chưa có API review, giao diện giỏ hàng/checkout/xử lý đơn hoặc thu phí trực tuyến. Không cam kết xử lý tải lớn hoặc khóa hàng PostgreSQL trước khi kiểm chứng môi trường thật.
+Schema vẫn revision 001. API review được mô tả ở F.10.6; chưa có giao diện giỏ hàng/checkout/xử lý đơn hoặc thu phí trực tuyến. Không cam kết xử lý tải lớn hoặc khóa hàng PostgreSQL trước khi kiểm chứng môi trường thật.
+
+## Đánh giá món đã mua — F.10.6
+
+`POST /api/v1/orders/{order_id}/review` yêu cầu Bearer access token vai trò customer; thành công trả 201 với ReviewOut. Body:
+
+```json
+{"menu_item_id": 1, "rating": 5, "comment": "Rất ngon"}
+```
+
+`menu_item_id` và `rating` bắt buộc. ID nguyên JSON 1–2147483647; rating nguyên JSON 1–5, không nhận Boolean/chuỗi/thập phân. Comment tùy chọn, mặc định chuỗi rỗng, trim và dài tối đa 2000 ký tự sau trim; không nhận giá trị null/số. Body cấm trường thừa, gồm user_id/order_id/is_simulated. ID path phải trong 1–2147483647.
+
+Chỉ người mua đúng đơn ở trạng thái completed mới gửi được; món phải là OrderItem của **đơn đó**. Đơn ngoài quyền hoặc không tồn tại trả cùng 404, món không thuộc đơn trả 404; đơn chưa completed trả 409 `ORDER_NOT_COMPLETED`. Mỗi cặp order_id/menu_item_id được đánh giá tối đa một lần, gửi lại trả 409 `REVIEW_ALREADY_EXISTS` kể cả khi thay nội dung. Món có thể được đánh giá lại sau một đơn mua khác. API ghi cờ mô phỏng false; không liên quan feedback phù hợp của gợi ý.
+
+Response gồm `id`, `order_id`, `menu_item_id`, `snapshot_name`, `snapshot_price`, `rating`, `comment`, `created_at`. Tên/giá lấy từ OrderItem lúc mua, không bị đổi khi quán sửa thực đơn/ngừng bán. Không trả actor/user_id hoặc cờ mô phỏng. Review được lưu cùng transaction, rollback khi lỗi; UNIQUE ghép và FK ghép ở revision 001 bảo vệ chống trùng/món chưa mua ở tầng DB. Kiểm thử dùng SQLite tạm; chưa kiểm chứng PostgreSQL cạnh tranh thực tế. Chưa có API liệt kê/sửa/xóa đánh giá hoặc frontend ReviewForm; sẽ làm riêng nếu cần theo giao diện F.12.

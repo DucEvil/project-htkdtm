@@ -1,6 +1,6 @@
 # Cài đặt và tạo cơ sở dữ liệu Vị Việt
 
-Hướng dẫn khởi chạy backend có `/health`, OpenAPI, API auth/quán/thực đơn/danh mục/tìm kiếm/đơn COD và frontend đăng ký/đăng nhập. Đã có migration `001` tạo 15 bảng OLTP; chưa có seed, dashboard hoặc frontend đơn hàng.
+Hướng dẫn khởi chạy backend có `/health`, OpenAPI, API auth/quán/thực đơn/danh mục/tìm kiếm/đơn COD/đánh giá và frontend đăng ký/đăng nhập. Đã có migration `001` tạo 15 bảng OLTP; chưa có seed, dashboard hoặc frontend đơn hàng/đánh giá.
 
 ## Cấu hình khóa JWT
 
@@ -75,6 +75,10 @@ Nếu có Make, các lệnh tương ứng là `make migrate`, `make migrate-stat
 Docker chưa được kiểm chứng trong phiên phát triển này vì máy không có Docker CLI trong PATH. Cần thử lại trên máy có Docker Desktop trước khi đánh dấu nghiệm thu.
 
 ## Kiểm tra
+
+Mốc F.10.6: **1066 kiểm thử backend đạt**, gồm 30 ca đánh giá mới và 1036 ca đã có. Ruff/format đạt. Các ca mới kiểm tra quyền người mua, trạng thái completed, món thực sự có trong đơn, chống trùng, snapshot và rollback trên SQLite tạm. PostgreSQL thực tế/chạy đồng thời chưa kiểm chứng.
+
+Để thử đánh giá, tạo đơn customer và cho vendor đúng quán chuyển đến completed, sau đó dùng access token của customer gọi POST `/api/v1/orders/{order_id}/review` với `{"menu_item_id":1,"rating":5,"comment":"Rất ngon"}`. ID món phải thuộc OrderItem của đơn đó; gửi lại cùng đơn/món trả 409. Response trả tên/giá snapshot của lần mua. Xem [API contract F.10.6](API_CONTRACT.md#đánh-giá-món-đã-mua--f106).
 
 Mốc hiện tại F.10.5: **1036 kiểm thử backend đạt**, gồm 86 ca API đơn COD mới và 950 ca trước; Ruff/format đạt. Kiểm thử API dùng SQLite tạm tạo bằng migration, gồm scope, validation, snapshot, idempotency 24 giờ, mô phỏng tranh chấp UNIQUE và rollback. Chưa kiểm chứng PostgreSQL thực tế. Các đoạn dưới giữ kết quả của mốc trước.
 

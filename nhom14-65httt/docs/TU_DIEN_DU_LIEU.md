@@ -229,7 +229,7 @@ Model: [`Review`](../src/backend/app/reviews/models.py). Tách khỏi feedback p
 
 UNIQUE: `uq_reviews_order_menu_item` trên `(order_id, menu_item_id)`. FK ghép `fk_reviews_purchased_item` tới `order_items(order_id, menu_item_id)`. CHECK: `ck_reviews_rating` trong 1–5; `ck_reviews_comment` dài không quá 2000. Index: `ix_reviews_order_id` trên `(order_id)`, `ix_reviews_menu_item_id` trên `(menu_item_id)`, `ix_reviews_user_id` trên `(user_id)`.
 
-ORM kiểm tra điểm nguyên, trim nhận xét; quan hệ `order_item` chỉ đọc để truy xuất snapshot. DB bảo đảm món có trong đơn và chưa có đánh giá cùng cặp; chưa bảo đảm người gửi là chủ đơn hoặc đơn đã hoàn tất. Cùng món được đánh giá lại trong đơn mua khác.
+ORM kiểm tra điểm nguyên, trim nhận xét; quan hệ `order_item` chỉ đọc để truy xuất snapshot. DB bảo đảm món có trong đơn và chưa có đánh giá cùng cặp; service F.10.6 kiểm tra customer sở hữu đơn completed trước khi ghi. Response dùng tên/giá snapshot; cùng món được đánh giá lại trong đơn mua khác. SQL ghi trực tiếp không được kiểm tra vai trò/trạng thái của service.
 
 ## 13. `recommendation_requests` — Yêu cầu gợi ý
 

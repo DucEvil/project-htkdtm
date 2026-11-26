@@ -1,4 +1,4 @@
-"""Dữ liệu đánh giá một món trong đơn; quyền gửi đánh giá do service kiểm tra sau."""
+"""Dữ liệu đánh giá một món trong đơn; quyền gửi do service kiểm tra."""
 
 from datetime import UTC, datetime
 

@@ -10,7 +10,7 @@ Website đặt món trực tuyến tích hợp trí tuệ nhân tạo gợi ý �
 
 Thông tin thành viên được ghi tại [danhsachnhom.md](danhsachnhom.md). Cần hoàn thiện các trường đang đánh dấu trước khi xác nhận hồ sơ nộp đầy đủ.
 
-Phần đơn hàng đã có API COD, kiểm tra điều kiện phục vụ, snapshot giá, chống gửi lặp và chuyển trạng thái/lịch sử cùng transaction (F.10.4–F.10.5). Chưa có giao diện đơn hàng. Xem [README backend](src/backend/README.md#api-đơn-cod-và-idempotency).
+Phần đơn hàng đã có API COD, snapshot giá, chống gửi lặp và chuyển trạng thái/lịch sử cùng transaction (F.10.4–F.10.5). Customer có thể gửi đánh giá món trong đơn completed qua API F.10.6; chưa có giao diện đơn hàng/đánh giá. Xem [README backend](src/backend/README.md#api-đơn-cod-và-idempotency).
 
 ## Vấn đề và mục tiêu
 

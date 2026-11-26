@@ -10,6 +10,7 @@ from app.menu.router import router as menu_router
 from app.middleware import setup_middleware
 from app.orders.router import router as orders_router
 from app.restaurants.router import router as restaurants_router
+from app.reviews.router import router as reviews_router
 from app.search.router import router as search_router
 from app.vendor.router import router as vendor_router
 
@@ -35,6 +36,7 @@ app.include_router(admin_router, prefix="/api/v1")
 app.include_router(menu_router, prefix="/api/v1")
 app.include_router(search_router, prefix="/api/v1")
 app.include_router(orders_router, prefix="/api/v1")
+app.include_router(reviews_router, prefix="/api/v1")
 
 
 @app.get("/health", tags=["health"])

@@ -171,7 +171,7 @@ Theo mục C.5, D.14 và F.5 của [thiết kế](../../docs/THIET_KE_CAU_TRUC.m
 
 UNIQUE trên `(order_id, menu_item_id)` ngăn đánh giá trùng một món trong cùng đơn. Cùng món bán được đánh giá lại khi có đơn mua khác. Quan hệ `order_item` chỉ đọc giúp lấy tên/giá snapshot đã mua dù thực đơn sau đó thay đổi. FK chặn xóa dữ liệu giao dịch đang được Review tham chiếu.
 
-Model chưa kiểm tra người gửi có sở hữu đơn hoặc đơn đã hoàn tất. Hai điều kiện đó thuộc `reviews/service.py` và auth khi triển khai mục F.10; hiện chưa có API gửi đánh giá. Các giới hạn điểm/nhận xét, thời điểm và cờ mô phỏng là chi tiết dữ liệu được ghi để dùng thống nhất. Bảng Review đã có trong migration `001`.
+`reviews/service.py` đã kiểm tra người gửi sở hữu đơn, trạng thái completed và món thực sự có trong OrderItem; router cung cấp POST `/api/v1/orders/{order_id}/review`. Mỗi món trong một đơn chỉ đánh giá một lần, duplicate trả 409. Response dùng tên/giá snapshot và không lộ cờ mô phỏng; xem [API contract F.10.6](../../docs/API_CONTRACT.md#đánh-giá-món-đã-mua--f106). Bảng Review đã có trong migration `001`; chưa có frontend ReviewForm hoặc API đọc/sửa/xóa đánh giá.
 
 ## Models yêu cầu gợi ý, hiển thị và tương tác đã bổ sung
 
@@ -233,7 +233,7 @@ Khi revision đã được commit/áp dụng, thay đổi schema bằng revision
 
 Python >=3.11, FastAPI, SQLAlchemy, PostgreSQL và scikit-learn. Phụ thuộc được khai báo trong `requirements.txt` và `requirements-dev.txt`. Chạy từ thư mục này: `python -m uvicorn app.main:app --reload`; kiểm tra: `python -m pytest tests -q`. Xem [hướng dẫn cài đặt](../../docs/HUONG_DAN_CAI_DAT.md) để tạo môi trường trước khi chạy.
 
-Các phần F.5–F.9 và nghiệp vụ/API F.10.1–F.10.5 đã được bổ sung đến đơn COD/idempotency. Tiếp theo là đánh giá món đã mua, tách riêng cho commit sau. Alembic trong backend là nguồn schema duy nhất; các model BI hoặc đánh giá mù của phần sau sẽ dùng revision bổ sung khi được triển khai.
+Các phần F.5–F.9 và nghiệp vụ/API F.10.1–F.10.6 đã được bổ sung đến đánh giá món đã mua. Các phần backend tiếp theo thuộc yêu cầu gợi ý/tracking và quản trị; triển khai từng phần để commit riêng. Alembic trong backend là nguồn schema duy nhất; các model BI hoặc đánh giá mù của phần sau sẽ dùng revision bổ sung khi được triển khai.
 
 Xem [README nhóm](../../README.md), [nguồn dữ liệu](../../docs/NGUON_DU_LIEU.md) và [kế hoạch](../../docs/KE_HOACH_THUC_HIEN.md).
 
