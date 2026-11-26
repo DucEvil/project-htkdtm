@@ -6,7 +6,7 @@ Website đặt món trực tuyến tích hợp trí tuệ nhân tạo gợi ý �
 
 ## Trạng thái hiện tại
 
-Đang triển khai theo từng phần của [thiết kế cấu trúc](docs/THIET_KE_CAU_TRUC.md) để nhóm commit riêng từng nội dung. Đã có nền tảng FastAPI, React/Vite/TypeScript, cấu hình môi trường, Docker, models F.5, migration `001`, ERD/từ điển dữ liệu, auth backend/frontend và API hồ sơ/duyệt quán, thực đơn/món chuẩn/nguyên liệu F.10.1–F.10.2. Tìm kiếm, giao dịch, AI, ETL và dashboard sẽ bổ sung ở các lượt sau; chưa có giao diện quản lý thực đơn. Xem [tiến độ](docs/TIEN_DO_TRIEN_KHAI.md).
+Đang triển khai theo từng phần của [thiết kế cấu trúc](docs/THIET_KE_CAU_TRUC.md) để nhóm commit riêng từng nội dung. Đã có nền tảng FastAPI, React/Vite/TypeScript, cấu hình môi trường, Docker, models F.5, migration `001`, ERD/từ điển dữ liệu, auth backend/frontend và API hồ sơ/duyệt quán, thực đơn/món chuẩn/nguyên liệu, tìm kiếm F.10.1–F.10.3. Giao dịch, AI, ETL và dashboard sẽ bổ sung ở các lượt sau; chưa có giao diện tìm kiếm hoặc quản lý thực đơn. Xem [tiến độ](docs/TIEN_DO_TRIEN_KHAI.md).
 
 Thông tin thành viên được ghi tại [danhsachnhom.md](danhsachnhom.md). Cần hoàn thiện các trường đang đánh dấu trước khi xác nhận hồ sơ nộp đầy đủ.
 
@@ -38,7 +38,7 @@ ViFoodRec là nguồn chính cho đặc trưng món ăn. Dữ liệu quán, th�
 | Thành phần | Công nghệ dự kiến | Tình trạng |
 | :--- | :--- | :--- |
 | Giao diện web | React/Vite/TypeScript | Có đăng ký/đăng nhập, quản lý phiên, refresh, thông tin tài khoản và guard vai trò; chưa có trang giao dịch |
-| API nghiệp vụ và dịch vụ gợi ý | FastAPI/Python | Có auth, hồ sơ/duyệt quán, thực đơn vendor, catalog admin và món/quán công khai; chưa có tìm kiếm/giao dịch/gợi ý |
+| API nghiệp vụ và dịch vụ gợi ý | FastAPI/Python | Có auth, hồ sơ/duyệt quán, thực đơn vendor, catalog admin, tìm món/quán theo chữ và khoảng cách; chưa có giao dịch/gợi ý |
 | Cơ sở dữ liệu | PostgreSQL | Có migration 001 tạo 15 bảng OLTP; đã thử SQLite và sinh SQL PostgreSQL, chưa chạy PostgreSQL thực tế |
 | Xử lý đặc trưng và gợi ý | scikit-learn | Chưa triển khai |
 | Báo cáo phân tích | Power BI | Chưa triển khai |

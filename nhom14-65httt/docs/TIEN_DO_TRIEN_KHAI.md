@@ -21,8 +21,9 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | F.9 | Kiểm thử auth | Backend 84 ca; frontend 54 ca unit/UI và bốn kịch bản E2E đạt |
 | F.10.1 | Hồ sơ quán vendor, duyệt/tạm ngừng admin và quán công khai | Đã có tám thao tác API, 92 kiểm thử mới; chưa có giao diện quản lý quán |
 | F.10.2 | Thực đơn vendor, catalog admin và món công khai | Đã có 17 thao tác API, 167 kiểm thử mới; chưa có giao diện quản lý thực đơn |
-| F.10 còn lại | API tìm kiếm, giao dịch, đánh giá và các nghiệp vụ khác | Chưa triển khai; tiếp tục tách từng module để commit |
-| Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Đã có backend hồ sơ/duyệt quán, thực đơn/catalog; chưa có đơn hàng hoặc màn hình nghiệp vụ |
+| F.10.3 | Tìm món/quán theo chữ, Haversine và phạm vi giao | Đã có hai GET công khai, 99 kiểm thử mới; chưa có SearchPage/bản đồ |
+| F.10 còn lại | API giao dịch, đánh giá và các nghiệp vụ khác | Chưa triển khai; tiếp tục tách từng module để commit |
+| Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Đã có backend hồ sơ/duyệt quán, thực đơn/catalog và tìm kiếm; chưa có đơn hàng hoặc màn hình nghiệp vụ |
 | Phase 3 | AI, tracking và dữ liệu | Chưa đưa vào mã nguồn hiện tại |
 | Phase 4 | ETL, BI, Power BI và đánh giá | Chưa đưa vào mã nguồn hiện tại |
 | Phase 5 | Tích hợp, kiểm thử và bàn giao | Chưa thực hiện |
@@ -184,7 +185,17 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - DELETE vendor ngừng bán bằng cờ, giữ món/liên kết/snapshot giao dịch và các tham chiếu lịch sử, cho phép bật lại qua PUT. Admin CRUD món chuẩn/nguyên liệu; chuẩn hóa tên/danh sách và trả 409 khi trùng tên/source_id hoặc xóa catalog còn dùng.
 - Toàn bộ 684 kiểm thử backend đạt, gồm 167 ca mới và 517 ca đã có; Ruff/format đạt. Kiểm thử API thật với SQLite tạm do migration tạo, phân quyền tất cả endpoint quản lý, cô lập quán, validation, visibility, phân trang, catalog UNIQUE/FK, thay nguyên liệu, snapshot sau ngừng bán và rollback cả món/liên kết khi lỗi ghi. OpenAPI bao phủ đủ 17 thao tác mới.
 - Không đổi model/migration/frontend/dependencies; API contract, từ điển dữ liệu, hướng dẫn cài đặt và README đã cập nhật. PostgreSQL thực tế/khóa hàng cạnh tranh chưa được kiểm chứng. Frontend 54 unit/UI và bốn E2E là kết quả lượt auth trước, không chạy lại ở phần backend này.
-- Chưa tự stage/commit/push. Phần kế tiếp là tìm kiếm trong F.10; chưa gộp search/orders/reviews/tracking vào commit thực đơn. Hai nội dung reset mật khẩu/lưu chấp thuận backend tiếp tục hoãn theo yêu cầu người dùng.
+- Phần thực đơn/catalog đã được người dùng commit tại `54c3811`; tìm kiếm được triển khai ở lượt riêng bên dưới. Hai nội dung reset mật khẩu/lưu chấp thuận backend tiếp tục hoãn theo yêu cầu người dùng.
+
+## Tìm kiếm món và quán F.10.3
+
+- Theo C.5, D.4–5 và F.10, thêm `app/search/__init__.py`, `schemas.py`, `service.py`, `router.py`, đăng ký hai GET `/api/v1/search/dishes` và `/api/v1/search/restaurants` trong production app. Chỉ triển khai backend, tách riêng để người dùng commit.
+- Vị trí lat/lng bắt buộc và hữu hạn; radius mặc định 5 km/tối đa 50. Chỉ trả quán approved và món đang bán, khoảng cách Haversine phải nằm trong cả radius khách lẫn phạm vi giao của quán. Quán đóng cửa/tắt nhận đơn vẫn hiện trạng thái theo API hồ sơ; bộ lọc AI/khẩu vị chưa áp vào search.
+- Cụ thể hóa quy tắc tìm chữ: bỏ dấu/casefold/đ→d, mọi token phải khớp tên món bán/món chuẩn/quán, hoặc tên/địa chỉ khi tìm quán. q rỗng duyệt gần vị trí; ký tự %, _ và nháy là literal. Không tìm trong thông tin nội bộ hoặc tự geocode địa chỉ.
+- SQL lọc hộp tọa độ, Python kiểm tra khoảng cách và chữ; xử lý vùng cực/kinh tuyến 180°. Lọc và sắp theo khoảng cách chưa làm tròn rồi ID trước total/phân trang, không cắt ngầm ứng viên. Nguyên liệu nạp theo lô chỉ cho trang trả về, tránh N+1. Cách triển khai phù hợp dữ liệu MVP; chưa có chỉ mục không gian/tìm kiếm cho tập lớn.
+- Response tái sử dụng public DTO, thêm distance_km; món kèm restaurant với trạng thái giờ/nhận đơn, không lộ source_id/cờ mô phỏng/membership. Không ghi DB hoặc lưu vị trí khách, không đổi model/migration/frontend/dependencies.
+- Toàn bộ 783 kiểm thử backend đạt, gồm 99 ca search mới và 684 ca đã có; Ruff/format đạt. Bao phủ API thật trên SQLite tạm do migration tạo, tiếng Việt NFC/NFD/đ, literal %/_, tọa độ và query sai, radius kép/sát biên, cực/kinh tuyến 180°, phân trang sau lọc/thứ tự ổn định, metadata công khai, không ghi DB và truy vấn tránh N+1. OpenAPI có đúng hai GET công khai cùng schema query; 57 liên kết tài liệu cục bộ hợp lệ. Chưa kiểm chứng PostgreSQL thực tế hoặc tải lớn. Không chạy lại frontend; kết quả 54 unit/UI và bốn E2E vẫn là mốc auth trước.
+- Đã cập nhật API contract, README, hướng dẫn cài đặt/thử API và từ điển dữ liệu. Chưa tự stage/commit/push; phần kế tiếp là nghiệp vụ đơn hàng trong F.10. Chưa triển khai orders/reviews/tracking hoặc giao diện nghiệp vụ trong phần này.
 
 ## Dọn bản nháp cục bộ
 

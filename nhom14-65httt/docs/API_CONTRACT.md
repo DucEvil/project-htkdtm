@@ -1,6 +1,6 @@
 # Hợp đồng API Vị Việt
 
-Tài liệu hiện mô tả auth F.8, hồ sơ/duyệt quán F.10.1 và thực đơn/món chuẩn/nguyên liệu F.10.2. API khẩu vị, tìm kiếm, giao dịch và tracking chưa triển khai; sẽ bổ sung từng phần. OpenAPI tại `http://localhost:8000/docs` phản ánh request/response đang chạy.
+Tài liệu hiện mô tả auth F.8, hồ sơ/duyệt quán F.10.1, thực đơn/món chuẩn/nguyên liệu F.10.2 và tìm kiếm F.10.3. API khẩu vị, giao dịch và tracking chưa triển khai; sẽ bổ sung từng phần. OpenAPI tại `http://localhost:8000/docs` phản ánh request/response đang chạy.
 
 ## Quy ước chung
 
@@ -134,7 +134,7 @@ Giao diện đăng ký yêu cầu đọc/đồng ý nội dung điều khoản v
 
 ## Hồ sơ quán và duyệt quán — F.10.1
 
-Prefix chung vẫn là `/api/v1`. Đây là phần API backend; màn hình hồ sơ/duyệt quán sẽ triển khai ở F.12. Endpoint thực đơn được mô tả ở F.10.2 bên dưới; tìm kiếm chưa triển khai.
+Prefix chung vẫn là `/api/v1`. Đây là phần API backend; màn hình hồ sơ/duyệt quán sẽ triển khai ở F.12. Endpoint thực đơn và tìm kiếm được mô tả ở F.10.2–F.10.3 bên dưới.
 
 | Method | Đường dẫn | Quyền | Kết quả |
 | :--- | :--- | :--- | :--- |
@@ -321,4 +321,55 @@ Mọi danh sách nhận `offset=0` trong 0–2147483647, `limit=20` trong 1–10
 | 409 | `CATALOG_IN_USE` | Danh mục còn được món bán tham chiếu |
 | 422 | `VALIDATION_ERROR` | Thiếu/thừa trường, sai kiểu/giới hạn, lặp ID hoặc xác nhận khi chưa có nguyên liệu |
 
-Không thay schema/revision `001`. Ghi món và liên kết nguyên liệu cùng transaction, rollback khi lỗi SQLAlchemy; khóa các hàng liên quan khi DB hỗ trợ. Kiểm thử chạy production app trên SQLite tạm được tạo bằng migration; chưa kiểm chứng PostgreSQL thực tế hoặc khóa hàng cạnh tranh. Chưa triển khai search/orders/reviews/tracking API trong phần này.
+Không thay schema/revision `001`. Ghi món và liên kết nguyên liệu cùng transaction, rollback khi lỗi SQLAlchemy; khóa các hàng liên quan khi DB hỗ trợ. Kiểm thử chạy production app trên SQLite tạm được tạo bằng migration; chưa kiểm chứng PostgreSQL thực tế hoặc khóa hàng cạnh tranh. Tìm kiếm được triển khai riêng ở F.10.3; orders/reviews/tracking API chưa triển khai.
+
+## Tìm kiếm món và quán — F.10.3
+
+Hai endpoint công khai, không yêu cầu token:
+
+| Method | Đường dẫn | Kết quả |
+| :--- | :--- | :--- |
+| GET | `/api/v1/search/dishes` | `DishSearchPage`: món đang bán của quán approved trong phạm vi |
+| GET | `/api/v1/search/restaurants` | `RestaurantSearchPage`: quán approved trong phạm vi |
+
+Hai endpoint nhận cùng query:
+
+| Tham số | Bắt buộc | Quy tắc |
+| :--- | :--- | :--- |
+| `lat` | Có | Vĩ độ khách, số hữu hạn trong [-90, 90] |
+| `lng` | Có | Kinh độ khách, số hữu hạn trong [-180, 180] |
+| `radius` | Không | Bán kính km trong (0, 50], mặc định 5 |
+| `q` | Không | Mặc định chuỗi rỗng; gộp khoảng trắng, tối đa 180 ký tự sau chuẩn hóa khoảng trắng |
+| `offset` | Không | Số nguyên trong 0–2147483647, mặc định 0 |
+| `limit` | Không | Số nguyên trong 1–100, mặc định 20 |
+
+Thiếu tọa độ, NaN/Infinity, giá trị sai kiểu/giới hạn hoặc tham số ngoài schema trả 422 `VALIDATION_ERROR` theo envelope chung. Không tự dùng tọa độ mặc định ở Hà Nội khi client chưa chọn vị trí. Request không lưu vị trí vào hồ sơ người dùng và không có hành vi geocode địa chỉ.
+
+Ví dụ:
+
+```http
+GET /api/v1/search/dishes?q=pho%20bo&lat=21.0285&lng=105.8542&radius=5&offset=0&limit=20
+GET /api/v1/search/restaurants?q=ha%20noi&lat=21.0285&lng=105.8542
+```
+
+### Từ khóa và điều kiện lọc
+
+- Tìm không phân biệt hoa/thường hoặc dấu tiếng Việt, gồm `đ`/`d` và chuỗi Unicode dựng sẵn/tổ hợp. Mỗi từ trong q phải xuất hiện dưới dạng chuỗi con trong các trường được tìm; thứ tự các từ không bắt buộc. q rỗng/toàn khoảng trắng trả kết quả gần vị trí khách.
+- Tìm món đối chiếu **tên món bán, tên món chuẩn và tên quán**; tìm quán đối chiếu **tên quán và địa chỉ**. Không tìm trong thành phần nguyên liệu/nhãn, source_id hoặc tài khoản chủ quán. `%`, `_`, dấu nháy được tìm như ký tự bình thường, không là wildcard/cú pháp SQL.
+- Quán phải approved. Món còn phải `is_available=true`; không gộp các MenuItem cùng món chuẩn, vì mỗi món bán có quán/giá riêng. Tìm quán có thể trả quán chưa có món đang bán.
+- Khoảng cách đường chim bay dùng Haversine, bán kính Trái Đất quy ước 6371,0088 km. Kết quả phải có `distance_km <= radius` **và** `distance_km <= delivery_radius_km` của quán. Hai biên đều được tính; lọc/sắp xếp dùng số chưa làm tròn. Đây không phải khoảng cách đường bộ hoặc thời gian giao dự kiến.
+- Quán approved đang đóng cửa/tắt nhận đơn vẫn xuất hiện kèm `is_open`, `accepting_orders`, `can_receive_orders` như API hồ sơ. Tìm kiếm là luồng khám phá; chưa cá nhân hóa theo khẩu vị, lọc nguyên liệu cần tránh hoặc bảo đảm đặt đơn thành công. `ingredients_verified` là khai báo của vendor, không phải chứng nhận an toàn.
+
+### Response và phân trang
+
+Cả hai trả `{"items":[...],"total":3,"offset":0,"limit":20}`. Lọc đủ điều kiện và sắp theo khoảng cách tăng dần trước khi phân trang; nếu cùng khoảng cách thì theo ID món bán/quán tăng dần. `total` là tổng sau lọc, không phải số mục trên trang. Không có kết quả hoặc offset vượt tổng trả 200 với items rỗng; total vẫn phản ánh toàn bộ kết quả phù hợp.
+
+`RestaurantSearchResult` gồm toàn bộ `RestaurantPublic` ở F.10.1 và thêm `distance_km`. Giờ mở, trạng thái nhận đơn được tính tại cùng một thời điểm cho toàn trang theo giờ Việt Nam. `can_receive_orders` vẫn chỉ phản ánh trạng thái quán; chưa chứng minh có món/khả năng tạo đơn.
+
+`DishSearchResult` gồm toàn bộ `MenuItemPublic` ở F.10.2 và thêm `distance_km`, `restaurant` là `RestaurantPublic` của quán bán. ID của kết quả là ID MenuItem dùng cho trang chi tiết/giỏ hàng sau này. `canonical_dish` là đặc trưng dùng chung, `ingredients` là nguyên liệu thực tế của MenuItem; không trộn hai nguồn. Không trả membership, source_id, cờ mô phỏng hoặc dữ liệu tài khoản trong kết quả hay các đối tượng lồng.
+
+### Phạm vi triển khai
+
+SQL lọc quán approved/món available và hộp tọa độ bao quanh bán kính; Python kiểm tra Haversine chính xác, chuẩn hóa chữ Unicode và sắp xếp/phân trang. Hộp tọa độ xử lý kinh tuyến 180° và vùng cực để không loại nhầm ứng viên hợp lệ. Nguyên liệu chỉ nạp theo lô cho trang món trả về, tránh truy vấn riêng từng món.
+
+Cách triển khai phù hợp tập dữ liệu MVP quanh trường; vẫn phải đọc toàn bộ ứng viên trong hộp tọa độ để tính đúng total/thứ tự, chưa có chỉ mục tìm kiếm không dấu hoặc chỉ mục không gian. Không cắt ngầm số ứng viên và không công bố cam kết hiệu năng cho dữ liệu lớn. Khi mở rộng cần đo tải và đưa tìm chữ/khoảng cách vào cơ chế chỉ mục thích hợp. Không cần extension DB, đổi model/migration hoặc thêm thư viện ở phần này. Chưa có giao diện SearchPage, tích hợp bản đồ hoặc API đặt đơn.

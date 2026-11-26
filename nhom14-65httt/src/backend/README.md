@@ -1,6 +1,6 @@
 # Backend Vị Việt
 
-Đã có nền tảng FastAPI: `/health`, tài liệu OpenAPI tại `/docs`, cấu hình môi trường, SQLAlchemy, Alembic, middleware request ID/CORS/logging và định dạng lỗi thống nhất. Đã có models F.5, migration `001`, auth F.8, API hồ sơ/duyệt quán F.10.1 và thực đơn/món chuẩn/nguyên liệu F.10.2. API tìm kiếm, đơn hàng và gợi ý chưa triển khai.
+Đã có nền tảng FastAPI: `/health`, tài liệu OpenAPI tại `/docs`, cấu hình môi trường, SQLAlchemy, Alembic, middleware request ID/CORS/logging và định dạng lỗi thống nhất. Đã có models F.5, migration `001`, auth F.8, API hồ sơ/duyệt quán F.10.1, thực đơn/món chuẩn/nguyên liệu F.10.2 và tìm kiếm F.10.3. API đơn hàng và gợi ý chưa triển khai.
 
 ## Auth backend
 
@@ -38,6 +38,14 @@ Ghi dữ liệu có rollback và khóa hàng khi DB hỗ trợ; kiểm thử SQL
 - Admin: GET/POST `/api/v1/admin/canonical-dishes` và `/ingredients`, PUT/DELETE `/{entry_id}` dưới từng prefix. Xóa mục còn được sử dụng trả 409, kể cả món đã ngừng bán. Chuẩn hóa tên nguyên liệu, kiểm tra UNIQUE tên/source_id và cấm client tự gán cờ mô phỏng.
 
 Giá là số nguyên VNĐ; các cờ nhận đúng Boolean JSON. Xác nhận nguyên liệu yêu cầu danh sách ID thực tế không rỗng; không suy thành phần thực tế từ JSON món chuẩn. Ghi món và thay liên kết nguyên liệu có tính nguyên tử/rollback. Menu quán trả mảng; các danh sách khác trả page có total/offset/limit. Chưa có frontend thực đơn hoặc kiểm tra điều kiện đặt đơn; không đổi schema.
+
+## API tìm kiếm món và quán
+
+`app/search/` có schema, service và router theo C.5/F.10. GET công khai `/api/v1/search/dishes` và `/api/v1/search/restaurants` nhận lat/lng bắt buộc, q tùy chọn, radius mặc định 5 km (tối đa 50), offset/limit như các API danh sách. Xem [API contract F.10.3](../../docs/API_CONTRACT.md#tìm-kiếm-món-và-quán--f103).
+
+Tìm chữ tiếng Việt có/không dấu, không phân biệt hoa/thường; mọi từ phải khớp trong tên món bán/món chuẩn/quán, hoặc tên/địa chỉ khi tìm quán. Chỉ trả quán approved, món đang bán và trong cả bán kính khách lẫn phạm vi giao của quán. Quán đóng cửa/tắt nhận đơn vẫn xuất hiện cùng trạng thái công khai. Không áp bộ lọc AI/khẩu vị vào tìm kiếm.
+
+Khoảng cách Haversine đường chim bay; sắp theo khoảng cách chưa làm tròn rồi ID, lọc trước total/phân trang. SQL giới hạn vùng ứng viên, Python chuẩn hóa Unicode và tính khoảng cách; phù hợp tập dữ liệu MVP, chưa có chỉ mục không gian/tìm kiếm cho dữ liệu lớn. Trả public DTO cùng distance_km, món có thêm restaurant để hiển thị giờ/trạng thái. Không ghi vị trí khách, không gọi Maps/geocode, không đổi schema/dependencies hoặc frontend.
 
 Refresh dùng JWT không lưu trạng thái: token cũ vẫn còn hiệu lực đến hạn, chưa có thu hồi từng phiên/thiết bị hoặc logout phía máy chủ. Không gọi việc cấp token mới là rotation có chống dùng lại. Frontend auth đã tích hợp token trong localStorage hoặc sessionStorage theo lựa chọn ghi nhớ, tải lại User từ `/me`, tự refresh một lần và logout cục bộ; backend chưa cấp cookie HttpOnly. Phần auth không thay đổi schema hoặc revision `001`.
 
@@ -209,7 +217,7 @@ Khi revision đã được commit/áp dụng, thay đổi schema bằng revision
 
 Python >=3.11, FastAPI, SQLAlchemy, PostgreSQL và scikit-learn. Phụ thuộc được khai báo trong `requirements.txt` và `requirements-dev.txt`. Chạy từ thư mục này: `python -m uvicorn app.main:app --reload`; kiểm tra: `python -m pytest tests -q`. Xem [hướng dẫn cài đặt](../../docs/HUONG_DAN_CAI_DAT.md) để tạo môi trường trước khi chạy.
 
-Các phần F.5–F.9 và API hồ sơ/duyệt quán, thực đơn/nguyên liệu F.10.1–F.10.2 đã được bổ sung. Tiếp theo là API tìm kiếm trong F.10, tách riêng cho commit sau. Alembic trong backend là nguồn schema duy nhất; các model BI hoặc đánh giá mù của phần sau sẽ dùng revision bổ sung khi được triển khai.
+Các phần F.5–F.9 và API hồ sơ/duyệt quán, thực đơn/nguyên liệu, tìm kiếm F.10.1–F.10.3 đã được bổ sung. Tiếp theo là nghiệp vụ đơn hàng trong F.10, tách riêng cho commit sau. Alembic trong backend là nguồn schema duy nhất; các model BI hoặc đánh giá mù của phần sau sẽ dùng revision bổ sung khi được triển khai.
 
 Xem [README nhóm](../../README.md), [nguồn dữ liệu](../../docs/NGUON_DU_LIEU.md) và [kế hoạch](../../docs/KE_HOACH_THUC_HIEN.md).
 

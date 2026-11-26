@@ -67,7 +67,7 @@ Model: [`Restaurant`](../src/backend/app/restaurants/models.py). Hồ sơ và đ
 
 CHECK: `ck_restaurants_name` và `ck_restaurants_address` giới hạn độ dài sau trim lần lượt 1–160, 1–500; `ck_restaurants_latitude` trong [-90, 90]; `ck_restaurants_longitude` trong [-180, 180]; `ck_restaurants_delivery_radius` lớn hơn 0 và không quá 50; `ck_restaurants_status` nhận `pending`, `approved`, `suspended`. Không có UNIQUE/index khai báo riêng.
 
-ORM trim tên/địa chỉ, chặn tọa độ/bán kính không hữu hạn, nhận giờ không kèm múi giờ với độ chính xác phút (`time` hoặc chuỗi `HH:MM`). API F.10.1 kiểm tra giờ đúng `HH:MM`; service tính `is_open` và `can_receive_orders` từ giờ Việt Nam, trạng thái duyệt và cờ nhận đơn. Khoảng qua đêm hợp lệ; hai mốc bằng nhau là 24 giờ. Hai trường tính toán chỉ có ở response, không thêm cột DB. DB chưa CHECK độ chính xác phút; lọc khoảng cách/vị trí khách thuộc phần tìm kiếm và đặt đơn sau.
+ORM trim tên/địa chỉ, chặn tọa độ/bán kính không hữu hạn, nhận giờ không kèm múi giờ với độ chính xác phút (`time` hoặc chuỗi `HH:MM`). API F.10.1 kiểm tra giờ đúng `HH:MM`; service tính `is_open` và `can_receive_orders` từ giờ Việt Nam, trạng thái duyệt và cờ nhận đơn. Khoảng qua đêm hợp lệ; hai mốc bằng nhau là 24 giờ. Các trường tính toán không thêm cột DB; DB chưa CHECK độ chính xác phút. Search F.10.3 tính distance_km từ vị trí khách trong query, lọc theo cả bán kính khách và delivery_radius_km của quán; không lưu vị trí khách vào bảng. Kiểm tra phạm vi tại lúc tạo đơn chưa triển khai.
 
 ## 4. `restaurant_memberships` — Liên kết người quản lý quán
 
