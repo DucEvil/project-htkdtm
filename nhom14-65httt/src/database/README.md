@@ -1,6 +1,6 @@
 # Cơ sở dữ liệu Vị Việt
 
-Thư mục dành cho tài liệu dữ liệu, seed, ánh xạ nguồn, truy vấn BI và tài liệu Power BI. Migration được quản lý duy nhất tại `src/backend/alembic/versions/`, không đặt ở đây. Backend đã có models `User` và `Preference`; chưa có migration tạo bảng trong DB ứng dụng, seed hoặc SQL BI. Hệ quản trị chính là PostgreSQL.
+Thư mục dành cho tài liệu dữ liệu, seed, ánh xạ nguồn, truy vấn BI và tài liệu Power BI. Migration được quản lý duy nhất tại `src/backend/alembic/versions/`, không đặt ở đây. Backend đã có models `User`, `Preference`, `Restaurant` và `RestaurantMembership`; chưa có migration tạo bảng trong DB ứng dụng, seed hoặc SQL BI. Hệ quản trị chính là PostgreSQL.
 
 ## Dữ liệu giao dịch dự kiến
 

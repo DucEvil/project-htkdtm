@@ -9,7 +9,7 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | Phase 0 | Cấu hình môi trường, Docker, backend/frontend chạy tối thiểu | Đã chuẩn bị; xem hướng dẫn cài đặt và kết quả kiểm tra |
 | Phase 1.1 | `users/models.py`: tài khoản và vai trò | Đã bổ sung model và kiểm thử; chưa có migration hoặc API auth |
 | Phase 1.2 | `preferences/models.py`: khẩu vị | Đã bổ sung model, liên kết User và kiểm thử; chưa có migration/API |
-| Phase 1.3 | `restaurants/models.py`: quán và thành viên quản lý | Chưa đưa vào mã nguồn hiện tại |
+| Phase 1.3 | `restaurants/models.py`: quán và thành viên quản lý | Đã bổ sung hai model và kiểm thử; chưa có migration/API |
 | Phase 1.4 | `menu/models.py`: món chuẩn, món bán, nguyên liệu | Chưa đưa vào mã nguồn hiện tại |
 | Phase 1.5 | `orders/models.py`: đơn, món đặt và lịch sử | Chưa đưa vào mã nguồn hiện tại |
 | Phase 1.6 | `reviews/models.py`: đánh giá món | Chưa đưa vào mã nguồn hiện tại |
@@ -30,7 +30,7 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Backend: 5 kiểm thử đạt (health/request ID, định dạng lỗi, CORS, cấu hình URL DB).
 - Frontend: `npm run build` và `npm run format:check` đạt.
 - Chưa kiểm chứng Docker/PostgreSQL vì môi trường phát triển không có Docker CLI.
-- Bộ khung, phần hợp nhất tài liệu và User model đã được commit. Sau Preference model là riêng `Restaurant`/`RestaurantMembership`; mỗi lượt chỉ thêm một phần.
+- Bộ khung, phần hợp nhất tài liệu, User và Preference models đã được commit. Sau phần quán là riêng các models thực đơn trong `menu/models.py`; mỗi lượt chỉ thêm một phần.
 
 ## Phần tài khoản và vai trò
 
@@ -51,4 +51,15 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Các danh sách không dùng chung mặc định giữa tài khoản, được chuẩn hóa khi gán và lưu được cập nhật tại chỗ qua MutableList.
 - Kết quả: 54 kiểm thử đạt, gồm 34 ca Preference và 20 ca User/nền tảng. Kiểm thử dữ liệu dùng SQLite; chưa kiểm chứng PostgreSQL.
 - Chưa tạo migration, API khẩu vị, bộ mã hóa vector hoặc giao diện khẩu vị. Các nội dung đó vẫn ở phần sau theo Markdown.
-- Chưa tự commit/push; các module soạn trước trong `.runtime/` tiếp tục được bỏ qua và không đưa vào cùng lượt.
+- Phần Preference model đã được người dùng commit; các module soạn trước trong `.runtime/` tiếp tục được bỏ qua và không đưa vào cùng lượt.
+
+## Phần quán và người quản lý
+
+- Theo đúng mục F.5, bổ sung `Restaurant` và `RestaurantMembership` tại `src/backend/app/restaurants/models.py`; Alembic đã nhận metadata của cả hai.
+- Theo mục C.5 và D.15/17/18/22, lưu hồ sơ quán, tọa độ, giờ mở cửa, bán kính giao, trạng thái duyệt, cờ nhận đơn và liên kết người quản lý.
+- Chi tiết kiểu cột, trạng thái `pending`/`approved`/`suspended`, bán kính tối đa 50 km, cờ nhận đơn mặc định false, giờ phục vụ qua đêm/cả ngày được ghi trong README backend. Đây là quy ước triển khai bổ sung cho phần Markdown chưa mô tả từng cột.
+- Với API `/vendor/restaurant` của bản thiết kế, MVP chọn mỗi tài khoản tối đa một quán; một quán có thể có nhiều tài khoản quản lý. PK/FK ngăn liên kết trùng và tham chiếu thiếu. Xóa tài khoản/quán đang có membership bị chặn, cần xử lý liên kết trước.
+- Chưa kiểm tra quyền API hoặc tự gán quyền theo membership; auth/vendor sẽ kiểm tra vai trò và quyền sở hữu ở phần sau.
+- Kết quả: 105 kiểm thử đạt, gồm 51 ca phần quán và 54 ca đã có. Kiểm thử dữ liệu dùng SQLite; chưa kiểm chứng PostgreSQL.
+- Chưa tạo migration, API CRUD, kiểm tra đang mở cửa hoặc bộ lọc khoảng cách; chưa thêm models thực đơn ở lượt này.
+- Chưa tự commit/push; thay đổi chỉ dành cho phần quán và tài liệu tiến độ liên quan.

@@ -1,6 +1,6 @@
 # Cài đặt Phase 0
 
-Hướng dẫn khởi chạy backend có `/health`, tài liệu API tự sinh và frontend tối thiểu. Đã bổ sung models `User` và `Preference`, nhưng chưa có migration tạo bảng nghiệp vụ trong DB ứng dụng, đăng nhập, API khẩu vị, đặt đơn, AI hay BI.
+Hướng dẫn khởi chạy backend có `/health`, tài liệu API tự sinh và frontend tối thiểu. Đã bổ sung models tài khoản, khẩu vị, quán và liên kết người quản lý, nhưng chưa có migration tạo bảng nghiệp vụ trong DB ứng dụng hoặc API nghiệp vụ.
 
 ## Chạy local trên Windows
 
@@ -48,6 +48,6 @@ Docker chưa được kiểm chứng trong phiên phát triển này vì máy kh
 npm run build
 ```
 
-Các kiểm tra gồm health, request ID, CORS, cấu trúc lỗi, cấu hình URL DB, lưu User model với ràng buộc email/vai trò và lưu Preference với liên kết tài khoản, giới hạn giá trị và cập nhật danh sách JSON trên SQLite. Chúng không xác nhận kết nối PostgreSQL hoặc các chức năng ở phần sau.
+Các kiểm tra gồm health, request ID, CORS, cấu trúc lỗi, cấu hình URL DB và lưu models tài khoản, khẩu vị, quán/người quản lý với các ràng buộc dữ liệu trên SQLite. Chúng không xác nhận kết nối PostgreSQL hoặc các chức năng ở phần sau.
 
 Không đưa `.env`, `.venv/`, `node_modules/`, `dist/` hay `.runtime/` vào commit.
