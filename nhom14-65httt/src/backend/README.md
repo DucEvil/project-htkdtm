@@ -17,7 +17,7 @@ Mật khẩu dùng Passlib PBKDF2-SHA256 với 600.000 vòng và salt ngẫu nhi
 
 Dependency `get_current_user`, `require_role(*roles)`, `require_vendor_owner` có thể import từ `app.auth.dependencies` hoặc `app.dependencies`. Guard đọc lại vai trò/membership từ DB; admin không tự bỏ qua quyền sở hữu quán của vendor. Các router vendor/admin nghiệp vụ chưa có.
 
-Refresh dùng JWT không lưu trạng thái: token cũ vẫn còn hiệu lực đến hạn, chưa có thu hồi từng phiên/thiết bị hoặc logout phía máy chủ. Không gọi việc cấp token mới là rotation có chống dùng lại. Frontend auth đã tích hợp token trong localStorage, tải lại User từ `/me`, tự refresh một lần và logout cục bộ; backend chưa cấp cookie HttpOnly. Phần auth không thay đổi schema hoặc revision `001`.
+Refresh dùng JWT không lưu trạng thái: token cũ vẫn còn hiệu lực đến hạn, chưa có thu hồi từng phiên/thiết bị hoặc logout phía máy chủ. Không gọi việc cấp token mới là rotation có chống dùng lại. Frontend auth đã tích hợp token trong localStorage hoặc sessionStorage theo lựa chọn ghi nhớ, tải lại User từ `/me`, tự refresh một lần và logout cục bộ; backend chưa cấp cookie HttpOnly. Phần auth không thay đổi schema hoặc revision `001`.
 
 ## Model tài khoản đã bổ sung
 

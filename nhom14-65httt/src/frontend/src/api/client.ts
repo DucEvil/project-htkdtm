@@ -12,6 +12,7 @@ export class ApiError extends Error {
     message: string,
     readonly status: number,
     readonly code: string,
+    readonly details: unknown = null,
   ) {
     super(message);
     this.name = "ApiError";
@@ -34,9 +35,11 @@ type SessionEvent =
   { kind: "login"; user: User } | { kind: "logout" | "external" };
 type RequestOptions = RequestInit & { authenticated?: boolean };
 
-function browserStorage(): Storage | undefined {
+function browserStorage(
+  kind: "localStorage" | "sessionStorage" = "localStorage",
+): Storage | undefined {
   try {
-    return window.localStorage;
+    return window[kind];
   } catch {
     return undefined;
   }
@@ -50,14 +53,18 @@ export class ApiClient {
   private refreshJob: { generation: number; promise: Promise<void> } | null =
     null;
   persisted = true;
+  private remember = true;
 
   constructor(
     private baseURL: string,
     private fetcher: typeof fetch = (...args) => fetch(...args),
     private storage: Storage | undefined = browserStorage(),
+    private sessionStorage: Storage | undefined = browserStorage(
+      "sessionStorage",
+    ),
   ) {
     this.baseURL = baseURL.replace(/\/$/, "");
-    this.tokens = this.readStorage();
+    this.restoreTokens();
   }
 
   get hasSession(): boolean {
@@ -77,9 +84,9 @@ export class ApiClient {
     this.listeners.forEach((listener) => listener(event));
   }
 
-  private readStorage(): SessionTokens | null {
+  private readStorage(storage: Storage | undefined): SessionTokens | null {
     try {
-      const raw = this.storage?.getItem(AUTH_STORAGE_KEY);
+      const raw = storage?.getItem(AUTH_STORAGE_KEY);
       if (!raw) return null;
       const value: unknown = JSON.parse(raw);
       if (typeof value !== "object" || value === null) return null;
@@ -102,24 +109,42 @@ export class ApiClient {
     }
   }
 
+  private restoreTokens() {
+    const persistent = this.readStorage(this.storage);
+    const temporary = this.readStorage(this.sessionStorage);
+    this.tokens = persistent || temporary;
+    this.remember = persistent !== null || temporary === null;
+  }
+
   private persist() {
     try {
-      if (!this.storage) throw new Error("Storage unavailable");
+      const target = this.remember ? this.storage : this.sessionStorage;
+      const other = this.remember ? this.sessionStorage : this.storage;
+      if (!target) throw new Error("Storage unavailable");
       if (this.tokens)
-        this.storage.setItem(AUTH_STORAGE_KEY, JSON.stringify(this.tokens));
-      else this.storage.removeItem(AUTH_STORAGE_KEY);
+        target.setItem(AUTH_STORAGE_KEY, JSON.stringify(this.tokens));
+      else target.removeItem(AUTH_STORAGE_KEY);
+      other?.removeItem(AUTH_STORAGE_KEY);
       this.persisted = true;
     } catch {
       this.persisted = false;
+      // Không để token của tài khoản trước còn lại khi ghi phiên mới thất bại.
+      for (const store of [this.storage, this.sessionStorage]) {
+        try {
+          store?.removeItem(AUTH_STORAGE_KEY);
+        } catch {
+          /* Chỉ giữ phiên trong bộ nhớ. */
+        }
+      }
     }
   }
 
   syncFromStorage() {
-    const next = this.readStorage();
-    if (JSON.stringify(next) === JSON.stringify(this.tokens)) return;
+    const previous = this.tokens;
+    this.restoreTokens();
+    if (JSON.stringify(this.tokens) === JSON.stringify(previous)) return;
     this.generation += 1;
-    this.tokens = next;
-    this.emit({ kind: next ? "external" : "logout" });
+    this.emit({ kind: this.tokens ? "external" : "logout" });
   }
 
   logout() {
@@ -129,7 +154,7 @@ export class ApiClient {
     this.emit({ kind: "logout" });
   }
 
-  async login(payload: LoginRequest): Promise<User> {
+  async login(payload: LoginRequest, remember = true): Promise<User> {
     const version = ++this.generation;
     const result = await this.send<TokenResponse>("/auth/login", {
       method: "POST",
@@ -138,6 +163,7 @@ export class ApiClient {
     if (this.generation !== version) throw new SessionChangedError();
     // Chặn cả request dùng token cũ được gửi trong lúc đăng nhập đang chờ.
     this.generation += 1;
+    this.remember = remember;
     this.tokens = {
       access_token: result.access_token,
       refresh_token: result.refresh_token,
@@ -178,6 +204,7 @@ export class ApiClient {
             "Không thể hoàn tất yêu cầu. Vui lòng thử lại.",
           response.status,
           body?.error?.code || `HTTP_${response.status}`,
+          body?.error?.details,
         );
       }
       return body as T;

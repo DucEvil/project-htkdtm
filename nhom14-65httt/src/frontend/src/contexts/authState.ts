@@ -6,7 +6,7 @@ export interface AuthState {
   status: "loading" | "authenticated" | "anonymous" | "error";
   error: string;
   persisted: boolean;
-  signIn: (payload: LoginRequest) => Promise<User>;
+  signIn: (payload: LoginRequest, remember?: boolean) => Promise<User>;
   signOut: () => void;
   retry: () => void;
 }

@@ -17,9 +17,9 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | F.6 | Migration khởi tạo | Đã có revision 001 tạo 15 bảng; kiểm thử SQLite và SQL PostgreSQL offline |
 | F.7 | ERD và từ điển dữ liệu | Đã mô tả 15 bảng, từng cột, ràng buộc và 24 FK theo revision 001 |
 | F.8 — backend | Đăng ký, đăng nhập, JWT, refresh và guard | Đã có API, 84 kiểm thử auth và tích hợp giao diện |
-| F.8 — frontend | AuthContext, useAuth, API client và trang/layout | Đã có auth, guard, localStorage/refresh và trạng thái lỗi/chờ |
-| F.9 | Kiểm thử auth | Backend 84 ca; frontend 43 ca unit/UI và ba kịch bản E2E đạt |
-| F.10 | API nghiệp vụ quán, thực đơn, tìm kiếm, giao dịch | Chưa triển khai; tiếp tục tách từng module để commit |
+| F.8 — frontend | AuthContext, useAuth, API client và trang/layout | Đã có auth; giao diện được hoàn thiện theo Material Design 3 |
+| F.9 | Kiểm thử auth | Backend 84 ca; frontend 54 ca unit/UI và bốn kịch bản E2E đạt |
+| F.10 | API nghiệp vụ quán, thực đơn, tìm kiếm, giao dịch | Chưa triển khai; người dùng yêu cầu hoàn thiện giao diện auth trước |
 | Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Chưa đưa vào mã nguồn hiện tại |
 | Phase 3 | AI, tracking và dữ liệu | Chưa đưa vào mã nguồn hiện tại |
 | Phase 4 | ETL, BI, Power BI và đánh giá | Chưa đưa vào mã nguồn hiện tại |
@@ -151,7 +151,17 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Giao diện co giãn, điều hướng bàn phím, liên kết bỏ qua điều hướng và thông báo khi storage bị chặn. Không thêm khẩu vị, menu, giỏ hàng hoặc dashboard vào cùng phần auth.
 - Thêm Vitest/Testing Library/jsdom và Playwright cùng lockfile, cấu hình/script kiểm thử. 43 ca unit/UI đạt (token, refresh, race, storage, validation, vai trò); ba kịch bản Playwright/Edge đạt với backend thật trên SQLite tạm tạo bằng migration `001` (customer/vendor, tải lại, chặn admin, logout và bố cục 1280px/390px). Đã xem ảnh desktop/mobile và sửa khoảng trắng tiêu đề mobile.
 - Build/typecheck nguồn + tests/config, lint và format check đạt. Không đổi schema hoặc mã backend; 425 kiểm thử backend đạt tại commit trước. Chưa chạy PostgreSQL/Docker, chưa đánh giá trải nghiệm người dùng thật. npm audit còn bốn cảnh báo từ Vite 5/React Router 6 đã có; chưa nâng major trong phần này.
-- Cập nhật API contract, README và hướng dẫn thử trên DB riêng. Chưa tự commit/push frontend; tiếp theo F.10 triển khai từng API nghiệp vụ.
+- Frontend auth ban đầu đã được người dùng commit tại `6c112c2`. Người dùng yêu cầu thiết kế lại login/register theo Material Design 3 trước khi thực hiện F.10.
+
+## Hoàn thiện giao diện auth theo Material Design 3
+
+- Giữ React/TypeScript và API auth hiện có. Tách khung auth khỏi điều hướng nghiệp vụ, bố cục desktop hai phần, mobile rút gọn thương hiệu; dùng design tokens màu MD3, card 28px, nút pill và minh họa SVG tối giản.
+- Be Vietnam Pro và Material Symbols Rounded phục vụ cục bộ, kèm giấy phép; không thêm MUI hoặc đăng nhập Google. Có AuthField/AuthButton/AuthDialog dùng chung, loading/lỗi khôi phục phiên đồng bộ thiết kế.
+- Nhãn luôn hiển thị, hiện/ẩn từng mật khẩu, validation tiếng Việt dưới trường, focus lỗi đầu tiên, giữ dữ liệu sau lỗi, chặn gửi lặp, autofill/Enter, vùng chạm 48px, transition 180ms và reduced motion. Đã thử Escape/khôi phục focus của dialog bằng trình duyệt.
+- Ghi nhớ đăng nhập có hành vi thực: bật lưu localStorage, tắt lưu sessionStorage; refresh bảo toàn lựa chọn, logout xóa cả hai, lỗi ghi storage không để token tài khoản cũ tồn tại ngoài ý muốn.
+- Checkbox đồng ý điều khoản/bảo mật chặn đăng ký khi chưa chọn; các liên kết mở nội dung cho bản thử nghiệm. Backend chưa lưu chấp thuận; quên mật khẩu chỉ mở hướng dẫn vì chưa có API reset. Không mô phỏng đăng nhập thành công.
+- 54 kiểm thử unit/UI và bốn kịch bản Playwright/Edge đạt với backend thật trên SQLite tạm; kiểm tra login/register ở 360/390/768/1280px, trạng thái lỗi, bàn phím, checkbox ghi nhớ và reduced motion. Build/typecheck, lint, format check đạt; không đổi mã backend/schema.
+- Chưa tự commit/push phần giao diện; chưa triển khai F.10 trong lượt này.
 
 ## Dọn bản nháp cục bộ
 

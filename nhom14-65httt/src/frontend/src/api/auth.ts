@@ -9,6 +9,7 @@ export function register(payload: RegisterRequest): Promise<User> {
   });
 }
 
-export const login = (payload: LoginRequest) => apiClient.login(payload);
+export const login = (payload: LoginRequest, remember = true) =>
+  apiClient.login(payload, remember);
 export const me = () => apiClient.request<User>("/auth/me");
 export const logout = () => apiClient.logout();

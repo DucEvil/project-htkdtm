@@ -19,7 +19,17 @@ Phụ trách dự kiến xem tại [danhsachnhom.md](../../danhsachnhom.md).
 
 API theo [contract auth](../../docs/API_CONTRACT.md). Mật khẩu giữ nguyên khi gửi, không lưu vào storage; role đăng ký chỉ có customer/vendor. Form có nhãn, autocomplete, validation, trạng thái chờ và khóa gửi lặp. Không thêm đăng nhập xã hội hoặc khôi phục mật khẩu khi backend chưa hỗ trợ.
 
-Token access/refresh được lưu dưới khóa `viviet.auth.v1` trong localStorage theo Markdown. Không lưu User/role để cấp quyền; khi mở lại trang phải gọi `/auth/me` trước khi hiển thị trang riêng. 401 của API được thử refresh một lần, các request đồng thời dùng chung một refresh; 401/422 từ refresh hoặc 401 sau thử lại xóa phiên. Lỗi mạng/5xx giữ token và cho thử lại; 403 không tự đăng xuất. Logout và đổi phiên vô hiệu hóa phản hồi cũ; sự kiện storage đồng bộ phiên giữa các tab. Nếu storage bị chặn, phiên còn trong bộ nhớ và giao diện thông báo có thể cần đăng nhập lại khi tải lại.
+Token access/refresh được lưu dưới khóa `viviet.auth.v1`: bật “Ghi nhớ đăng nhập” dùng localStorage, tắt dùng sessionStorage của tab hiện tại. Refresh giữ nguyên lựa chọn này; logout xóa cả hai nơi. Không lưu User/role để cấp quyền; khi mở lại trang phải gọi `/auth/me` trước khi hiển thị trang riêng. 401 của API được thử refresh một lần, các request đồng thời dùng chung một refresh; 401/422 từ refresh hoặc 401 sau thử lại xóa phiên. Lỗi mạng/5xx giữ token và cho thử lại; 403 không tự đăng xuất. Logout và đổi phiên vô hiệu hóa phản hồi cũ; sự kiện storage đồng bộ phiên lưu lâu dài giữa các tab. Nếu storage bị chặn, phiên còn trong bộ nhớ và giao diện thông báo có thể cần đăng nhập lại khi tải lại.
+
+### Giao diện Material Design 3
+
+Hai trang auth có khung riêng: desktop hai phần thương hiệu/biểu mẫu, mobile rút gọn thương hiệu để ưu tiên thao tác. Card bo 28px, nút pill, nền ngà và xanh lá trầm; không dùng thư viện UI mới. Be Vietnam Pro và subset Material Symbols Rounded được phục vụ cùng ứng dụng, có giấy phép tại [public/fonts](public/fonts/README.md).
+
+Các vai trò màu `primary`, `on-primary`, `primary-container`, `surface`, `on-surface`, `outline`, `error` và trạng thái bổ sung nằm tập trung trong [auth.css](src/auth.css). Đổi các biến `--md-sys-color-*` để thay theme. Component dùng chung ở `components/auth/`: `AuthField`, `AuthButton`, `MaterialIcon`, `AuthDialog`; `AuthLayout` và `AuthSessionState` quản lý khung/trạng thái phục hồi phiên. CSS auth cũ đã được gỡ khỏi stylesheet chung.
+
+Form validation ở `utils/authValidation.ts` và `useAuthErrors`: lỗi tiếng Việt dưới từng trường, focus trường lỗi đầu tiên, không xóa dữ liệu khi gửi thất bại. Có hiện/ẩn mật khẩu, xác nhận mật khẩu, đồng ý điều khoản, autofill, gửi bằng Enter, khóa gửi lặp, vòng focus/khôi phục focus khi đóng dialog, chuyển động 180ms và giảm chuyển động theo hệ điều hành. Vùng tương tác chính tối thiểu 48px; đã kiểm tra 360px, 390px, 768px và 1280px.
+
+“Quên mật khẩu?” mở hướng dẫn hỗ trợ, không gọi hoặc giả lập API reset chưa có. Điều khoản/chính sách mở nội dung cho bản thử nghiệm, có thể đóng bằng nút hoặc Escape. Checkbox đồng ý được kiểm tra ở frontend, chưa lưu thời điểm/phiên bản chấp thuận trong DB; không gửi trường `consent` vào API đăng ký hiện có. Không hiển thị đăng nhập Google vì backend chưa hỗ trợ.
 
 Logout chỉ xóa phiên trình duyệt, chưa thu hồi token ở máy chủ. localStorage có thể được JavaScript cùng origin đọc; không coi đây là cookie HttpOnly. Backend vẫn kiểm tra quyền mỗi API, RoleGuard không thay thế kiểm tra membership của quán. Sau đăng nhập chỉ nhận đích quay lại thuộc `/account`, `/vendor`, `/admin`, không nhận URL ngoài hoặc đường dẫn có dấu gạch chéo ngược.
 
@@ -132,7 +142,7 @@ npm ci
 npm run dev
 ```
 
-Frontend chạy tại `http://localhost:5173`. `npm run build` kiểm tra TypeScript của nguồn, tests/config và tạo bản production; `npm run lint`, `npm run format:check` kiểm tra mã/định dạng. `npm test` chạy 43 ca API client và React UI với Vitest/Testing Library, không cần backend. `npm run test:e2e` chạy ba kịch bản trình duyệt với backend thật; cần khởi động riêng backend/DB tạm và frontend theo [hướng dẫn](../../docs/HUONG_DAN_CAI_DAT.md#kiểm-thử-auth-trên-trình-duyệt).
+Frontend chạy tại `http://localhost:5173`. `npm run build` kiểm tra TypeScript của nguồn, tests/config và tạo bản production; `npm run lint`, `npm run format:check` kiểm tra mã/định dạng. `npm test` chạy 54 ca API client và React UI với Vitest/Testing Library, không cần backend. `npm run test:e2e` chạy bốn kịch bản trình duyệt với backend thật; cần khởi động riêng backend/DB tạm và frontend theo [hướng dẫn](../../docs/HUONG_DAN_CAI_DAT.md#kiểm-thử-auth-trên-trình-duyệt).
 
 `VITE_API_BASE_URL` trong cấu hình mẫu là `/api/v1`. Vite chuyển `/api` và `/health` tới backend local ở `http://127.0.0.1:8000`; Docker đặt `API_PROXY_TARGET=http://backend:8000`.
 

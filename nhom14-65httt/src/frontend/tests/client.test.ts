@@ -39,6 +39,7 @@ function makeClient(fetcher: typeof fetch) {
 }
 beforeEach(() => {
   localStorage.clear();
+  sessionStorage.clear();
   localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(oldTokens));
 });
 afterEach(() => {
@@ -286,6 +287,64 @@ describe("API session", () => {
       .catch((error) => error);
     await vi.advanceTimersByTimeAsync(15_000);
     expect(await result).toMatchObject({ name: "AbortError" });
+  });
+
+  it("khôi phục phiên không ghi nhớ từ sessionStorage và logout xóa cả hai nơi", async () => {
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(json(tokenResponse));
+    const client = makeClient(fetcher);
+    await client.login({ email: user.email, password: "secret" }, false);
+    expect(localStorage.getItem(AUTH_STORAGE_KEY)).toBeNull();
+    expect(JSON.parse(sessionStorage.getItem(AUTH_STORAGE_KEY)!)).toEqual(
+      newTokens,
+    );
+    expect(makeClient(fetcher).hasSession).toBe(true);
+    client.logout();
+    expect(sessionStorage.getItem(AUTH_STORAGE_KEY)).toBeNull();
+    expect(localStorage.getItem(AUTH_STORAGE_KEY)).toBeNull();
+  });
+
+  it("refresh giữ nguyên lựa chọn chỉ lưu theo phiên", async () => {
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockImplementation(async (url, options) => {
+        if (String(url).endsWith("/login"))
+          return json({ ...tokenResponse, ...oldTokens });
+        if (String(url).endsWith("/refresh")) return json(tokenResponse);
+        return new Headers(options?.headers).get("Authorization") ===
+          "Bearer old-access"
+          ? denied()
+          : json(user);
+      });
+    const client = makeClient(fetcher);
+    await client.login({ email: user.email, password: "secret" }, false);
+    await client.request("/auth/me");
+    expect(localStorage.getItem(AUTH_STORAGE_KEY)).toBeNull();
+    expect(JSON.parse(sessionStorage.getItem(AUTH_STORAGE_KEY)!)).toEqual(
+      newTokens,
+    );
+  });
+
+  it("xóa token cũ khi storage đầy không cho ghi phiên mới", async () => {
+    const storage = {
+      getItem: () => JSON.stringify(oldTokens),
+      setItem: () => {
+        throw new Error("quota");
+      },
+      removeItem: vi.fn(),
+      clear: () => {},
+      key: () => null,
+      length: 1,
+    };
+    const client = new ApiClient(
+      "/api/v1",
+      vi.fn<typeof fetch>().mockResolvedValue(json(tokenResponse)),
+      storage,
+    );
+    await client.login({ email: user.email, password: "secret" });
+    expect(client.persisted).toBe(false);
+    expect(storage.removeItem).toHaveBeenCalledWith(AUTH_STORAGE_KEY);
   });
 });
 

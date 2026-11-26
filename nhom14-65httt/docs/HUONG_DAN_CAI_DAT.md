@@ -83,11 +83,11 @@ npm test
 
 Toàn bộ 425 kiểm thử đạt, gồm 84 ca auth, các model OLTP và 23 ca migration. Kiểm thử auth dùng API thật trên SQLite tạm được migration tạo, gồm đăng ký/đăng nhập, JWT/refresh, vai trò/quyền sở hữu và dữ liệu không hợp lệ. Migration kiểm tra nâng/hạ/nâng lại, lệch schema, constraint, đường dẫn, URL và mặc định JSON. PostgreSQL mới kiểm tra SQL offline; chưa xác nhận PostgreSQL/Docker thực tế hoặc API giao dịch/tracking.
 
-Frontend có 43 kiểm thử Vitest/React UI và ba kịch bản Playwright đạt với backend thật trên SQLite tạm; đã kiểm tra ảnh login/register ở 1280px và 390px. Build, TypeScript (gồm tests/config), lint và format check đạt. Kết quả 425 ca backend là mốc của commit backend auth; lượt frontend không đổi mã Python. npm audit còn bốn cảnh báo thuộc Vite 5/React Router 6 đã có; chưa nâng major toolchain trong phần auth này.
+Frontend có 54 kiểm thử Vitest/React UI và bốn kịch bản Playwright đạt với backend thật trên SQLite tạm; đã kiểm tra ảnh login/register Material Design 3 ở 360/390/768/1280px, bàn phím, hiện/ẩn mật khẩu, dialog và lựa chọn ghi nhớ đăng nhập. Build, TypeScript (gồm tests/config), lint và format check đạt. Kết quả 425 ca backend là mốc của commit backend auth; lượt frontend không đổi mã Python. npm audit còn bốn cảnh báo thuộc Vite 5/React Router 6 đã có; chưa nâng major toolchain trong phần auth này.
 
 ## Kiểm thử auth trên trình duyệt
 
-Ba kịch bản E2E tạo tài khoản thử qua giao diện, vì vậy chạy backend với DB SQLite riêng. Sau khi đã cài dependencies, mở terminal tại thư mục nhóm:
+Các kịch bản E2E tạo tài khoản thử qua giao diện, vì vậy chạy backend với DB SQLite riêng. Sau khi đã cài dependencies, mở terminal tại thư mục nhóm:
 
 ```powershell
 New-Item -ItemType Directory -Force .runtime | Out-Null

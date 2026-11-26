@@ -9,10 +9,10 @@ import RegisterPage from "./pages/auth/RegisterPage";
 export default function AppRouter() {
   return (
     <Routes>
+      <Route path="login" element={<LoginPage />} />
+      <Route path="register" element={<RegisterPage />} />
       <Route element={<AppShell />}>
         <Route index element={<HomePage />} />
-        <Route path="login" element={<LoginPage />} />
-        <Route path="register" element={<RegisterPage />} />
         <Route element={<RoleGuard />}>
           <Route path="account" element={<AccountPage />} />
         </Route>
