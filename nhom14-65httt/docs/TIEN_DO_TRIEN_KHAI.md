@@ -12,7 +12,7 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | Phase 1.3 | `restaurants/models.py`: quán và thành viên quản lý | Đã bổ sung hai model và kiểm thử; chưa có migration/API |
 | Phase 1.4 | `menu/models.py`: món chuẩn, món bán, nguyên liệu | Đã bổ sung bốn model và kiểm thử; chưa có migration/API |
 | Phase 1.5 | `orders/models.py`: đơn, món đặt và lịch sử | Đã bổ sung ba model và kiểm thử; chưa có migration/service/API |
-| Phase 1.6 | `reviews/models.py`: đánh giá món | Chưa đưa vào mã nguồn hiện tại |
+| Phase 1.6 | `reviews/models.py`: đánh giá món | Đã bổ sung model và kiểm thử; chưa có migration/service/API |
 | Phase 1.7 | `tracking/models.py`: yêu cầu gợi ý, hiển thị, sự kiện | Chưa đưa vào mã nguồn hiện tại |
 | Phase 1.8 | Migration ban đầu, ERD và từ điển dữ liệu | Chờ các model được chốt |
 | Phase 1.9 | Auth backend, frontend và kiểm thử | Chờ models/migration |
@@ -32,7 +32,7 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Backend: 5 kiểm thử đạt (health/request ID, định dạng lỗi, CORS, cấu hình URL DB).
 - Frontend: `npm run build` và `npm run format:check` đạt.
 - Chưa kiểm chứng Docker/PostgreSQL vì môi trường phát triển không có Docker CLI.
-- Bộ khung, phần hợp nhất tài liệu và models tài khoản/khẩu vị/quán/thực đơn đã được commit. Sau models đơn hàng là riêng Review trong `reviews/models.py`; mỗi lượt chỉ thêm một phần.
+- Bộ khung, phần hợp nhất tài liệu và models tài khoản/khẩu vị/quán/thực đơn/đơn hàng đã được commit. Sau Review là riêng các models trong `tracking/models.py`; mỗi lượt chỉ thêm một phần.
 
 ## Phần tài khoản và vai trò
 
@@ -85,11 +85,21 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Tổng tiền dùng BIGINT, snapshot dùng số nguyên VNĐ, mỗi món tối đa một dòng/đơn. FK bảo vệ dữ liệu giao dịch đang có tham chiếu. Các giới hạn và phần kiểm tra nghiệp vụ chưa triển khai được ghi rõ trong README backend.
 - Kết quả: 219 kiểm thử đạt, gồm 64 ca dữ liệu đơn hàng và 155 ca đã có. Kiểm thử dùng SQLite; chưa kiểm chứng PostgreSQL. Chưa thay thế các ca giao dịch/API và state machine trong Markdown.
 - Chưa có migration, tạo đơn qua API, transaction đặt đơn, kiểm tra quyền, tính tổng/snapshot tự động hoặc state machine.
-- Chưa tự commit/push; chưa thêm Review hoặc tracking vào lượt này.
+- Phần đơn hàng đã được người dùng commit; không gộp Review hoặc tracking vào commit đó.
+
+## Phần đánh giá món đã mua
+
+- Theo mục C.5, D.14 và F.5, thêm Review tại `src/backend/app/reviews/models.py`, đăng ký metadata với Alembic.
+- Liên kết Review tới Order, MenuItem, User và dùng FK ghép tới đúng cặp OrderItem để không đánh giá một món chỉ tồn tại ở đơn khác.
+- UNIQUE ngăn đánh giá trùng một món trong một đơn; điểm nguyên 1–5, nhận xét tùy chọn tối đa 2000 ký tự. Lưu thời điểm UTC và cờ dữ liệu mô phỏng; đây là quy ước dữ liệu chi tiết trong README backend.
+- Quan hệ đọc OrderItem giữ liên kết với tên/giá snapshot của lần mua. FK bảo vệ dữ liệu giao dịch đang được đánh giá tham chiếu.
+- Kết quả: 252 kiểm thử đạt, gồm 33 ca Review và 219 ca đã có. Kiểm thử dữ liệu dùng SQLite; chưa kiểm chứng PostgreSQL.
+- Chưa có migration/API đánh giá hoặc kiểm tra đơn hoàn tất/người gửi sở hữu đơn; service/auth sẽ thực hiện ở mục F.10. Không trộn Review với feedback gợi ý.
+- Chưa tự commit/push; chưa thêm tracking vào lượt này.
 
 ## Dọn bản nháp cục bộ
 
 - Theo yêu cầu người dùng, chỉ dọn bản nháp khi bản chính tương ứng đã được tích hợp, kiểm thử, commit và không có thay đổi chưa commit.
-- Đã xóa bốn bản `models.py` cũ trong `.runtime/pending-implementation/src/backend/app/users/`, `preferences/`, `restaurants/`, `menu/`. Bản chính của chúng vẫn nằm trong `src/` và lịch sử Git.
-- Các schema/service/router chưa tích hợp và công cụ Python/uv đang dùng để kiểm tra vẫn được giữ lại. Bản nháp Order sẽ chỉ dọn sau khi phần Order được người dùng commit.
+- Đã xóa năm bản `models.py` cũ trong `.runtime/pending-implementation/src/backend/app/users/`, `preferences/`, `restaurants/`, `menu/`, `orders/`. Bản chính của chúng vẫn nằm trong `src/` và lịch sử Git.
+- Các schema/service/router chưa tích hợp và công cụ Python/uv đang dùng để kiểm tra vẫn được giữ lại. Bản nháp Review sẽ chỉ dọn sau khi phần Review được người dùng commit.
 - Không xóa toàn bộ `.runtime/` trong lúc công cụ ở đó vẫn phục vụ kiểm thử; không thêm bản nháp vào commit.

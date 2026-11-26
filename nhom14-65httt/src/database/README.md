@@ -1,6 +1,6 @@
 # Cơ sở dữ liệu Vị Việt
 
-Thư mục dành cho tài liệu dữ liệu, seed, ánh xạ nguồn, truy vấn BI và tài liệu Power BI. Migration được quản lý duy nhất tại `src/backend/alembic/versions/`, không đặt ở đây. Backend đã có models tài khoản, khẩu vị, quán/người quản lý, thực đơn/nguyên liệu và đơn hàng/chi tiết/lịch sử; chưa có migration tạo bảng trong DB ứng dụng, seed hoặc SQL BI. Hệ quản trị chính là PostgreSQL.
+Thư mục dành cho tài liệu dữ liệu, seed, ánh xạ nguồn, truy vấn BI và tài liệu Power BI. Migration được quản lý duy nhất tại `src/backend/alembic/versions/`, không đặt ở đây. Backend đã có models tài khoản, khẩu vị, quán/người quản lý, thực đơn/nguyên liệu, đơn hàng/chi tiết/lịch sử và đánh giá; chưa có migration tạo bảng trong DB ứng dụng, seed hoặc SQL BI. Hệ quản trị chính là PostgreSQL.
 
 ## Dữ liệu giao dịch dự kiến
 
@@ -10,6 +10,7 @@ Thư mục dành cho tài liệu dữ liệu, seed, ánh xạ nguồn, truy vấ
 | Quán và người quản lý | Restaurant, RestaurantMembership |
 | Món và nguyên liệu | CanonicalDish, MenuItem, Ingredient, MenuItemIngredient |
 | Giao dịch | Order, OrderItem, OrderStatusHistory |
+| Đánh giá món đã mua | Review |
 | Gợi ý và hành vi | RecommendationRequest, RecommendationImpression, InteractionEvent |
 
 `CanonicalDish` là món chuẩn; `MenuItem` là món bán cụ thể tại một quán. Lưu thông tin món tại thời điểm đặt để dữ liệu đơn không thay đổi theo lần cập nhật thực đơn sau đó. Sự kiện cần mã duy nhất và thời điểm để chống đếm trùng, đối soát và hạn chế sử dụng dữ liệu tương lai.

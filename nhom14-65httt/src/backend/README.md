@@ -1,6 +1,6 @@
 # Backend Vị Việt
 
-Đã có nền tảng FastAPI: `/health`, tài liệu OpenAPI tại `/docs`, cấu hình môi trường, SQLAlchemy, Alembic, middleware request ID/CORS/logging và định dạng lỗi thống nhất. Đã bổ sung models tài khoản, khẩu vị, quán/người quản lý, món chuẩn/thực đơn/nguyên liệu và đơn hàng; chưa có migration revision hoặc API nghiệp vụ.
+Đã có nền tảng FastAPI: `/health`, tài liệu OpenAPI tại `/docs`, cấu hình môi trường, SQLAlchemy, Alembic, middleware request ID/CORS/logging và định dạng lỗi thống nhất. Đã bổ sung models tài khoản, khẩu vị, quán/người quản lý, món chuẩn/thực đơn/nguyên liệu, đơn hàng và đánh giá món; chưa có migration revision hoặc API nghiệp vụ.
 
 ## Model tài khoản đã bổ sung
 
@@ -92,6 +92,24 @@ FK chặn xóa khách/quán/món bán đang được giao dịch tham chiếu v�
 
 Model hiện chưa tự tạo snapshot từ menu, tính tổng, kiểm tra các món cùng quán, khả dụng, vai trò người thao tác hoặc chuyển trạng thái hợp lệ. Những việc đó sẽ được thực hiện trong transaction của `orders/service.py` và `orders/state_machine.py` ở phần nghiệp vụ theo Markdown. Bộ test model không thay thế 30 ca giao dịch/API yêu cầu trong đề cương; migration cũng chưa được tạo.
 
+## Model đánh giá món đã bổ sung
+
+Theo mục C.5, D.14 và F.5 của [thiết kế](../../docs/THIET_KE_CAU_TRUC.md), `app/reviews/models.py` định nghĩa `Review`. Đây là đánh giá món đã mua, tách khỏi phản hồi phù hợp/không phù hợp của danh sách gợi ý.
+
+| Trường | Quy ước |
+| :--- | :--- |
+| `id` | Khóa chính tự tăng |
+| `order_id`, `menu_item_id` | Tham chiếu Order/MenuItem và có FK ghép tới cặp `(order_id, menu_item_id)` trong OrderItem; món phải thực sự xuất hiện trong đơn |
+| `user_id` | Tài khoản gửi đánh giá; service sẽ gán từ người đang đăng nhập |
+| `rating` | Số nguyên 1–5, có CHECK constraint ở DB |
+| `comment` | Nhận xét tùy chọn, mặc định chuỗi rỗng, tối đa 2000 ký tự sau khi bỏ khoảng trắng đầu/cuối |
+| `created_at` | Thời điểm tạo, mặc định UTC; giá trị gán qua ORM phải có múi giờ và được đổi về UTC |
+| `is_simulated` | Phân biệt đánh giá mô phỏng với đánh giá thật; mặc định false |
+
+UNIQUE trên `(order_id, menu_item_id)` ngăn đánh giá trùng một món trong cùng đơn. Cùng món bán được đánh giá lại khi có đơn mua khác. Quan hệ `order_item` chỉ đọc giúp lấy tên/giá snapshot đã mua dù thực đơn sau đó thay đổi. FK chặn xóa dữ liệu giao dịch đang được Review tham chiếu.
+
+Model chưa kiểm tra người gửi có sở hữu đơn hoặc đơn đã hoàn tất. Hai điều kiện đó thuộc `reviews/service.py` và auth khi triển khai mục F.10; hiện chưa có API gửi đánh giá. Các giới hạn điểm/nhận xét, thời điểm và cờ mô phỏng là chi tiết dữ liệu được ghi để dùng thống nhất. Chưa tạo migration.
+
 ## Phạm vi dự kiến
 
 - Xác thực và phân quyền khách hàng, chủ quán, quản trị viên.
@@ -112,7 +130,7 @@ Model hiện chưa tự tạo snapshot từ menu, tính tổng, kiểm tra các 
 
 Python >=3.11, FastAPI, SQLAlchemy, PostgreSQL và scikit-learn. Phụ thuộc được khai báo trong `requirements.txt` và `requirements-dev.txt`. Chạy từ thư mục này: `python -m uvicorn app.main:app --reload`; kiểm tra: `python -m pytest tests -q`. Xem [hướng dẫn cài đặt](../../docs/HUONG_DAN_CAI_DAT.md) để tạo môi trường trước khi chạy.
 
-Các module được thêm theo từng phần; tiếp theo là `reviews/models.py` với Review. Alembic trong backend là nguồn schema duy nhất; chỉ thêm migration sau khi các models liên quan được chốt.
+Các module được thêm theo từng phần; tiếp theo là `tracking/models.py` với RecommendationRequest, RecommendationImpression và InteractionEvent. Alembic trong backend là nguồn schema duy nhất; chỉ thêm migration sau khi các models liên quan được chốt.
 
 Xem [README nhóm](../../README.md), [nguồn dữ liệu](../../docs/NGUON_DU_LIEU.md) và [kế hoạch](../../docs/KE_HOACH_THUC_HIEN.md).
 
