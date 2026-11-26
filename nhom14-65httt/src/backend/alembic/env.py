@@ -7,6 +7,7 @@ from sqlalchemy import engine_from_config, pool
 
 from app.config import settings
 from app.database import Base
+from app.menu.models import CanonicalDish, Ingredient, MenuItem, MenuItemIngredient  # noqa: F401
 from app.preferences.models import Preference  # noqa: F401 - đăng ký bảng preferences
 from app.restaurants.models import Restaurant, RestaurantMembership  # noqa: F401
 from app.users.models import User  # noqa: F401 - đăng ký bảng users vào Base.metadata

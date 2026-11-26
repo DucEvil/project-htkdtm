@@ -6,7 +6,7 @@ Website đặt món trực tuyến tích hợp trí tuệ nhân tạo gợi ý �
 
 ## Trạng thái hiện tại
 
-Đang triển khai theo từng phần của [thiết kế cấu trúc](docs/THIET_KE_CAU_TRUC.md) để nhóm commit riêng từng nội dung. Đã có nền tảng FastAPI, React/Vite/TypeScript, cấu hình môi trường, Docker và các models tài khoản (`User`), khẩu vị (`Preference`), quán/người quản lý (`Restaurant`, `RestaurantMembership`). Các model còn lại, migration, API nghiệp vụ, AI, ETL và dashboard sẽ được bổ sung ở các lượt sau. Xem [tiến độ](docs/TIEN_DO_TRIEN_KHAI.md).
+Đang triển khai theo từng phần của [thiết kế cấu trúc](docs/THIET_KE_CAU_TRUC.md) để nhóm commit riêng từng nội dung. Đã có nền tảng FastAPI, React/Vite/TypeScript, cấu hình môi trường, Docker và các models tài khoản, khẩu vị, quán/người quản lý, món chuẩn/thực đơn/nguyên liệu. Các model còn lại, migration, API nghiệp vụ, AI, ETL và dashboard sẽ được bổ sung ở các lượt sau. Xem [tiến độ](docs/TIEN_DO_TRIEN_KHAI.md).
 
 Thông tin thành viên được ghi tại [danhsachnhom.md](danhsachnhom.md). Cần hoàn thiện các trường đang đánh dấu trước khi xác nhận hồ sơ nộp đầy đủ.
 
@@ -39,7 +39,7 @@ ViFoodRec là nguồn chính cho đặc trưng món ăn. Dữ liệu quán, th�
 | :--- | :--- | :--- |
 | Giao diện web | React/Vite/TypeScript | Có ứng dụng tối thiểu; chưa có trang nghiệp vụ |
 | API nghiệp vụ và dịch vụ gợi ý | FastAPI/Python | Có `/health`, cấu trúc lỗi và middleware; chưa có API nghiệp vụ |
-| Cơ sở dữ liệu | PostgreSQL | Có cấu hình kết nối/Compose/Alembic và models tài khoản, khẩu vị, quán/người quản lý; chưa có migration |
+| Cơ sở dữ liệu | PostgreSQL | Có cấu hình kết nối/Compose/Alembic và models tài khoản, khẩu vị, quán, thực đơn/nguyên liệu; chưa có migration |
 | Xử lý đặc trưng và gợi ý | scikit-learn | Chưa triển khai |
 | Báo cáo phân tích | Power BI | Chưa triển khai |
 

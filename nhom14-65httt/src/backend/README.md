@@ -1,6 +1,6 @@
 # Backend Vị Việt
 
-Đã có nền tảng FastAPI: `/health`, tài liệu OpenAPI tại `/docs`, cấu hình môi trường, SQLAlchemy, Alembic, middleware request ID/CORS/logging và định dạng lỗi thống nhất. Đã bổ sung models `User`, `Preference`, `Restaurant` và `RestaurantMembership`; chưa có migration revision hoặc API nghiệp vụ.
+Đã có nền tảng FastAPI: `/health`, tài liệu OpenAPI tại `/docs`, cấu hình môi trường, SQLAlchemy, Alembic, middleware request ID/CORS/logging và định dạng lỗi thống nhất. Đã bổ sung models tài khoản, khẩu vị, quán/người quản lý, món chuẩn/thực đơn/nguyên liệu; chưa có migration revision hoặc API nghiệp vụ.
 
 ## Model tài khoản đã bổ sung
 
@@ -55,6 +55,25 @@ Giờ phục vụ có độ chính xác đến phút. Chấp nhận khoảng qua
 
 Khóa ngoại chặn xóa tài khoản/quán đang có membership để không làm mất liên kết ngoài ý muốn; cần xử lý membership trước khi xóa. FK chỉ kiểm tra đối tượng tồn tại, chưa thay thế kiểm tra vai trò `vendor` và quyền sở hữu trên API. Phần đó thuộc module auth/vendor theo các bước tiếp theo của Markdown. Alembic đã nhận metadata của hai model; chưa tạo migration hay bảng trong DB ứng dụng.
 
+## Models món chuẩn, thực đơn và nguyên liệu đã bổ sung
+
+Theo mục C.5, D.16/33/34 và F.5 của [thiết kế](../../docs/THIET_KE_CAU_TRUC.md), `app/menu/models.py` có bốn model. Các giới hạn chi tiết dưới đây được ghi để API và dữ liệu nhập dùng thống nhất.
+
+| Model | Nội dung |
+| :--- | :--- |
+| `CanonicalDish` | Món chuẩn: tên duy nhất, vùng miền, mức cay 0–3, cách chế biến, nguyên liệu đặc trưng và nhãn JSON; `source_id` tùy chọn/duy nhất để truy vết nguồn |
+| `MenuItem` | Món bán tại một quán, tham chiếu Restaurant và CanonicalDish; có tên, giá, khả dụng và xác nhận nguyên liệu riêng |
+| `Ingredient` | Danh mục nguyên liệu: tên tối đa 100 ký tự, chuẩn hóa chữ thường và duy nhất |
+| `MenuItemIngredient` | Liên kết nguyên liệu thực tế của món bán; khóa chính ghép ngăn liên kết trùng một nguyên liệu |
+
+Tên món tối đa 180 ký tự; vùng miền/cách chế biến tối đa 40 ký tự; mã nguồn tối đa 120 ký tự khi có. Tên được bỏ khoảng trắng đầu/cuối. Nguyên liệu đặc trưng và nhãn dùng MutableList để lưu cập nhật tại chỗ; khi gán danh sách qua ORM sẽ loại phần tử trùng, chuỗi rỗng và dữ liệu sai kiểu.
+
+Giá dùng số nguyên VNĐ, lớn hơn 0 và không quá 10.000.000. Món mới mặc định `is_available=false`, `ingredients_verified=false`; API quản lý quán sẽ bật các cờ sau khi xác nhận dữ liệu. CanonicalDish, MenuItem và Ingredient đều có `is_simulated`, mặc định false.
+
+Nguyên liệu JSON của món chuẩn là đặc trưng tham khảo, không tự thay thế nguyên liệu thực tế trong MenuItemIngredient. Việc nhập nguồn, xác nhận nguyên liệu và lọc món theo nguyên liệu cần tránh sẽ được triển khai ở các service sau. Model hiện chưa chứng minh một món đáp ứng điều kiện lọc chỉ từ cờ xác nhận.
+
+Một món chuẩn có thể được nhiều quán bán với tên và giá khác nhau. FK chặn xóa quán/món chuẩn còn MenuItem và nguyên liệu còn được liên kết. Xóa một MenuItem chưa có tham chiếu khác sẽ xóa các liên kết nguyên liệu đi kèm, giữ lại danh mục; khi có đơn hàng, quy tắc bảo vệ lịch sử và ngừng bán sẽ được bổ sung ở phần đơn hàng/service.
+
 ## Phạm vi dự kiến
 
 - Xác thực và phân quyền khách hàng, chủ quán, quản trị viên.
@@ -75,7 +94,7 @@ Khóa ngoại chặn xóa tài khoản/quán đang có membership để không l
 
 Python >=3.11, FastAPI, SQLAlchemy, PostgreSQL và scikit-learn. Phụ thuộc được khai báo trong `requirements.txt` và `requirements-dev.txt`. Chạy từ thư mục này: `python -m uvicorn app.main:app --reload`; kiểm tra: `python -m pytest tests -q`. Xem [hướng dẫn cài đặt](../../docs/HUONG_DAN_CAI_DAT.md) để tạo môi trường trước khi chạy.
 
-Các module được thêm theo từng phần; tiếp theo là `menu/models.py` với CanonicalDish, MenuItem, Ingredient và MenuItemIngredient. Alembic trong backend là nguồn schema duy nhất; chỉ thêm migration sau khi các models liên quan được chốt.
+Các module được thêm theo từng phần; tiếp theo là `orders/models.py` với Order, OrderItem và OrderStatusHistory. Alembic trong backend là nguồn schema duy nhất; chỉ thêm migration sau khi các models liên quan được chốt.
 
 Xem [README nhóm](../../README.md), [nguồn dữ liệu](../../docs/NGUON_DU_LIEU.md) và [kế hoạch](../../docs/KE_HOACH_THUC_HIEN.md).
 
