@@ -4,6 +4,8 @@ Tài liệu hiện mô tả auth F.8, hồ sơ/duyệt quán F.10.1, thực đơ
 
 ## Quy ước chung
 
+Nghiệp vụ đơn hàng hiện có state machine/service chuyển trạng thái nội bộ theo E.2 (F.10.4), chưa có endpoint đơn hàng trong OpenAPI. Xem [README backend](../src/backend/README.md#chuyển-trạng-thái-và-lịch-sử-đơn) về quyền sở hữu, transaction và giới hạn; các đường dẫn orders trong thiết kế vẫn là kế hoạch cho lượt API tiếp theo.
+
 - Base URL local: `http://localhost:8000/api/v1`. Gửi body JSON với `Content-Type: application/json`.
 - Endpoint yêu cầu đăng nhập nhận `Authorization: Bearer <access_token>`. Refresh token chỉ gửi trong body `/auth/refresh`, không dùng thay access token.
 - ID người dùng là số nguyên; timestamp response dùng ISO 8601. Thời điểm phía ứng dụng dùng UTC; SQLite demo có thể trả timestamp không kèm offset khi đọc lại từ DB.

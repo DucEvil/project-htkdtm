@@ -176,7 +176,7 @@ UNIQUE: `uq_orders_idempotency_key` trên `(idempotency_key)`. CHECK: `ck_orders
 
 ORM yêu cầu UUID v4 cho session/key; yêu cầu hash gồm 64 ký tự hex và chuyển chữ thường; tổng tiền là số nguyên dương không quá giới hạn BIGINT; trim địa chỉ, chặn tọa độ không hữu hạn. DB chưa CHECK phiên bản UUID hoặc nội dung hex của hash. UNIQUE key chưa thực hiện phản hồi gửi lặp, xác thực người gửi, cửa sổ 24 giờ hoặc kiểm tra payload trùng/khác; service phải bổ sung.
 
-Schema chưa bắt buộc có dòng món, chưa tính tổng hoặc kiểm tra cùng quán/khả dụng. Danh sách trạng thái chưa phải state machine; việc đổi trạng thái và ghi lịch sử phải được thực hiện cùng transaction sau này.
+Schema chưa bắt buộc có dòng món, chưa tính tổng hoặc kiểm tra cùng quán/khả dụng. `orders/state_machine.py` đã kiểm tra luồng E.2; `orders/service.py` đổi trạng thái và ghi lịch sử trong cùng transaction sau khi kiểm tra vai trò/quyền sở hữu. UPDATE có điều kiện trạng thái cũ để chặn ghi đè thay đổi cạnh tranh. Chưa có API tạo/chuyển trạng thái đơn.
 
 ## 10. `order_items` — Dòng món và thông tin tại lúc đặt
 
@@ -210,7 +210,7 @@ Model: [`OrderStatusHistory`](../src/backend/app/orders/models.py).
 
 CHECK: `ck_order_history_status` dùng cùng bảy mã trạng thái Order; `ck_order_history_reason` NULL hoặc trim dài 1–500; `ck_order_history_rejection_reason` yêu cầu `reason IS NOT NULL` khi `status='rejected'`. Index: `ix_order_status_history_order_id` trên `(order_id)`, `ix_order_status_history_actor_id` trên `(actor_id)`.
 
-ORM trim lý do nếu có; quan hệ `Order.history` đọc theo `(created_at, id)`. Chưa có trigger bắt buộc lịch sử khớp `orders.status`, chặn sửa/xóa lịch sử hoặc kiểm tra vai trò actor. Service sẽ chịu trách nhiệm các điều kiện đó và chuyển trạng thái hợp lệ.
+ORM trim lý do nếu có; quan hệ `Order.history` đọc theo `(created_at, id)`. Service chuyển trạng thái đã kiểm tra actor và ghi một dòng lịch sử cùng transaction với trạng thái mới; từ chối cần lý do 1–500 ký tự, các thao tác khác không nhận lý do. Không có trigger bảo vệ khi ghi SQL trực tiếp. Lịch sử pending ban đầu sẽ do service tạo đơn ghi; chưa có API sửa/xóa lịch sử.
 
 ## 12. `reviews` — Đánh giá món đã mua
 

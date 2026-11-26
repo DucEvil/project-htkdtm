@@ -76,6 +76,8 @@ Docker chưa được kiểm chứng trong phiên phát triển này vì máy kh
 
 ## Kiểm tra
 
+Ở lượt chuyển trạng thái đơn F.10.4, toàn bộ **950 kiểm thử backend đạt**, gồm 167 ca mới và 783 ca trước. Ruff/format đạt. Phần mới là service nội bộ, chưa có endpoint đơn hàng để thử trong Swagger; chạy `python -m pytest tests/test_order_state_machine.py -q` từ backend để kiểm tra riêng. Bộ kiểm thử dùng SQLite tạm, chưa xác nhận khóa hàng/cạnh tranh thực tế trên PostgreSQL. Chi tiết mốc API trước được giữ bên dưới.
+
 ```powershell
 # Từ src/backend
 .venv/Scripts/python.exe -m pytest tests -q

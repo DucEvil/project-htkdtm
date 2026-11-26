@@ -10,6 +10,8 @@ Website đặt món trực tuyến tích hợp trí tuệ nhân tạo gợi ý �
 
 Thông tin thành viên được ghi tại [danhsachnhom.md](danhsachnhom.md). Cần hoàn thiện các trường đang đánh dấu trước khi xác nhận hồ sơ nộp đầy đủ.
 
+Phần đơn hàng đã có quy tắc chuyển trạng thái và service ghi lịch sử cùng transaction (F.10.4); chưa có API tạo/xử lý đơn. Xem [README backend](src/backend/README.md#chuyển-trạng-thái-và-lịch-sử-đơn).
+
 ## Vấn đề và mục tiêu
 
 Hỗ trợ khách lựa chọn món Việt phù hợp khẩu vị và điều kiện phục vụ, thực hiện đặt món trong cùng website; kết nối dữ liệu tương tác với đơn hàng để chủ quán hiểu nhu cầu và chất lượng phục vụ. Các giả thuyết về khó khăn lựa chọn sẽ được kiểm chứng bằng khảo sát.
