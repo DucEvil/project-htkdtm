@@ -6,7 +6,7 @@ Website đặt món trực tuyến tích hợp trí tuệ nhân tạo gợi ý �
 
 ## Trạng thái hiện tại
 
-Đang triển khai theo từng phần của [thiết kế cấu trúc](docs/THIET_KE_CAU_TRUC.md) để nhóm commit riêng từng nội dung. Đã có nền tảng FastAPI, React/Vite/TypeScript, cấu hình môi trường, Docker, các models OLTP ở F.5, migration `001` ở F.6, ERD/từ điển dữ liệu ở F.7 và auth backend/frontend của F.8 cùng kiểm thử. API giao dịch, AI, ETL và dashboard sẽ được bổ sung ở các lượt sau. Xem [tiến độ](docs/TIEN_DO_TRIEN_KHAI.md).
+Đang triển khai theo từng phần của [thiết kế cấu trúc](docs/THIET_KE_CAU_TRUC.md) để nhóm commit riêng từng nội dung. Đã có nền tảng FastAPI, React/Vite/TypeScript, cấu hình môi trường, Docker, models F.5, migration `001`, ERD/từ điển dữ liệu, auth backend/frontend và API hồ sơ/duyệt quán đầu F.10. Thực đơn, tìm kiếm, giao dịch, AI, ETL và dashboard sẽ bổ sung ở các lượt sau. Xem [tiến độ](docs/TIEN_DO_TRIEN_KHAI.md).
 
 Thông tin thành viên được ghi tại [danhsachnhom.md](danhsachnhom.md). Cần hoàn thiện các trường đang đánh dấu trước khi xác nhận hồ sơ nộp đầy đủ.
 
@@ -38,7 +38,7 @@ ViFoodRec là nguồn chính cho đặc trưng món ăn. Dữ liệu quán, th�
 | Thành phần | Công nghệ dự kiến | Tình trạng |
 | :--- | :--- | :--- |
 | Giao diện web | React/Vite/TypeScript | Có đăng ký/đăng nhập, quản lý phiên, refresh, thông tin tài khoản và guard vai trò; chưa có trang giao dịch |
-| API nghiệp vụ và dịch vụ gợi ý | FastAPI/Python | Có health, đăng ký/đăng nhập/JWT/refresh/me và guard vai trò/quán; chưa có API giao dịch/gợi ý |
+| API nghiệp vụ và dịch vụ gợi ý | FastAPI/Python | Có auth, hồ sơ quán vendor, duyệt/tạm ngừng admin và quán công khai; chưa có API thực đơn/giao dịch/gợi ý |
 | Cơ sở dữ liệu | PostgreSQL | Có migration 001 tạo 15 bảng OLTP; đã thử SQLite và sinh SQL PostgreSQL, chưa chạy PostgreSQL thực tế |
 | Xử lý đặc trưng và gợi ý | scikit-learn | Chưa triển khai |
 | Báo cáo phân tích | Power BI | Chưa triển khai |

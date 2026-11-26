@@ -1,6 +1,6 @@
 # Backend Vị Việt
 
-Đã có nền tảng FastAPI: `/health`, tài liệu OpenAPI tại `/docs`, cấu hình môi trường, SQLAlchemy, Alembic, middleware request ID/CORS/logging và định dạng lỗi thống nhất. Đã có các models OLTP ở F.5, migration `001` tạo 15 bảng và API auth backend của F.8. API giao dịch, gợi ý và quản lý quán chưa triển khai.
+Đã có nền tảng FastAPI: `/health`, tài liệu OpenAPI tại `/docs`, cấu hình môi trường, SQLAlchemy, Alembic, middleware request ID/CORS/logging và định dạng lỗi thống nhất. Đã có models F.5, migration `001`, auth F.8 và API hồ sơ/duyệt quán đầu F.10. API thực đơn, tìm kiếm, đơn hàng và gợi ý chưa triển khai.
 
 ## Auth backend
 
@@ -15,7 +15,19 @@
 
 Mật khẩu dùng Passlib PBKDF2-SHA256 với 600.000 vòng và salt ngẫu nhiên; không phụ thuộc bcrypt. Đăng ký công khai không nhận admin hoặc trường ngoài schema. Email kiểm tra theo định dạng cơ bản, chưa xác minh hộp thư. JWT chỉ dùng HS256, có hạn dùng và phân biệt access/refresh; thay SECRET_KEY mẫu trước khi dùng token. Chưa có giới hạn tần suất đăng nhập/khôi phục mật khẩu.
 
-Dependency `get_current_user`, `require_role(*roles)`, `require_vendor_owner` có thể import từ `app.auth.dependencies` hoặc `app.dependencies`. Guard đọc lại vai trò/membership từ DB; admin không tự bỏ qua quyền sở hữu quán của vendor. Các router vendor/admin nghiệp vụ chưa có.
+Dependency `get_current_user`, `require_role(*roles)`, `require_vendor_owner` có thể import từ `app.auth.dependencies` hoặc `app.dependencies`. Guard đọc lại vai trò/membership từ DB; admin không tự bỏ qua quyền sở hữu quán của vendor. Router vendor/admin hiện có phần hồ sơ/duyệt quán; menu, đơn hàng và các chức năng quản trị khác sẽ bổ sung sau.
+
+## API hồ sơ và duyệt quán
+
+`restaurants/` có schema, service và API công khai; `vendor/` quản lý quán lấy từ membership của người đăng nhập; `admin/` có danh sách, duyệt và tạm ngừng. Các endpoint, request đầy đủ và lỗi nằm ở [API contract F.10.1](../../docs/API_CONTRACT.md#hồ-sơ-quán-và-duyệt-quán--f101).
+
+- Công khai: GET `/api/v1/restaurants/` có phân trang, GET `/api/v1/restaurants/{restaurant_id}`; chỉ trả quán approved.
+- Vendor: POST/GET/PUT `/api/v1/vendor/restaurant`. Tạo quán và membership trong cùng transaction, mặc định pending và chưa nhận đơn. PUT yêu cầu toàn bộ hồ sơ; chỉ approved mới bật nhận đơn được. Không nhận ID quán/người dùng hoặc trạng thái duyệt từ client.
+- Admin: GET `/api/v1/admin/restaurants`, PATCH `/{restaurant_id}/approve` hoặc `/suspend` dưới prefix đó. Tạm ngừng luôn tắt nhận đơn; duyệt không tự bật lại. Chưa có API thêm/chuyển membership, xóa quán hoặc tự cấp admin.
+
+Service tính giờ mở theo `Asia/Ho_Chi_Minh`, hỗ trợ qua đêm và quy ước hai giờ bằng nhau là 24 giờ. Response có `is_open` và `can_receive_orders` (approved + cờ nhận đơn + giờ mở), chưa bao gồm điều kiện vị trí khách/khả dụng món. DB vẫn giữ TIME địa phương và không có cột tính toán mới. Quán pending/suspended bị ẩn ở công khai nhưng chủ quán vẫn xem/sửa hồ sơ của mình với cờ nhận đơn false.
+
+Ghi dữ liệu có rollback và khóa hàng khi DB hỗ trợ; kiểm thử SQLite tạm chưa chứng minh cạnh tranh/khóa trên PostgreSQL. Không thay models hoặc migration `001`; giao diện hồ sơ/duyệt quán sẽ triển khai theo F.12, menu API làm ở lượt riêng tiếp theo.
 
 Refresh dùng JWT không lưu trạng thái: token cũ vẫn còn hiệu lực đến hạn, chưa có thu hồi từng phiên/thiết bị hoặc logout phía máy chủ. Không gọi việc cấp token mới là rotation có chống dùng lại. Frontend auth đã tích hợp token trong localStorage hoặc sessionStorage theo lựa chọn ghi nhớ, tải lại User từ `/me`, tự refresh một lần và logout cục bộ; backend chưa cấp cookie HttpOnly. Phần auth không thay đổi schema hoặc revision `001`.
 
@@ -66,11 +78,11 @@ Theo mục C.5 và F.5 của [thiết kế](../../docs/THIET_KE_CAU_TRUC.md), `a
 | `status` | `pending`, `approved`, `suspended`; mặc định `pending`, có CHECK constraint |
 | `is_simulated` | Cờ dữ liệu mô phỏng; mặc định `false` |
 
-Giờ phục vụ có độ chính xác đến phút. Chấp nhận khoảng qua đêm, ví dụ 22:00–02:00; hai mốc bằng nhau được quy ước là phục vụ 24 giờ. Mặc định cả hai là 00:00. Việc xác định quán đang mở và kiểm tra kết hợp trạng thái duyệt/cờ nhận đơn sẽ được viết trong service khi triển khai nghiệp vụ; model hiện chỉ lưu giờ và các cờ.
+Giờ phục vụ có độ chính xác đến phút. Chấp nhận khoảng qua đêm, ví dụ 22:00–02:00; hai mốc bằng nhau được quy ước là phục vụ 24 giờ. Mặc định cả hai là 00:00. Service F.10.1 đã tính giờ mở theo Việt Nam và kết hợp trạng thái duyệt/cờ nhận đơn trong response; model chỉ lưu giờ và các cờ.
 
 `RestaurantMembership.user_id` vừa là khóa chính vừa tham chiếu `users.id`: mỗi tài khoản quản lý tối đa một quán, phù hợp API `/vendor/restaurant` trong bản thiết kế. `restaurant_id` tham chiếu `restaurants.id`, có index và cho phép nhiều tài khoản cùng liên kết một quán. Đây là quy ước MVP; chưa mở rộng một tài khoản quản lý chuỗi nhiều quán.
 
-Khóa ngoại chặn xóa tài khoản/quán đang có membership để không làm mất liên kết ngoài ý muốn; cần xử lý membership trước khi xóa. FK chỉ kiểm tra đối tượng tồn tại, chưa thay thế kiểm tra vai trò `vendor` và quyền sở hữu trên API. Phần đó thuộc module auth/vendor theo các bước tiếp theo của Markdown. Hai model đã có trong migration `001`; bảng trong DB ứng dụng được tạo khi chạy upgrade.
+Khóa ngoại chặn xóa tài khoản/quán đang có membership để không làm mất liên kết ngoài ý muốn; cần xử lý membership trước khi xóa. FK chỉ kiểm tra đối tượng tồn tại; auth/vendor đã kiểm tra vai trò và suy ra đúng quán của tài khoản ở API hồ sơ. Hai model đã có trong migration `001`; bảng trong DB ứng dụng được tạo khi chạy upgrade.
 
 ## Models món chuẩn, thực đơn và nguyên liệu đã bổ sung
 
@@ -187,7 +199,7 @@ Khi revision đã được commit/áp dụng, thay đổi schema bằng revision
 
 Python >=3.11, FastAPI, SQLAlchemy, PostgreSQL và scikit-learn. Phụ thuộc được khai báo trong `requirements.txt` và `requirements-dev.txt`. Chạy từ thư mục này: `python -m uvicorn app.main:app --reload`; kiểm tra: `python -m pytest tests -q`. Xem [hướng dẫn cài đặt](../../docs/HUONG_DAN_CAI_DAT.md) để tạo môi trường trước khi chạy.
 
-Các models F.5, migration F.6, tài liệu dữ liệu F.7 và auth backend/frontend F.8 cùng kiểm thử F.9 đã được bổ sung. Tiếp theo là các API nghiệp vụ F.10, triển khai tách theo module. Alembic trong backend là nguồn schema duy nhất; các model BI hoặc đánh giá mù của phần sau sẽ dùng revision bổ sung khi được triển khai.
+Các phần F.5–F.9 và API hồ sơ/duyệt quán F.10.1 đã được bổ sung. Tiếp theo là API thực đơn/nguyên liệu của F.10, tách riêng cho commit sau. Alembic trong backend là nguồn schema duy nhất; các model BI hoặc đánh giá mù của phần sau sẽ dùng revision bổ sung khi được triển khai.
 
 Xem [README nhóm](../../README.md), [nguồn dữ liệu](../../docs/NGUON_DU_LIEU.md) và [kế hoạch](../../docs/KE_HOACH_THUC_HIEN.md).
 

@@ -9,7 +9,7 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | Phase 0 | Cấu hình môi trường, Docker, backend/frontend chạy tối thiểu | Đã chuẩn bị; xem hướng dẫn cài đặt và kết quả kiểm tra |
 | Phase 1.1 | `users/models.py`: tài khoản và vai trò | Có model, kiểm thử, migration 001 và API auth backend |
 | Phase 1.2 | `preferences/models.py`: khẩu vị | Có model, kiểm thử, migration 001; chưa có API |
-| Phase 1.3 | `restaurants/models.py`: quán và thành viên quản lý | Có hai model, kiểm thử, migration 001; chưa có API |
+| Phase 1.3 | `restaurants/models.py`: quán và thành viên quản lý | Có model/migration và API hồ sơ, duyệt/tạm ngừng ở F.10.1 |
 | Phase 1.4 | `menu/models.py`: món chuẩn, món bán, nguyên liệu | Có bốn model, kiểm thử, migration 001; chưa có API |
 | Phase 1.5 | `orders/models.py`: đơn, món đặt và lịch sử | Có ba model, kiểm thử, migration 001; chưa có service/API |
 | Phase 1.6 | `reviews/models.py`: đánh giá món | Có model, kiểm thử, migration 001; chưa có service/API |
@@ -19,8 +19,9 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | F.8 — backend | Đăng ký, đăng nhập, JWT, refresh và guard | Đã có API, 84 kiểm thử auth và tích hợp giao diện |
 | F.8 — frontend | AuthContext, useAuth, API client và trang/layout | Đã có auth; giao diện được hoàn thiện theo Material Design 3 |
 | F.9 | Kiểm thử auth | Backend 84 ca; frontend 54 ca unit/UI và bốn kịch bản E2E đạt |
-| F.10 | API nghiệp vụ quán, thực đơn, tìm kiếm, giao dịch | Chưa triển khai; người dùng yêu cầu hoàn thiện giao diện auth trước |
-| Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Chưa đưa vào mã nguồn hiện tại |
+| F.10.1 | Hồ sơ quán vendor, duyệt/tạm ngừng admin và quán công khai | Đã có tám thao tác API, 92 kiểm thử mới; chưa có giao diện quản lý quán |
+| F.10 còn lại | API thực đơn, tìm kiếm, giao dịch | Chưa triển khai; tiếp tục tách từng module để commit |
+| Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Đã bắt đầu backend hồ sơ/duyệt quán; chưa có menu, đơn hàng hoặc màn hình nghiệp vụ |
 | Phase 3 | AI, tracking và dữ liệu | Chưa đưa vào mã nguồn hiện tại |
 | Phase 4 | ETL, BI, Power BI và đánh giá | Chưa đưa vào mã nguồn hiện tại |
 | Phase 5 | Tích hợp, kiểm thử và bàn giao | Chưa thực hiện |
@@ -162,6 +163,16 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Checkbox đồng ý điều khoản/bảo mật chặn đăng ký khi chưa chọn; các liên kết mở nội dung cho bản thử nghiệm. Backend chưa lưu chấp thuận; quên mật khẩu chỉ mở hướng dẫn vì chưa có API reset. Không mô phỏng đăng nhập thành công.
 - 54 kiểm thử unit/UI và bốn kịch bản Playwright/Edge đạt với backend thật trên SQLite tạm; kiểm tra login/register ở 360/390/768/1280px, trạng thái lỗi, bàn phím, checkbox ghi nhớ và reduced motion. Build/typecheck, lint, format check đạt; không đổi mã backend/schema.
 - Chưa tự commit/push phần giao diện; chưa triển khai F.10 trong lượt này.
+
+## Hồ sơ và duyệt quán F.10.1
+
+- Tiếp tục phần F sau khi hoàn thiện giao diện auth. Theo yêu cầu người dùng, không triển khai reset mật khẩu hoặc lưu chấp thuận điều khoản trong lượt này.
+- Thêm schema/service/router của `restaurants/`, và module `vendor/`, `admin/` cho hồ sơ/duyệt quán; đăng ký trong production app. Hai GET công khai chỉ trả approved và có phân trang; vendor POST/GET/PUT chỉ tác động quán lấy từ membership; admin GET/approve/suspend yêu cầu đúng vai trò.
+- Tạo Restaurant và membership cùng transaction, chặn liên kết trùng và rollback khi ghi lỗi. Quán mới pending/không nhận đơn; pending/suspended không bật nhận đơn được. Suspend luôn tắt nhận đơn, approve không tự bật lại. Không cho client tự đặt trạng thái, chủ sở hữu hoặc cờ mô phỏng.
+- Giờ chuẩn `HH:MM`, tính theo `Asia/Ho_Chi_Minh`, hỗ trợ qua đêm và hai mốc bằng nhau = 24 giờ. Response phân biệt `is_open`, `accepting_orders`, `can_receive_orders`; chưa thay thế lọc khoảng cách/khả dụng món khi đặt đơn.
+- 517 kiểm thử backend đạt, gồm 92 ca mới và 425 ca đã có; Ruff/format đạt. Có kiểm thử vòng đời qua API thật trên SQLite tạm, phân quyền/cô lập quán, validation, giờ địa phương, lỗi commit, rollback membership và mô phỏng tranh chấp tạo quán. PostgreSQL thực tế/khóa hàng chưa kiểm chứng.
+- Không sửa model/migration, không thêm menu/search/orders/reviews API hoặc frontend quản lý quán vào cùng phần. API contract, tài liệu dữ liệu và README đã cập nhật; phần tiếp theo là API thực đơn/nguyên liệu.
+- Chưa tự commit/push. Các bản nháp service/router chưa tích hợp vẫn được giữ trong `.runtime/` và không được mã chính tham chiếu.
 
 ## Dọn bản nháp cục bộ
 

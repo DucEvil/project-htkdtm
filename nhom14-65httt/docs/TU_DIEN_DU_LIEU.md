@@ -67,7 +67,7 @@ Model: [`Restaurant`](../src/backend/app/restaurants/models.py). Hồ sơ và đ
 
 CHECK: `ck_restaurants_name` và `ck_restaurants_address` giới hạn độ dài sau trim lần lượt 1–160, 1–500; `ck_restaurants_latitude` trong [-90, 90]; `ck_restaurants_longitude` trong [-180, 180]; `ck_restaurants_delivery_radius` lớn hơn 0 và không quá 50; `ck_restaurants_status` nhận `pending`, `approved`, `suspended`. Không có UNIQUE/index khai báo riêng.
 
-ORM trim tên/địa chỉ, chặn tọa độ/bán kính không hữu hạn, nhận giờ không kèm múi giờ với độ chính xác phút (`time` hoặc chuỗi `HH:MM`). Quy ước khoảng qua đêm hợp lệ; hai giờ bằng nhau nghĩa là phục vụ 24 giờ. DB không CHECK độ chính xác phút hoặc tự xác định đang mở; service cần kiểm tra kết hợp giờ, trạng thái duyệt, cờ nhận đơn và khoảng cách.
+ORM trim tên/địa chỉ, chặn tọa độ/bán kính không hữu hạn, nhận giờ không kèm múi giờ với độ chính xác phút (`time` hoặc chuỗi `HH:MM`). API F.10.1 kiểm tra giờ đúng `HH:MM`; service tính `is_open` và `can_receive_orders` từ giờ Việt Nam, trạng thái duyệt và cờ nhận đơn. Khoảng qua đêm hợp lệ; hai mốc bằng nhau là 24 giờ. Hai trường tính toán chỉ có ở response, không thêm cột DB. DB chưa CHECK độ chính xác phút; lọc khoảng cách/vị trí khách thuộc phần tìm kiếm và đặt đơn sau.
 
 ## 4. `restaurant_memberships` — Liên kết người quản lý quán
 
@@ -78,7 +78,7 @@ Model: [`RestaurantMembership`](../src/backend/app/restaurants/models.py). Mỗi
 | `user_id` | INTEGER | Không | — | PK, FK → `users.id` |
 | `restaurant_id` | INTEGER | Không | — | FK → `restaurants.id` |
 
-Index: `ix_restaurant_memberships_restaurant_id` trên `(restaurant_id)`. Không có CHECK/UNIQUE riêng ngoài PK. Membership không tự cấp vai trò `vendor`; auth/vendor phải kiểm tra tài khoản và quyền sở hữu. Xóa cha có membership bị chặn; cần xử lý liên kết trước.
+Index: `ix_restaurant_memberships_restaurant_id` trên `(restaurant_id)`. Không có CHECK/UNIQUE riêng ngoài PK. Membership không tự cấp vai trò `vendor`; API hồ sơ quán hiện kiểm tra vai trò và lấy đúng quán từ membership. POST vendor tạo quán/membership cùng transaction; chưa có API gán/chuyển membership sang tài khoản khác. Xóa cha có membership bị chặn; cần xử lý liên kết trước.
 
 ## 5. `canonical_dishes` — Danh mục món chuẩn
 

@@ -1,6 +1,6 @@
 # Hợp đồng API Vị Việt
 
-Tài liệu này hiện mô tả phần auth backend của bước F.8. Các API khẩu vị, tìm kiếm, giao dịch, vendor/admin và tracking chưa triển khai; sẽ bổ sung theo từng phần. Tài liệu OpenAPI trực tiếp tại `http://localhost:8000/docs` phản ánh schema request/response đang chạy.
+Tài liệu hiện mô tả auth F.8 và hồ sơ/duyệt quán ở phần đầu F.10. API khẩu vị, thực đơn, tìm kiếm, giao dịch và tracking chưa triển khai; sẽ bổ sung từng phần. OpenAPI tại `http://localhost:8000/docs` phản ánh request/response đang chạy.
 
 ## Quy ước chung
 
@@ -122,7 +122,7 @@ Khi SECRET_KEY chưa cấu hình hợp lệ, thao tác cần ký/kiểm tra toke
 | `require_role(*roles)` | User có một trong các vai trò cho phép | Trả User, lỗi 403 khi không đủ quyền |
 | `require_vendor_owner` | Vai trò vendor và membership trùng `restaurant_id` trên route | Trả ID quán, lỗi 403 nếu sai vai trò/chưa có membership/khác quán |
 
-Admin không tự vượt qua guard sở hữu của vendor; router admin sẽ dùng guard riêng. Các guard đã được kiểm thử qua route chỉ tồn tại trong ứng dụng kiểm thử, chưa có endpoint nghiệp vụ vendor/admin được công bố.
+Admin không tự vượt qua guard sở hữu của vendor; router admin dùng guard riêng. Các API hồ sơ quán, duyệt và tạm ngừng quán bên dưới đã áp dụng guard thật; API quản lý thực đơn/đơn hàng/tài khoản admin chưa triển khai.
 
 ## Phạm vi kiểm chứng
 
@@ -131,3 +131,102 @@ API auth được kiểm thử với FastAPI TestClient và SQLite tạm có sch
 Frontend lưu hai token dưới khóa `viviet.auth.v1`: `localStorage` khi bật “Ghi nhớ đăng nhập”, `sessionStorage` của tab khi tắt. Refresh giữ nguyên nơi lưu, logout xóa cả hai. Không lưu password hoặc dùng User/role trong storage để cấp quyền. Sau tải lại, frontend gọi `/auth/me`; nếu access hết hạn thì gọi `/auth/refresh` và thử lại request một lần. Refresh bị từ chối xóa phiên; lỗi mạng/5xx cho phép thử lại. Request đồng thời dùng chung một refresh; phản hồi từ phiên trước không khôi phục được phiên sau logout/đổi tài khoản. Các phiên localStorage được đồng bộ giữa tab; sessionStorage theo phiên riêng của tab. Backend vẫn nhận token qua JSON/Bearer, chưa có cookie HttpOnly hoặc thu hồi token phía máy chủ.
 
 Giao diện đăng ký yêu cầu đọc/đồng ý nội dung điều khoản và bảo mật của bản thử nghiệm; đây là điều kiện phía client, API hiện chưa nhận/lưu trường chấp thuận. “Quên mật khẩu?” chỉ mở hướng dẫn hỗ trợ; chưa có endpoint reset mật khẩu hoặc đăng nhập Google. Các lỗi validation được hiển thị tiếng Việt tại trường tương ứng; password/confirm không bị xóa khi gửi lỗi.
+
+## Hồ sơ quán và duyệt quán — F.10.1
+
+Prefix chung vẫn là `/api/v1`. Đây là phần API backend; màn hình hồ sơ/duyệt quán sẽ triển khai ở F.12. Các endpoint thực đơn và tìm kiếm chưa có trong phần này.
+
+| Method | Đường dẫn | Quyền | Kết quả |
+| :--- | :--- | :--- | :--- |
+| GET | `/restaurants/` | Công khai | Trang danh sách quán đã duyệt |
+| GET | `/restaurants/{restaurant_id}` | Công khai | Hồ sơ quán đã duyệt, hoặc 404 |
+| POST | `/vendor/restaurant` | vendor | Tạo quán pending cùng membership, trả 201 |
+| GET | `/vendor/restaurant` | vendor | Hồ sơ quán của tài khoản hiện tại |
+| PUT | `/vendor/restaurant` | vendor | Thay toàn bộ hồ sơ quán của tài khoản hiện tại |
+| GET | `/admin/restaurants` | admin | Trang danh sách quán ở mọi trạng thái |
+| PATCH | `/admin/restaurants/{restaurant_id}/approve` | admin | Duyệt/quyết định hoạt động trở lại, trả 200 |
+| PATCH | `/admin/restaurants/{restaurant_id}/suspend` | admin | Tạm ngừng và tắt cờ nhận đơn, trả 200 |
+
+### Tạo quán của vendor
+
+Body `POST /vendor/restaurant`:
+
+```json
+{
+  "name": "Bếp Vị Việt",
+  "address": "Hà Nội",
+  "latitude": 21.0285,
+  "longitude": 105.8542,
+  "delivery_radius_km": 5,
+  "opens_at": "08:00",
+  "closes_at": "22:00"
+}
+```
+
+`name`, `address`, `latitude`, `longitude` bắt buộc. Tên/địa chỉ trim trước khi kiểm tra, dài 1–160 và 1–500 ký tự. Tọa độ nhận số JSON hữu hạn trong [-90, 90] và [-180, 180], không nhận chuỗi hoặc Boolean. Bán kính trong (0, 50] km, mặc định 5. Giờ phải đúng chuỗi `HH:MM` địa phương Việt Nam, mặc định cả hai `00:00`; không nhận giây hoặc offset.
+
+Server lấy vendor từ access token, tạo Restaurant và RestaurantMembership trong cùng transaction. Quán mới luôn `status=pending`, `accepting_orders=false`, `is_simulated=false`; không nhận các trường tự gán quyền như `user_id`, `restaurant_id`, `status`, `is_simulated` hoặc `accepting_orders` trong body tạo. Mỗi tài khoản tối đa một membership; tạo lần nữa trả 409, không thay liên kết cũ hoặc tạo quán mồ côi khi thất bại.
+
+### Xem/cập nhật hồ sơ của mình
+
+GET/PUT `/vendor/restaurant` suy ra quán từ membership của người đăng nhập, không nhận ID quán từ body/query để đổi mục tiêu. Chưa có membership trả 404. Nhiều tài khoản được liên kết cùng quán có thể cùng quản lý quán đó theo model hiện tại; chưa có API thêm/chuyển membership giữa tài khoản.
+
+PUT là thay toàn bộ hồ sơ: gửi đủ bảy trường trong ví dụ tạo và thêm `accepting_orders` dạng Boolean. Không dùng PATCH hoặc bỏ trường để sửa từng phần.
+
+```json
+{
+  "name": "Bếp Vị Việt",
+  "address": "Hà Nội",
+  "latitude": 21.0285,
+  "longitude": 105.8542,
+  "delivery_radius_km": 5,
+  "opens_at": "08:00",
+  "closes_at": "22:00",
+  "accepting_orders": true
+}
+```
+
+Chỉ quán approved mới bật nhận đơn được; pending/suspended gửi `true` trả 409 `RESTAURANT_NOT_APPROVED` và không ghi phần hồ sơ còn lại. Vendor vẫn sửa hồ sơ của quán pending/suspended khi gửi `false`. Sửa hồ sơ không tự thay trạng thái duyệt; vendor không được gửi `status` hoặc cờ mô phỏng. Chưa có thao tác xóa quán qua API; sử dụng trạng thái/cờ nhận đơn để quản lý hoạt động, giữ các tham chiếu lịch sử.
+
+### Duyệt/tạm ngừng
+
+Admin PATCH approve/suspend không cần body. Approve đổi trạng thái sang approved và giữ nguyên cờ nhận đơn; không tự bật nhận đơn cho quán mới hoặc quán vừa tạm ngừng. Suspend đổi sang suspended và đặt `accepting_orders=false`. Gọi lặp cùng thao tác trả 200; có thể approve lại quán suspended, sau đó vendor chủ động bật nhận đơn. Quán không tồn tại trả 404. Vai trò admin được đọc lại từ DB như auth; chưa có API tự cấp admin hoặc seed tài khoản quản trị.
+
+Quán pending/suspended không xuất hiện trong danh sách công khai và chi tiết công khai đều trả cùng 404 với quán không tồn tại. Quán approved vẫn xuất hiện khi đóng cửa hoặc tạm tắt nhận đơn; trạng thái giờ/cờ trong response cho biết điều kiện hiện tại.
+
+### Response và phân trang
+
+`RestaurantPublic` chỉ có các trường sau; ví dụ minh họa một quán được duyệt, đang tắt nhận đơn:
+
+```json
+{
+  "id": 1,
+  "name": "Bếp Vị Việt",
+  "address": "Hà Nội",
+  "latitude": 21.0285,
+  "longitude": 105.8542,
+  "delivery_radius_km": 5,
+  "opens_at": "08:00",
+  "closes_at": "22:00",
+  "accepting_orders": false,
+  "is_open": true,
+  "can_receive_orders": false
+}
+```
+
+`is_open` được tính tại thời điểm request theo `Asia/Ho_Chi_Minh`: gồm giờ mở, không gồm giờ đóng; qua đêm hợp lệ, hai mốc bằng nhau nghĩa là 24 giờ. `can_receive_orders = approved AND accepting_orders AND is_open` chỉ phản ánh điều kiện của quán, chưa kiểm tra vị trí khách, món bán hoặc nguyên liệu cần tránh. Các kiểm tra đặt đơn/lọc khoảng cách được làm ở phần tiếp theo. Hai trường tính toán không phải cột DB.
+
+Response quản lý (`RestaurantDetail`) thêm `status` và `is_simulated`. API công khai không trả membership/tài khoản chủ quán, trạng thái nội bộ hoặc cờ mô phỏng. Giờ response luôn là `HH:MM`.
+
+Hai endpoint danh sách nhận `offset` mặc định 0, trong 0–2147483647; `limit` mặc định 20, trong 1–100. Sắp xếp tăng dần theo ID, response `{"items":[...],"total":3,"offset":0,"limit":20}`; offset vượt số dòng trả danh sách rỗng, total vẫn là tổng số quán phù hợp. Admin còn nhận filter `status=pending|approved|suspended`; công khai luôn lọc approved. ID trên path trong 1–2147483647; tham số sai trả 422.
+
+| HTTP | Mã lỗi | Trường hợp |
+| :--- | :--- | :--- |
+| 401 | `UNAUTHENTICATED` | Thiếu/sai/hết hạn access token ở endpoint quản lý |
+| 403 | `FORBIDDEN` | Vai trò không đúng; admin cũng không dùng endpoint vendor |
+| 404 | `NOT_FOUND` | Chưa liên kết quán, quán không tồn tại hoặc không công khai |
+| 409 | `RESTAURANT_ALREADY_LINKED` | Vendor đã có membership |
+| 409 | `RESTAURANT_NOT_APPROVED` | Bật nhận đơn khi quán chưa approved |
+| 422 | `VALIDATION_ERROR` | Trường thiếu/thừa, kiểu/giới hạn/giờ không hợp lệ |
+
+Phần này không đổi schema/revision `001`. Ghi hồ sơ và trạng thái dùng khóa hàng `FOR UPDATE` khi hệ quản trị hỗ trợ; PK membership vẫn bảo vệ liên kết duy nhất. Kiểm thử hiện dùng SQLite tạm và có ca mô phỏng race/lỗi ghi để kiểm tra rollback; chưa xác nhận khóa hàng hoặc cạnh tranh thực tế trên PostgreSQL.

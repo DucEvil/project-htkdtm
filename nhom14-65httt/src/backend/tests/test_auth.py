@@ -445,10 +445,11 @@ def test_auth_configuration_rejects_invalid_algorithm_or_lifetime(values):
 def test_production_app_mounts_auth_without_test_guard_routes():
     schema = production_app.openapi()
     assert schema["paths"][AUTH + "/me"]["get"]["security"] == [{"HTTPBearer": []}]
-    assert set(schema["paths"]) == {
-        "/health",
+    assert {path for path in schema["paths"] if path.startswith(AUTH + "/")} == {
         AUTH + "/register",
         AUTH + "/login",
         AUTH + "/refresh",
         AUTH + "/me",
     }
+    assert "/health" in schema["paths"]
+    assert not {"/admin-only", "/staff-only"} & set(schema["paths"])

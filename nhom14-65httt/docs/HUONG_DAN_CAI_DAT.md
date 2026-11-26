@@ -1,6 +1,6 @@
 # Cài đặt và tạo cơ sở dữ liệu Vị Việt
 
-Hướng dẫn khởi chạy backend có `/health`, tài liệu API tự sinh, API auth và frontend đăng ký/đăng nhập. Đã có migration `001` tạo 15 bảng OLTP, gồm tracking; chưa có API giao dịch, seed hoặc dashboard.
+Hướng dẫn khởi chạy backend có `/health`, tài liệu API tự sinh, API auth/hồ sơ quán/duyệt quán và frontend đăng ký/đăng nhập. Đã có migration `001` tạo 15 bảng OLTP; chưa có API thực đơn/giao dịch, seed hoặc dashboard.
 
 ## Cấu hình khóa JWT
 
@@ -33,6 +33,8 @@ Set-Location src/backend
 Backend: `http://localhost:8000/health`; tài liệu API: `http://localhost:8000/docs`.
 
 Trong `/docs`, thử lần lượt `POST /api/v1/auth/register`, `/login`, nhập access token vào nút Authorize rồi gọi `GET /api/v1/auth/me`. `/refresh` nhận refresh token trong JSON. Mật khẩu/role và mã lỗi xem [API contract](API_CONTRACT.md). Refresh chưa thu hồi token cũ; chưa có logout phía máy chủ. Chưa có tài khoản admin mẫu hoặc seed quán.
+
+Sau khi đăng nhập bằng vendor, có thể tạo quán qua POST `/api/v1/vendor/restaurant`, xem/sửa hồ sơ bằng GET/PUT cùng đường dẫn. Quán mới chờ duyệt và chưa nhận đơn. Admin được cấp hợp lệ dùng GET `/api/v1/admin/restaurants`, PATCH `/{restaurant_id}/approve` hoặc `/suspend` dưới prefix đó; duyệt xong vendor mới bật `accepting_orders=true` qua PUT được. Xem payload đầy đủ và các giới hạn ở API contract. API công khai `/api/v1/restaurants/` và `/{restaurant_id}` chỉ trả quán approved; frontend quản lý quán chưa được tích hợp ở lượt này.
 
 Sau migrate, `current` cần báo `001 (head)`, `check` không báo thay đổi schema mới. File SQLite local là dữ liệu phát sinh và được Git bỏ qua. Nếu dùng biến môi trường DATABASE_URL cho SQLite, cần giữ cùng giá trị khi chạy backend và các lệnh Alembic. Không cần seed ở bước này vì chưa có dữ liệu mẫu.
 
@@ -81,7 +83,7 @@ npm run format:check
 npm test
 ```
 
-Toàn bộ 425 kiểm thử đạt, gồm 84 ca auth, các model OLTP và 23 ca migration. Kiểm thử auth dùng API thật trên SQLite tạm được migration tạo, gồm đăng ký/đăng nhập, JWT/refresh, vai trò/quyền sở hữu và dữ liệu không hợp lệ. Migration kiểm tra nâng/hạ/nâng lại, lệch schema, constraint, đường dẫn, URL và mặc định JSON. PostgreSQL mới kiểm tra SQL offline; chưa xác nhận PostgreSQL/Docker thực tế hoặc API giao dịch/tracking.
+Toàn bộ 517 kiểm thử backend đạt, gồm 92 ca mới về quán/phân quyền, 84 ca auth, các model OLTP và 23 ca migration. Kiểm thử quán dùng production app với DB SQLite tạm do migration tạo: tạo/duyệt/tạm ngừng, membership, giờ qua đêm, phân trang, validation và rollback. Migration kiểm tra nâng/hạ/nâng lại, lệch schema, constraint, đường dẫn, URL và mặc định JSON. PostgreSQL mới kiểm tra SQL offline; chưa xác nhận PostgreSQL/Docker, khóa hàng cạnh tranh thực tế hoặc API giao dịch/tracking.
 
 Frontend có 54 kiểm thử Vitest/React UI và bốn kịch bản Playwright đạt với backend thật trên SQLite tạm; đã kiểm tra ảnh login/register Material Design 3 ở 360/390/768/1280px, bàn phím, hiện/ẩn mật khẩu, dialog và lựa chọn ghi nhớ đăng nhập. Build, TypeScript (gồm tests/config), lint và format check đạt. Kết quả 425 ca backend là mốc của commit backend auth; lượt frontend không đổi mã Python. npm audit còn bốn cảnh báo thuộc Vite 5/React Router 6 đã có; chưa nâng major toolchain trong phần auth này.
 
