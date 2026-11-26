@@ -21,14 +21,14 @@ Model: [`User`](../src/backend/app/users/models.py). Một dòng cho một tài 
 | `id` | INTEGER | Không | Tự cấp | PK |
 | `email` | VARCHAR(254) | Không | — | Email, UNIQUE |
 | `full_name` | VARCHAR(120) | Không | — | Họ tên |
-| `hashed_password` | VARCHAR(256) | Không | — | Chuỗi băm mật khẩu; chưa có chức năng tạo/kiểm tra băm |
+| `hashed_password` | VARCHAR(256) | Không | — | Chuỗi băm Passlib PBKDF2-SHA256 do module auth tạo/kiểm tra |
 | `role` | VARCHAR(20) | Không | `'customer'` | Vai trò |
 | `is_simulated` | BOOLEAN | Không | false | Cờ mô phỏng |
 | `created_at` | TIMESTAMPTZ | Không | CURRENT_TIMESTAMP | Thời điểm tạo |
 
 Ràng buộc DB: `uq_users_email` UNIQUE `(email)`; `ck_users_role` chỉ nhận `customer`, `vendor`, `admin`. Không có index khai báo riêng.
 
-ORM bỏ khoảng trắng, chuyển email về chữ thường và chặn email rỗng; họ tên bỏ khoảng trắng và chặn rỗng. DB chưa có CHECK cho định dạng email/họ tên hoặc index không phân biệt hoa thường: ghi trực tiếp có thể bỏ qua chuẩn hóa. Schema chưa xác thực đăng nhập, phân quyền hoặc bảo đảm giá trị mật khẩu thực sự là chuỗi băm hợp lệ.
+ORM bỏ khoảng trắng, chuyển email về chữ thường và chặn email rỗng; họ tên bỏ khoảng trắng và chặn rỗng. DB chưa có CHECK cho định dạng email/họ tên hoặc index không phân biệt hoa thường: ghi trực tiếp có thể bỏ qua chuẩn hóa. Module auth xử lý đăng nhập, băm/kiểm tra mật khẩu và dependency phân quyền; schema không tự bảo đảm một chuỗi được ghi trực tiếp là hash hợp lệ. Xem [API contract](API_CONTRACT.md).
 
 ## 2. `preferences` — Hồ sơ khẩu vị
 

@@ -6,7 +6,7 @@ Website đặt món trực tuyến tích hợp trí tuệ nhân tạo gợi ý �
 
 ## Trạng thái hiện tại
 
-Đang triển khai theo từng phần của [thiết kế cấu trúc](docs/THIET_KE_CAU_TRUC.md) để nhóm commit riêng từng nội dung. Đã có nền tảng FastAPI, React/Vite/TypeScript, cấu hình môi trường, Docker, các models OLTP ở F.5, migration `001` tạo 15 bảng ở F.6 và ERD/từ điển dữ liệu ở F.7. API nghiệp vụ, AI, ETL và dashboard sẽ được bổ sung ở các lượt sau. Xem [tiến độ](docs/TIEN_DO_TRIEN_KHAI.md).
+Đang triển khai theo từng phần của [thiết kế cấu trúc](docs/THIET_KE_CAU_TRUC.md) để nhóm commit riêng từng nội dung. Đã có nền tảng FastAPI, React/Vite/TypeScript, cấu hình môi trường, Docker, các models OLTP ở F.5, migration `001` tạo 15 bảng ở F.6, ERD/từ điển dữ liệu ở F.7 và auth backend của F.8. Giao diện auth, API giao dịch, AI, ETL và dashboard sẽ được bổ sung ở các lượt sau. Xem [tiến độ](docs/TIEN_DO_TRIEN_KHAI.md).
 
 Thông tin thành viên được ghi tại [danhsachnhom.md](danhsachnhom.md). Cần hoàn thiện các trường đang đánh dấu trước khi xác nhận hồ sơ nộp đầy đủ.
 
@@ -38,7 +38,7 @@ ViFoodRec là nguồn chính cho đặc trưng món ăn. Dữ liệu quán, th�
 | Thành phần | Công nghệ dự kiến | Tình trạng |
 | :--- | :--- | :--- |
 | Giao diện web | React/Vite/TypeScript | Có ứng dụng tối thiểu; chưa có trang nghiệp vụ |
-| API nghiệp vụ và dịch vụ gợi ý | FastAPI/Python | Có `/health`, cấu trúc lỗi và middleware; chưa có API nghiệp vụ |
+| API nghiệp vụ và dịch vụ gợi ý | FastAPI/Python | Có health, đăng ký/đăng nhập/JWT/refresh/me và guard vai trò/quán; chưa có API giao dịch/gợi ý |
 | Cơ sở dữ liệu | PostgreSQL | Có migration 001 tạo 15 bảng OLTP; đã thử SQLite và sinh SQL PostgreSQL, chưa chạy PostgreSQL thực tế |
 | Xử lý đặc trưng và gợi ý | scikit-learn | Chưa triển khai |
 | Báo cáo phân tích | Power BI | Chưa triển khai |
@@ -56,6 +56,7 @@ Yêu cầu Python >=3.11, Node.js >=20; frontend có `package-lock.json`. Các p
 | [docs/CHECKLIST_NOP_BAI.md](docs/CHECKLIST_NOP_BAI.md) | Các mục cần kiểm tra trước nộp |
 | [docs/ERD.md](docs/ERD.md) | Sơ đồ 15 bảng OLTP, quan hệ và quy tắc xóa |
 | [docs/TU_DIEN_DU_LIEU.md](docs/TU_DIEN_DU_LIEU.md) | Từng cột, kiểu, mặc định, ràng buộc và giới hạn kiểm tra |
+| [docs/API_CONTRACT.md](docs/API_CONTRACT.md) | API auth hiện có, JWT, mã lỗi và giới hạn refresh |
 | [src/backend/README.md](src/backend/README.md) | Phạm vi backend dự kiến |
 | [src/frontend/README.md](src/frontend/README.md) | Phạm vi frontend dự kiến |
 | [src/database/README.md](src/database/README.md) | Phạm vi dữ liệu giao dịch và BI dự kiến |

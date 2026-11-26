@@ -1,10 +1,6 @@
-"""Dependency injection dùng chung: DB session, current user, role guard."""
+"""Re-export các dependency dùng chung cho router nghiệp vụ."""
 
-from app.database import get_db  # noqa: F401 – re-export
+from app.auth.dependencies import get_current_user, require_role, require_vendor_owner
+from app.database import get_db
 
-# Các dependency xác thực và phân quyền sẽ được bổ sung
-# khi module auth được triển khai (Phase 1).
-# Ví dụ:
-#   get_current_user  – giải mã JWT, trả User
-#   require_role      – kiểm tra role
-#   require_vendor_owner – kiểm tra chủ quán sở hữu restaurant_id
+__all__ = ["get_db", "get_current_user", "require_role", "require_vendor_owner"]

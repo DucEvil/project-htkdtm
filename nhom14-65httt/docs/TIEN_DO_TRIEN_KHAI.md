@@ -7,7 +7,7 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | Phần | Nội dung | Trạng thái trong mã nguồn hiện tại |
 | :--- | :--- | :--- |
 | Phase 0 | Cấu hình môi trường, Docker, backend/frontend chạy tối thiểu | Đã chuẩn bị; xem hướng dẫn cài đặt và kết quả kiểm tra |
-| Phase 1.1 | `users/models.py`: tài khoản và vai trò | Có model, kiểm thử, migration 001; chưa có API auth |
+| Phase 1.1 | `users/models.py`: tài khoản và vai trò | Có model, kiểm thử, migration 001 và API auth backend |
 | Phase 1.2 | `preferences/models.py`: khẩu vị | Có model, kiểm thử, migration 001; chưa có API |
 | Phase 1.3 | `restaurants/models.py`: quán và thành viên quản lý | Có hai model, kiểm thử, migration 001; chưa có API |
 | Phase 1.4 | `menu/models.py`: món chuẩn, món bán, nguyên liệu | Có bốn model, kiểm thử, migration 001; chưa có API |
@@ -16,7 +16,9 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | Phase 1.7 | `tracking/models.py`: yêu cầu gợi ý, hiển thị, sự kiện | Có ba model, kiểm thử, migration 001; chưa có service/API |
 | F.6 | Migration khởi tạo | Đã có revision 001 tạo 15 bảng; kiểm thử SQLite và SQL PostgreSQL offline |
 | F.7 | ERD và từ điển dữ liệu | Đã mô tả 15 bảng, từng cột, ràng buộc và 24 FK theo revision 001 |
-| F.8 | Auth backend, frontend và kiểm thử | Chưa triển khai; phần tiếp theo sau tài liệu dữ liệu |
+| F.8 — backend | Đăng ký, đăng nhập, JWT, refresh và guard | Đã có API và 84 kiểm thử; chưa tích hợp giao diện |
+| F.8 — frontend | AuthContext, useAuth, API client và trang/layout | Chưa triển khai; phần tiếp theo để commit riêng |
+| F.9 | `tests/test_auth.py` | Đã kiểm thử backend cùng phần F.8; chưa kiểm thử tích hợp giao diện |
 | Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Chưa đưa vào mã nguồn hiện tại |
 | Phase 3 | AI, tracking và dữ liệu | Chưa đưa vào mã nguồn hiện tại |
 | Phase 4 | ETL, BI, Power BI và đánh giá | Chưa đưa vào mã nguồn hiện tại |
@@ -33,7 +35,7 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Backend: 5 kiểm thử đạt (health/request ID, định dạng lỗi, CORS, cấu hình URL DB).
 - Frontend: `npm run build` và `npm run format:check` đạt.
 - Chưa kiểm chứng Docker/PostgreSQL vì môi trường phát triển không có Docker CLI.
-- Bộ khung, phần hợp nhất tài liệu, toàn bộ models F.5 và migration F.6 đã được commit. Tài liệu dữ liệu F.7 được triển khai ở lượt riêng; tiếp sau là auth F.8.
+- Bộ khung, phần hợp nhất tài liệu, toàn bộ models F.5, migration F.6 và tài liệu dữ liệu F.7 đã được commit. Auth backend F.8 được triển khai riêng; giao diện auth tiếp tục ở lượt sau.
 
 ## Phần tài khoản và vai trò
 
@@ -126,7 +128,19 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Phân biệt ràng buộc DB với chuẩn hóa/validator ORM và nghiệp vụ chưa triển khai; đặc biệt quyền đánh giá, tính tổng/cùng quán, state machine, UUID v4 và hiển thị thực tế trước khi tính KPI.
 - Liên kết tài liệu từ README nhóm/backend/database. Không thay đổi schema, không đưa bảng BI/đánh giá mù hoặc API auth vào phần này.
 - Đối chiếu tự động đủ 15 bảng, 103 cột (kiểu/NULL/mặc định), các tên constraint/index và 24 FK; kiểm tra cấu trúc ba sơ đồ Mermaid cùng 57 liên kết cục bộ. Đối chiếu danh sách bảng/cột/FK với revision `001`; không chạy lại kiểm thử nghiệp vụ vì chỉ thay đổi tài liệu. PostgreSQL thực tế vẫn chưa được kiểm chứng.
-- Chưa tự commit/push tài liệu; auth F.8 dành cho lượt tiếp theo.
+- Tài liệu F.7 đã được người dùng commit tại `bade3f3`; auth F.8 được triển khai ở lượt riêng tiếp theo.
+
+## Auth backend F.8 và kiểm thử F.9
+
+- Tạo đủ `app/auth/__init__.py`, `schemas.py`, `utils.py`, `service.py`, `dependencies.py`, `router.py`; mount dưới `/api/v1/auth`. Đăng ký trả UserOut 201, đăng nhập/refresh trả cặp JWT và UserOut, GET `/me` xác thực access token.
+- Đăng ký chỉ nhận customer/vendor, mặc định customer; không cho tự đăng ký admin hoặc truyền trường thừa. Email trim/lower và UNIQUE chống tạo trùng kể cả trường hợp chạy đồng thời; rollback khi lỗi DB.
+- Băm mật khẩu bằng Passlib PBKDF2-SHA256, 600.000 vòng và salt ngẫu nhiên, giữ nguyên mật khẩu Unicode/khoảng trắng. Requirements không còn cần extra bcrypt. Không trả password/hash hoặc input nhạy cảm trong lỗi validation.
+- JWT HS256 có issuer/audience, thời điểm cấp/hết hạn, subject, jti và loại access/refresh. Chặn SECRET_KEY mẫu/ngắn khi sử dụng JWT, thêm cấu hình hạn refresh; health/docs vẫn hoạt động khi chưa cấu hình khóa.
+- `get_current_user` đọc User từ DB; `require_role(*roles)` và `require_vendor_owner` kiểm tra vai trò hiện tại/membership đúng quán. Chưa công bố API nghiệp vụ vendor/admin; guard được thử qua route của ứng dụng kiểm thử.
+- Refresh là JWT không lưu trạng thái; cấp mới không thu hồi token cũ, chưa có denylist/thu hồi thiết bị/logout phía máy chủ. Chưa có xác minh email, khôi phục mật khẩu hoặc giới hạn tần suất đăng nhập. Những giới hạn này được ghi trong API contract.
+- Thêm `docs/API_CONTRACT.md`, cập nhật hướng dẫn SECRET_KEY và tài liệu liên quan. Không đổi schema hoặc sửa revision `001`; chưa đưa frontend auth vào cùng phần.
+- Toàn bộ 425 kiểm thử đạt, gồm 84 ca auth và 341 ca đã có. Auth được thử trên SQLite tạm do migration thật tạo, gồm API, validation, token sai/hết hạn/thiếu claim, refresh, vai trò, quyền sở hữu quán và lỗi DB; Ruff đạt trên các file Python của phần thay đổi.
+- Chưa chạy PostgreSQL/Docker thực tế, chưa tích hợp/trải nghiệm frontend. Chưa tự commit/push; phần frontend F.8 làm tiếp sau commit này.
 
 ## Dọn bản nháp cục bộ
 
@@ -135,3 +149,4 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Trước khi dọn tracking đã bảo toàn nguyên lớp BlindEvaluation chưa tích hợp sang bản nháp `src/backend/app/ai/evaluation_models.py` trong `.runtime/pending-implementation/`. Các schema/service/router chưa tích hợp và công cụ Python/uv đang dùng để kiểm tra vẫn được giữ lại.
 - DB rỗng dùng để sinh migration ở `.runtime/migration-generation/` đã được dọn sau khi sinh xong. Các bản nháp migration cũ chưa được dùng hoặc chép đè vào migration hiện tại.
 - Không xóa toàn bộ `.runtime/` trong lúc công cụ ở đó vẫn phục vụ kiểm thử; không thêm bản nháp vào commit.
+- Bản nháp auth cũ chưa dọn ở lượt này vì bản chính mới tích hợp chưa được người dùng commit; mã chạy chính không phụ thuộc bản nháp đó.

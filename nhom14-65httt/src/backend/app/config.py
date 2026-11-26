@@ -1,7 +1,9 @@
 """Cấu hình ứng dụng – đọc từ biến môi trường (.env)."""
 
 from pathlib import Path
+from typing import Literal
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy import URL
 
@@ -24,8 +26,9 @@ class Settings(BaseSettings):
 
     # Auth
     SECRET_KEY: str = "changeme-generate-a-random-secret-key"
-    ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    ALGORITHM: Literal["HS256"] = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(default=60, gt=0, le=1440)
+    REFRESH_TOKEN_EXPIRE_DAYS: int = Field(default=7, gt=0, le=30)
 
     # CORS
     BACKEND_CORS_ORIGINS: list[str] = ["http://localhost:5173"]
@@ -41,9 +44,12 @@ class Settings(BaseSettings):
         if self.DATABASE_URL:
             return self.DATABASE_URL
         return URL.create(
-            "postgresql+psycopg2", username=self.POSTGRES_USER,
-            password=self.POSTGRES_PASSWORD, host=self.POSTGRES_HOST,
-            port=self.POSTGRES_PORT, database=self.POSTGRES_DB,
+            "postgresql+psycopg2",
+            username=self.POSTGRES_USER,
+            password=self.POSTGRES_PASSWORD,
+            host=self.POSTGRES_HOST,
+            port=self.POSTGRES_PORT,
+            database=self.POSTGRES_DB,
         ).render_as_string(hide_password=False)
 
 

@@ -100,7 +100,7 @@ Phục vụ 150 trường hợp so sánh danh sách phổ biến với mô hình
 - Xin đồng thuận trước khi lưu hồ sơ khẩu vị và vị trí; giải thích dữ liệu dùng để gợi ý.
 - Không lưu tọa độ chính xác lâu dài trong `localStorage`; ưu tiên giữ trong phiên.
 - Không đưa khóa bí mật vào mã nguồn trình duyệt. Khóa Google Maps phía trình duyệt luôn bị lộ, nên phải giới hạn theo HTTP referrer và chỉ bật API cần dùng.
-- Token xác thực theo cơ chế backend chốt (ưu tiên cookie `HttpOnly`); không ghi token ra log.
+- Backend auth F.8 hiện nhận/trả JWT trong JSON và header Bearer theo [API contract](../../docs/API_CONTRACT.md), chưa có cookie `HttpOnly` hoặc giao diện auth. Cơ chế lưu token phía trình duyệt sẽ được triển khai ở phần frontend riêng; không ghi token ra log. Cookie `HttpOnly` là hướng có thể bổ sung sau khi thống nhất luồng cookie/CSRF với backend.
 
 ## 6. Công nghệ, lệnh chạy và cấu trúc
 

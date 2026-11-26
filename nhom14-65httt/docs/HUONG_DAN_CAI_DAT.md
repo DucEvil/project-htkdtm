@@ -1,13 +1,24 @@
 # Cài đặt và tạo cơ sở dữ liệu Vị Việt
 
-Hướng dẫn khởi chạy backend có `/health`, tài liệu API tự sinh và frontend tối thiểu. Đã có migration `001` tạo 15 bảng OLTP, gồm tracking; chưa có API nghiệp vụ, seed hoặc dashboard.
+Hướng dẫn khởi chạy backend có `/health`, tài liệu API tự sinh, API auth và frontend tối thiểu. Đã có migration `001` tạo 15 bảng OLTP, gồm tracking; chưa có API giao dịch, seed, dashboard hoặc giao diện auth.
+
+## Cấu hình khóa JWT
+
+Sau khi tạo `.env` từ `.env.example`, thay `SECRET_KEY` mẫu bằng khóa ngẫu nhiên riêng. Có thể chạy lệnh sau với Python đã cài và lưu kết quả vào `SECRET_KEY` trong `.env` một lần:
+
+```powershell
+python -c "import secrets; print(secrets.token_urlsafe(48))"
+```
+
+Giữ nguyên khóa giữa các lần khởi động nếu muốn token tiếp tục hợp lệ; không commit `.env` hoặc đưa khóa vào frontend. Các thao tác cần JWT trả 503 `AUTH_NOT_CONFIGURED` nếu khóa dưới 32 byte hoặc còn bắt đầu bằng `changeme`; health/docs vẫn chạy. `ALGORITHM` chỉ nhận HS256, access mặc định 60 phút và refresh 7 ngày; cấu hình ở `.env.example`. Khi chạy lại phần local bên dưới, không ghi đè `.env` đã chỉnh bằng file mẫu.
 
 ## Chạy local trên Windows
 
 Cần Python 3.11 trở lên và Node.js 20 trở lên. Với PostgreSQL, DB/tài khoản trong `.env` cần tồn tại và máy chủ DB đang chạy; có thể chạy riêng DB bằng `docker compose up db -d` từ thư mục nhóm nếu có Docker. Để thử local chưa có PostgreSQL, dùng lựa chọn SQLite được chú thích trong đoạn lệnh dưới. Từ thư mục `nhom14-65httt/`:
 
 ```powershell
-Copy-Item .env.example .env
+# Chỉ copy ở lần đầu; sau đó cấu hình SECRET_KEY như hướng dẫn phía trên:
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }
 python -m venv src/backend/.venv
 src/backend/.venv/Scripts/python.exe -m pip install -r src/backend/requirements.txt -r src/backend/requirements-dev.txt
 Set-Location src/backend
@@ -20,6 +31,8 @@ Set-Location src/backend
 ```
 
 Backend: `http://localhost:8000/health`; tài liệu API: `http://localhost:8000/docs`.
+
+Trong `/docs`, thử lần lượt `POST /api/v1/auth/register`, `/login`, nhập access token vào nút Authorize rồi gọi `GET /api/v1/auth/me`. `/refresh` nhận refresh token trong JSON. Mật khẩu/role và mã lỗi xem [API contract](API_CONTRACT.md). Refresh chưa thu hồi token cũ; chưa có logout phía máy chủ. Chưa có tài khoản admin mẫu hoặc seed quán.
 
 Sau migrate, `current` cần báo `001 (head)`, `check` không báo thay đổi schema mới. File SQLite local là dữ liệu phát sinh và được Git bỏ qua. Nếu dùng biến môi trường DATABASE_URL cho SQLite, cần giữ cùng giá trị khi chạy backend và các lệnh Alembic. Không cần seed ở bước này vì chưa có dữ liệu mẫu.
 
@@ -63,7 +76,7 @@ Docker chưa được kiểm chứng trong phiên phát triển này vì máy kh
 npm run build
 ```
 
-Toàn bộ 341 kiểm thử đạt, gồm các model OLTP và 23 ca migration: nâng/hạ/nâng lại, kiểm tra lệch schema, ghi dữ liệu trên schema thực sự do Alembic tạo, constraint, đường dẫn cấu hình, URL mật khẩu có ký tự đặc biệt và so sánh mặc định JSON. Kiểm thử DB dùng SQLite tạm; PostgreSQL mới kiểm tra SQL offline. Chưa xác nhận chạy trên PostgreSQL thực tế hoặc API giao dịch/tracking.
+Toàn bộ 425 kiểm thử đạt, gồm 84 ca auth, các model OLTP và 23 ca migration. Kiểm thử auth dùng API thật trên SQLite tạm được migration tạo, gồm đăng ký/đăng nhập, JWT/refresh, vai trò/quyền sở hữu và dữ liệu không hợp lệ. Migration kiểm tra nâng/hạ/nâng lại, lệch schema, constraint, đường dẫn, URL và mặc định JSON. PostgreSQL mới kiểm tra SQL offline; chưa xác nhận PostgreSQL/Docker thực tế hoặc API giao dịch/tracking.
 
 ## Thay đổi schema sau này
 

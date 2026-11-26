@@ -1,6 +1,23 @@
 # Backend Vị Việt
 
-Đã có nền tảng FastAPI: `/health`, tài liệu OpenAPI tại `/docs`, cấu hình môi trường, SQLAlchemy, Alembic, middleware request ID/CORS/logging và định dạng lỗi thống nhất. Đã có các models OLTP ở F.5 và migration `001` tạo 15 bảng; chưa có API nghiệp vụ.
+Đã có nền tảng FastAPI: `/health`, tài liệu OpenAPI tại `/docs`, cấu hình môi trường, SQLAlchemy, Alembic, middleware request ID/CORS/logging và định dạng lỗi thống nhất. Đã có các models OLTP ở F.5, migration `001` tạo 15 bảng và API auth backend của F.8. API giao dịch, gợi ý và quản lý quán chưa triển khai.
+
+## Auth backend
+
+`app/auth/` có router, schema, service, dependency và tiện ích theo F.8. Chi tiết request/response, mã lỗi, cấu hình JWT và giới hạn refresh nằm trong [API contract](../../docs/API_CONTRACT.md).
+
+| Endpoint | Chức năng |
+| :--- | :--- |
+| `POST /api/v1/auth/register` | Tạo customer/vendor, chuẩn hóa email, băm mật khẩu, trả UserOut 201 |
+| `POST /api/v1/auth/login` | Kiểm tra mật khẩu, trả access/refresh token và UserOut |
+| `POST /api/v1/auth/refresh` | Kiểm tra refresh token và cấp cặp token mới |
+| `GET /api/v1/auth/me` | Kiểm tra Bearer access token và đọc User hiện tại từ DB |
+
+Mật khẩu dùng Passlib PBKDF2-SHA256 với 600.000 vòng và salt ngẫu nhiên; không phụ thuộc bcrypt. Đăng ký công khai không nhận admin hoặc trường ngoài schema. Email kiểm tra theo định dạng cơ bản, chưa xác minh hộp thư. JWT chỉ dùng HS256, có hạn dùng và phân biệt access/refresh; thay SECRET_KEY mẫu trước khi dùng token. Chưa có giới hạn tần suất đăng nhập/khôi phục mật khẩu.
+
+Dependency `get_current_user`, `require_role(*roles)`, `require_vendor_owner` có thể import từ `app.auth.dependencies` hoặc `app.dependencies`. Guard đọc lại vai trò/membership từ DB; admin không tự bỏ qua quyền sở hữu quán của vendor. Các router vendor/admin nghiệp vụ chưa có.
+
+Refresh dùng JWT không lưu trạng thái: token cũ vẫn còn hiệu lực đến hạn, chưa có thu hồi từng phiên/thiết bị hoặc logout phía máy chủ. Không gọi việc cấp token mới là rotation có chống dùng lại. Giao diện auth, nơi lưu token và logout cục bộ sẽ được tích hợp ở lượt riêng; backend hiện chưa cấp cookie HttpOnly. Phần này không thay đổi schema hoặc revision `001`.
 
 ## Model tài khoản đã bổ sung
 
@@ -11,12 +28,12 @@
 | `id` | Khóa chính tự tăng |
 | `email` | Bắt buộc, duy nhất; ORM bỏ khoảng trắng đầu/cuối và chuyển chữ thường trước khi lưu |
 | `full_name` | Họ tên bắt buộc; ORM loại khoảng trắng đầu/cuối, không nhận chuỗi rỗng |
-| `hashed_password` | Chuỗi băm mật khẩu bắt buộc; việc tạo hash sẽ được triển khai trong module auth |
+| `hashed_password` | Chuỗi băm mật khẩu bắt buộc; module auth tạo/kiểm tra PBKDF2-SHA256 |
 | `role` | `customer`, `vendor`, `admin`; mặc định `customer`, có CHECK constraint ở DB |
 | `is_simulated` | Phân biệt tài khoản mô phỏng; mặc định `false` |
 | `created_at` | Thời điểm tạo; mặc định UTC phía Python, có mặc định phía DB |
 
-Alembic đã import model để nhận metadata và User nằm trong migration `001`. Cần chạy `alembic upgrade head` để tạo bảng trong DB ứng dụng. Kiểm thử dùng DB SQLite riêng, không thay đổi DB ứng dụng. Khai báo vai trò ở đây chưa phải chức năng xác thực hoặc phân quyền API.
+Alembic đã import model để nhận metadata và User nằm trong migration `001`. Cần chạy `alembic upgrade head` để tạo bảng trong DB ứng dụng. Kiểm thử dùng DB SQLite riêng, không thay đổi DB ứng dụng. Enum vai trò ở model giới hạn dữ liệu; dependency trong module auth thực hiện kiểm tra quyền API.
 
 ## Model khẩu vị đã bổ sung
 
@@ -170,7 +187,7 @@ Khi revision đã được commit/áp dụng, thay đổi schema bằng revision
 
 Python >=3.11, FastAPI, SQLAlchemy, PostgreSQL và scikit-learn. Phụ thuộc được khai báo trong `requirements.txt` và `requirements-dev.txt`. Chạy từ thư mục này: `python -m uvicorn app.main:app --reload`; kiểm tra: `python -m pytest tests -q`. Xem [hướng dẫn cài đặt](../../docs/HUONG_DAN_CAI_DAT.md) để tạo môi trường trước khi chạy.
 
-Các models F.5, migration F.6 và tài liệu dữ liệu F.7 đã được bổ sung. Tiếp theo là auth backend/frontend ở F.8. Alembic trong backend là nguồn schema duy nhất; các model BI hoặc đánh giá mù của phần sau sẽ dùng revision bổ sung khi được triển khai.
+Các models F.5, migration F.6, tài liệu dữ liệu F.7 và auth backend F.8 đã được bổ sung. Tiếp theo là phần frontend auth còn lại của F.8. Kiểm thử auth ở F.9 được viết cùng backend để có thể kiểm tra trước khi commit; kiểm thử tích hợp frontend sẽ bổ sung sau. Alembic trong backend là nguồn schema duy nhất; các model BI hoặc đánh giá mù của phần sau sẽ dùng revision bổ sung khi được triển khai.
 
 Xem [README nhóm](../../README.md), [nguồn dữ liệu](../../docs/NGUON_DU_LIEU.md) và [kế hoạch](../../docs/KE_HOACH_THUC_HIEN.md).
 
