@@ -15,8 +15,8 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | Phase 1.6 | `reviews/models.py`: đánh giá món | Có model, kiểm thử, migration 001; chưa có service/API |
 | Phase 1.7 | `tracking/models.py`: yêu cầu gợi ý, hiển thị, sự kiện | Có ba model, kiểm thử, migration 001; chưa có service/API |
 | F.6 | Migration khởi tạo | Đã có revision 001 tạo 15 bảng; kiểm thử SQLite và SQL PostgreSQL offline |
-| F.7 | ERD và từ điển dữ liệu | Chưa viết; làm riêng sau migration |
-| Phase 1.9 | Auth backend, frontend và kiểm thử | Chưa triển khai; tiếp sau tài liệu dữ liệu |
+| F.7 | ERD và từ điển dữ liệu | Đã mô tả 15 bảng, từng cột, ràng buộc và 24 FK theo revision 001 |
+| F.8 | Auth backend, frontend và kiểm thử | Chưa triển khai; phần tiếp theo sau tài liệu dữ liệu |
 | Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Chưa đưa vào mã nguồn hiện tại |
 | Phase 3 | AI, tracking và dữ liệu | Chưa đưa vào mã nguồn hiện tại |
 | Phase 4 | ETL, BI, Power BI và đánh giá | Chưa đưa vào mã nguồn hiện tại |
@@ -33,7 +33,7 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Backend: 5 kiểm thử đạt (health/request ID, định dạng lỗi, CORS, cấu hình URL DB).
 - Frontend: `npm run build` và `npm run format:check` đạt.
 - Chưa kiểm chứng Docker/PostgreSQL vì môi trường phát triển không có Docker CLI.
-- Bộ khung, phần hợp nhất tài liệu và toàn bộ models F.5 đã được commit. Sau migration F.6 là ERD/từ điển dữ liệu F.7, mỗi lượt tách riêng để commit.
+- Bộ khung, phần hợp nhất tài liệu, toàn bộ models F.5 và migration F.6 đã được commit. Tài liệu dữ liệu F.7 được triển khai ở lượt riêng; tiếp sau là auth F.8.
 
 ## Phần tài khoản và vai trò
 
@@ -117,7 +117,16 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Thêm hỗ trợ so sánh mặc định JSON dạng literal trên PostgreSQL để tránh dùng toán tử bằng không được hỗ trợ cho kiểu `json`; các kiểu khác tiếp tục dùng cơ chế Alembic.
 - Toàn bộ 341 kiểm thử đạt, gồm 23 ca migration: nâng/hạ/nâng lại khi có dữ liệu, chạy head lặp không xóa dữ liệu, đối chiếu PK/FK/index/UNIQUE/CHECK, phát hiện schema lệch, ghi dữ liệu ORM trên schema do migration tạo, URL/đường dẫn, mặc định JSON và SQL PostgreSQL offline.
 - PostgreSQL/Docker thực tế chưa được kiểm chứng vì môi trường không có CLI/server tương ứng. Các thao tác nâng/hạ kiểm thử dùng SQLite tạm; không sử dụng DB cần giữ dữ liệu.
-- Chưa tự commit/push migration; ERD và từ điển dữ liệu F.7 được để riêng cho lượt sau.
+- Migration đã được người dùng commit tại `c3b8c76`; ERD và từ điển dữ liệu F.7 được triển khai ở lượt riêng tiếp theo.
+
+## ERD và từ điển dữ liệu F.7
+
+- Thêm `docs/ERD.md` với ba sơ đồ Mermaid chia theo tài khoản/thực đơn, giao dịch/đánh giá và tracking; bao phủ đủ 15 bảng. Ghi rõ PK/FK/UNIQUE ghép, lực lượng quan hệ và danh mục 24 FK cùng ON DELETE.
+- Thêm `docs/TU_DIEN_DU_LIEU.md` mô tả mọi cột, kiểu hướng PostgreSQL, NULL, mặc định DB, khóa, CHECK, UNIQUE và index của revision `001`.
+- Phân biệt ràng buộc DB với chuẩn hóa/validator ORM và nghiệp vụ chưa triển khai; đặc biệt quyền đánh giá, tính tổng/cùng quán, state machine, UUID v4 và hiển thị thực tế trước khi tính KPI.
+- Liên kết tài liệu từ README nhóm/backend/database. Không thay đổi schema, không đưa bảng BI/đánh giá mù hoặc API auth vào phần này.
+- Đối chiếu tự động đủ 15 bảng, 103 cột (kiểu/NULL/mặc định), các tên constraint/index và 24 FK; kiểm tra cấu trúc ba sơ đồ Mermaid cùng 57 liên kết cục bộ. Đối chiếu danh sách bảng/cột/FK với revision `001`; không chạy lại kiểm thử nghiệp vụ vì chỉ thay đổi tài liệu. PostgreSQL thực tế vẫn chưa được kiểm chứng.
+- Chưa tự commit/push tài liệu; auth F.8 dành cho lượt tiếp theo.
 
 ## Dọn bản nháp cục bộ
 

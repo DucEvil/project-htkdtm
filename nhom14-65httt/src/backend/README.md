@@ -148,7 +148,7 @@ python -m alembic check
 
 Đã kiểm thử nâng/hạ/nâng lại, schema lệch model, dữ liệu/constraint trên DB tạo từ migration và sinh SQL PostgreSQL offline. Chưa chạy PostgreSQL hoặc Docker thực tế trong môi trường này. Các bài test chỉ dùng DB tạm. Hạ về `base` sẽ xóa các bảng và dữ liệu, chỉ dùng trên DB kiểm thử có thể bỏ; không chạy trên DB cần giữ dữ liệu.
 
-Khi revision đã được commit/áp dụng, thay đổi schema bằng revision kế tiếp thay vì sửa hoặc sinh lại `001`. Xem hướng dẫn cài đặt để chạy migration local/Docker. ERD và từ điển dữ liệu sẽ được viết riêng ở F.7.
+Khi revision đã được commit/áp dụng, thay đổi schema bằng revision kế tiếp thay vì sửa hoặc sinh lại `001`. Xem hướng dẫn cài đặt để chạy migration local/Docker. [ERD](../../docs/ERD.md) và [từ điển dữ liệu](../../docs/TU_DIEN_DU_LIEU.md) ở F.7 đối chiếu đủ 15 bảng, các cột và ràng buộc hiện có.
 
 ## Phạm vi dự kiến
 
@@ -170,7 +170,7 @@ Khi revision đã được commit/áp dụng, thay đổi schema bằng revision
 
 Python >=3.11, FastAPI, SQLAlchemy, PostgreSQL và scikit-learn. Phụ thuộc được khai báo trong `requirements.txt` và `requirements-dev.txt`. Chạy từ thư mục này: `python -m uvicorn app.main:app --reload`; kiểm tra: `python -m pytest tests -q`. Xem [hướng dẫn cài đặt](../../docs/HUONG_DAN_CAI_DAT.md) để tạo môi trường trước khi chạy.
 
-Các models F.5 và migration F.6 đã được bổ sung. Tiếp theo là ERD/từ điển dữ liệu F.7. Alembic trong backend là nguồn schema duy nhất; các model BI hoặc đánh giá mù của phần sau sẽ dùng revision bổ sung khi được triển khai.
+Các models F.5, migration F.6 và tài liệu dữ liệu F.7 đã được bổ sung. Tiếp theo là auth backend/frontend ở F.8. Alembic trong backend là nguồn schema duy nhất; các model BI hoặc đánh giá mù của phần sau sẽ dùng revision bổ sung khi được triển khai.
 
 Xem [README nhóm](../../README.md), [nguồn dữ liệu](../../docs/NGUON_DU_LIEU.md) và [kế hoạch](../../docs/KE_HOACH_THUC_HIEN.md).
 

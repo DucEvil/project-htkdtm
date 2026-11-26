@@ -6,7 +6,7 @@ Website đặt món trực tuyến tích hợp trí tuệ nhân tạo gợi ý �
 
 ## Trạng thái hiện tại
 
-Đang triển khai theo từng phần của [thiết kế cấu trúc](docs/THIET_KE_CAU_TRUC.md) để nhóm commit riêng từng nội dung. Đã có nền tảng FastAPI, React/Vite/TypeScript, cấu hình môi trường, Docker, các models OLTP ở F.5 và migration `001` tạo 15 bảng ở F.6. API nghiệp vụ, AI, ETL và dashboard sẽ được bổ sung ở các lượt sau. Xem [tiến độ](docs/TIEN_DO_TRIEN_KHAI.md).
+Đang triển khai theo từng phần của [thiết kế cấu trúc](docs/THIET_KE_CAU_TRUC.md) để nhóm commit riêng từng nội dung. Đã có nền tảng FastAPI, React/Vite/TypeScript, cấu hình môi trường, Docker, các models OLTP ở F.5, migration `001` tạo 15 bảng ở F.6 và ERD/từ điển dữ liệu ở F.7. API nghiệp vụ, AI, ETL và dashboard sẽ được bổ sung ở các lượt sau. Xem [tiến độ](docs/TIEN_DO_TRIEN_KHAI.md).
 
 Thông tin thành viên được ghi tại [danhsachnhom.md](danhsachnhom.md). Cần hoàn thiện các trường đang đánh dấu trước khi xác nhận hồ sơ nộp đầy đủ.
 
@@ -54,6 +54,8 @@ Yêu cầu Python >=3.11, Node.js >=20; frontend có `package-lock.json`. Các p
 | [docs/NGUON_DU_LIEU.md](docs/NGUON_DU_LIEU.md) | Nguồn dữ liệu và quy tắc chuẩn bị |
 | [docs/KE_HOACH_THUC_HIEN.md](docs/KE_HOACH_THUC_HIEN.md) | Lộ trình và tiêu chí đánh giá |
 | [docs/CHECKLIST_NOP_BAI.md](docs/CHECKLIST_NOP_BAI.md) | Các mục cần kiểm tra trước nộp |
+| [docs/ERD.md](docs/ERD.md) | Sơ đồ 15 bảng OLTP, quan hệ và quy tắc xóa |
+| [docs/TU_DIEN_DU_LIEU.md](docs/TU_DIEN_DU_LIEU.md) | Từng cột, kiểu, mặc định, ràng buộc và giới hạn kiểm tra |
 | [src/backend/README.md](src/backend/README.md) | Phạm vi backend dự kiến |
 | [src/frontend/README.md](src/frontend/README.md) | Phạm vi frontend dự kiến |
 | [src/database/README.md](src/database/README.md) | Phạm vi dữ liệu giao dịch và BI dự kiến |
@@ -67,7 +69,7 @@ git checkout nhom14-65httt
 git pull --ff-only origin nhom14-65httt
 ```
 
-Xem [hướng dẫn cài đặt Phase 0](docs/HUONG_DAN_CAI_DAT.md) để chạy local hoặc Docker. Frontend dùng cổng 5173, backend dùng cổng 8000. PostgreSQL/Docker và các chức năng ở phase sau chưa được nghiệm thu.
+Xem [hướng dẫn cài đặt](docs/HUONG_DAN_CAI_DAT.md) để chạy local hoặc Docker. Frontend dùng cổng 5173, backend dùng cổng 8000. PostgreSQL/Docker và các chức năng ở phần sau chưa được nghiệm thu.
 
 ## Cập nhật và nộp bài
 

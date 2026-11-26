@@ -2,7 +2,9 @@
 
 Thư mục dành cho tài liệu dữ liệu, seed, ánh xạ nguồn, truy vấn BI và tài liệu Power BI. Migration được quản lý duy nhất tại `src/backend/alembic/versions/`, không đặt ở đây. Đã có [revision 001](../backend/alembic/versions/001_initial_schema.py) tạo 15 bảng OLTP của F.5; chưa có seed hoặc SQL BI. Hệ quản trị chính là PostgreSQL; migration đã thử trên SQLite và sinh SQL PostgreSQL, chưa chạy PostgreSQL thực tế.
 
-## Dữ liệu giao dịch dự kiến
+## Dữ liệu giao dịch hiện có
+
+[ERD](../../docs/ERD.md) mô tả đủ 15 bảng và 24 khóa ngoại của revision `001`. [Từ điển dữ liệu](../../docs/TU_DIEN_DU_LIEU.md) ghi từng cột, kiểu, NULL, mặc định, khóa, CHECK, index và những kiểm tra thuộc ORM/service.
 
 | Nhóm | Thực thể chính |
 | :--- | :--- |
@@ -34,7 +36,7 @@ Các chiều dùng chung: ngày, người dùng đã ẩn danh, quán và món; 
 
 ## Đầu ra cần bổ sung
 
-- ERD, ràng buộc và từ điển dữ liệu đã thống nhất.
+- ERD/từ điển dữ liệu F.7 đã có theo revision `001`; cần cập nhật cùng mỗi revision mở rộng.
 - Migration hiện có: `001_initial_schema.py` trong backend; hướng dẫn tạo schema tại [hướng dẫn cài đặt](../../docs/HUONG_DAN_CAI_DAT.md). Các phần mở rộng sẽ có revision kế tiếp.
 - Seed có phân biệt dữ liệu mô phỏng và dữ liệu thật.
 - Quy trình nhập dữ liệu, ánh xạ nguồn, báo cáo làm sạch và cách chạy ETL.
