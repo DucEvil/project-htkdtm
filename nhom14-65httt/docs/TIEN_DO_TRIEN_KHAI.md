@@ -11,7 +11,7 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | Phase 1.2 | `preferences/models.py`: khẩu vị | Có model, kiểm thử, migration 001; chưa có API |
 | Phase 1.3 | `restaurants/models.py`: quán và thành viên quản lý | Có model/migration và API hồ sơ, duyệt/tạm ngừng ở F.10.1 |
 | Phase 1.4 | `menu/models.py`: món chuẩn, món bán, nguyên liệu | Có bốn model/migration; API thực đơn và catalog ở F.10.2 |
-| Phase 1.5 | `orders/models.py`: đơn, món đặt và lịch sử | Có model/migration và service chuyển trạng thái; chưa có API |
+| Phase 1.5 | `orders/models.py`: đơn, món đặt và lịch sử | Có model/migration, service và API đơn COD F.10.5 |
 | Phase 1.6 | `reviews/models.py`: đánh giá món | Có model, kiểm thử, migration 001; chưa có service/API |
 | Phase 1.7 | `tracking/models.py`: yêu cầu gợi ý, hiển thị, sự kiện | Có ba model, kiểm thử, migration 001; chưa có service/API |
 | F.6 | Migration khởi tạo | Đã có revision 001 tạo 15 bảng; kiểm thử SQLite và SQL PostgreSQL offline |
@@ -22,9 +22,10 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | F.10.1 | Hồ sơ quán vendor, duyệt/tạm ngừng admin và quán công khai | Đã có tám thao tác API, 92 kiểm thử mới; chưa có giao diện quản lý quán |
 | F.10.2 | Thực đơn vendor, catalog admin và món công khai | Đã có 17 thao tác API, 167 kiểm thử mới; chưa có giao diện quản lý thực đơn |
 | F.10.3 | Tìm món/quán theo chữ, Haversine và phạm vi giao | Đã có hai GET công khai, 99 kiểm thử mới; chưa có SearchPage/bản đồ |
-| F.10.4 | Quy tắc chuyển trạng thái và lịch sử đơn | Có state machine/service và 167 kiểm thử mới; chưa có API đơn hàng |
-| F.10 còn lại | API giao dịch, đánh giá và các nghiệp vụ khác | Chưa triển khai; tiếp tục tách từng module để commit |
-| Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Đã có backend hồ sơ/duyệt quán, thực đơn/catalog và tìm kiếm; chưa có đơn hàng hoặc màn hình nghiệp vụ |
+| F.10.4 | Quy tắc chuyển trạng thái và lịch sử đơn | Có state machine/service và 167 kiểm thử, đã nối API F.10.5 |
+| F.10.5 | Tạo đơn COD, idempotency và API đơn hàng | Có 11 thao tác API customer/vendor; chưa có UI |
+| F.10 còn lại | API đánh giá và các nghiệp vụ khác | Chưa triển khai; tiếp tục tách từng module để commit |
+| Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Đã có backend hồ sơ/duyệt quán, thực đơn/catalog và tìm kiếm; đã có API đơn COD; chưa có màn hình nghiệp vụ |
 | Phase 3 | AI, tracking và dữ liệu | Chưa đưa vào mã nguồn hiện tại |
 | Phase 4 | ETL, BI, Power BI và đánh giá | Chưa đưa vào mã nguồn hiện tại |
 | Phase 5 | Tích hợp, kiểm thử và bàn giao | Chưa thực hiện |
@@ -205,7 +206,16 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Đọc lại vai trò/membership/trạng thái từ DB, khóa hàng Order khi DB hỗ trợ; UPDATE có điều kiện trạng thái cũ và ghi lịch sử trong cùng transaction. Lỗi ghi lịch sử/commit rollback cả hai. Không sửa snapshot/tổng tiền/địa chỉ; chưa xử lý tạo đơn, idempotency, API hoặc frontend trong phần này.
 - 167 kiểm thử mới gồm toàn bộ tổ hợp trạng thái/vai trò, luồng hoàn tất/hủy/từ chối, quyền sở hữu, thành viên chung quán, dữ liệu cached cũ, lý do, rollback và mô phỏng cạnh tranh cập nhật. Kiểm thử DB dùng SQLite tạm tạo bằng migration; chưa kiểm chứng PostgreSQL/khóa hàng cạnh tranh thực tế.
 - Toàn bộ 950 kiểm thử backend đạt (783 ca trước + 167 ca mới); Ruff/format và diff check đạt. Không chạy lại frontend vì không thay đổi giao diện.
-- Phần kế tiếp là service tạo đơn COD/idempotency và API đơn hàng. Chưa stage/commit/push; không đổi schema hoặc migration `001`.
+- Phần chuyển trạng thái đã được người dùng commit tại `56f7cda`; API đơn hàng được triển khai ở lượt riêng bên dưới.
+
+## Đơn COD, idempotency và API F.10.5
+
+- Thêm schemas/router và mở rộng service orders; mount 11 thao tác customer/vendor theo E.1, thêm chi tiết vendor để xem địa chỉ/lịch sử. Dùng state machine E.2 đã commit; kiểm tra scope từ token/membership, không cho admin vượt quyền.
+- Tạo đơn kiểm tra quán approved/giờ mở/nhận đơn/phạm vi giao, món cùng quán/đang bán và expected_price. Snapshot lấy từ DB, tổng tính phía server; ghi Order/OrderItem/lịch sử pending cùng transaction, rollback khi lỗi. Không đổi schema/dependencies, chỉ bỏ import thừa trong model.
+- Key UUID v4 UNIQUE; hash payload chuẩn hóa thứ tự dòng/địa chỉ, gồm session và tọa độ. Cùng khách/nội dung dưới 24 giờ trả lại đơn 200; khác nội dung/chủ sở hữu hoặc key quá hạn trả 409. Không xóa hoặc tái sử dụng key. Có khóa hàng khi DB hỗ trợ và xử lý UNIQUE sau rollback.
+- Danh sách đơn trả mảng theo thiết kế, offset/limit, mới nhất trước. Chi tiết gồm snapshot/lịch sử, không trả key/hash/session/cờ mô phỏng; đơn ngoài quyền và không tồn tại cùng 404. Gọi lặp chuyển trạng thái trả 409.
+- Chưa có UI/review, PostgreSQL thực tế hoặc kiểm thử tải/cạnh tranh thực tế; các ca race dùng mô phỏng trên SQLite. Chưa stage/commit/push; phần tiếp theo là API đánh giá món đã mua.
+- Toàn bộ 1036 kiểm thử backend đạt, gồm 86 ca API đơn hàng mới và 950 ca đã có. Ruff/format đạt; bao phủ vòng đời COD, snapshot, scope, tất cả guard, validation/phân trang, key 24 giờ/payload khác/chủ sở hữu khác, tranh chấp UNIQUE mô phỏng, rollback dòng món/lịch sử/commit và OpenAPI 11 thao tác. Không chạy lại frontend vì không đổi giao diện.
 
 ## Dọn bản nháp cục bộ
 

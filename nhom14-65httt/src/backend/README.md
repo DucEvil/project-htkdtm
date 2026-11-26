@@ -1,6 +1,6 @@
 # Backend Vị Việt
 
-Đã có nền tảng FastAPI: `/health`, tài liệu OpenAPI tại `/docs`, cấu hình môi trường, SQLAlchemy, Alembic, middleware request ID/CORS/logging và định dạng lỗi thống nhất. Đã có models F.5, migration `001`, auth F.8, API hồ sơ/duyệt quán F.10.1, thực đơn/món chuẩn/nguyên liệu F.10.2 và tìm kiếm F.10.3. API đơn hàng và gợi ý chưa triển khai.
+Đã có nền tảng FastAPI: `/health`, tài liệu OpenAPI tại `/docs`, cấu hình môi trường, SQLAlchemy, Alembic, middleware request ID/CORS/logging và định dạng lỗi thống nhất. Đã có models F.5, migration `001`, auth F.8, API hồ sơ/duyệt quán F.10.1, thực đơn/món chuẩn/nguyên liệu F.10.2 và tìm kiếm F.10.3. API đơn COD đã có ở F.10.5; API gợi ý chưa triển khai.
 
 ## Auth backend
 
@@ -137,17 +137,23 @@ Tổng tiền là số nguyên VNĐ dương dùng BIGINT để không tràn số
 
 FK chặn xóa khách/quán/món bán đang được giao dịch tham chiếu và chặn xóa Order còn chi tiết hoặc lịch sử. Thay đổi tên/giá trong MenuItem không tự thay đổi snapshot đã lưu ở OrderItem. Lịch sử được đọc theo thời điểm rồi ID để giữ thứ tự ổn định.
 
-Model chưa tự tạo snapshot từ menu, tính tổng hoặc kiểm tra các món cùng quán/khả dụng. Service đã bổ sung chuyển trạng thái có kiểm tra vai trò/quyền sở hữu và ghi lịch sử nguyên tử như mô tả bên dưới. Chưa có API tạo/xử lý đơn; kiểm thử service không thay thế các ca giao dịch/API yêu cầu trong đề cương. Các bảng đơn hàng đã có trong migration `001`.
+Service đã tạo snapshot từ menu, tính tổng, kiểm tra cùng quán/khả dụng/giá/giờ/phạm vi và ghi lịch sử pending cùng transaction. API tạo, đọc, hủy và xử lý đơn đã tích hợp ở F.10.5; schema vẫn migration `001`.
+
+### API đơn COD và idempotency
+
+`orders/router.py` có 11 thao tác customer/vendor dưới `/api/v1`: POST/GET `/orders/`, GET `/orders/{order_id}`, PATCH cancel; GET `/vendor/orders`, GET chi tiết và PATCH confirm/reject/preparing/delivering/complete. Danh sách trả mảng phân trang, chỉ đơn của khách/quán từ membership. Chi tiết body/response/mã lỗi ở [API contract F.10.5](../../docs/API_CONTRACT.md#đơn-cod-và-chống-gửi-lặp--f105).
+
+Body tạo gồm restaurant_id, items (menu_item_id/quantity/expected_price), địa chỉ/tọa độ giao, session_id và idempotency_key UUID v4. Backend xác minh giá và lưu snapshot/tổng tiền từ DB. Mã gửi lặp cùng khách/cùng payload trong dưới 24 giờ trả đơn cũ 200; khác payload/chủ sở hữu hoặc hết hạn trả 409, không tái sử dụng key. Khóa hàng khách/quán/món khi DB hỗ trợ; UNIQUE xử lý tranh chấp key, rollback khi lỗi. Chưa có frontend đơn hàng, review hoặc kiểm chứng cạnh tranh PostgreSQL thực tế.
 
 ### Chuyển trạng thái và lịch sử đơn
 
 `orders/state_machine.py` thực hiện đúng E.2: vendor chuyển pending → confirmed/rejected, confirmed → preparing, preparing → delivering, delivering → completed; customer chỉ hủy pending → cancelled. Completed/cancelled/rejected là trạng thái kết thúc; không có chuyển về trước hoặc chuyển lặp cùng trạng thái. Admin không có quyền chuyển trạng thái thay người mua/chủ quán.
 
-`orders/service.py::transition_order(db, order_id, actor_id, target, reason=...)` là hàm nội bộ chuẩn bị cho API. Caller phải lấy actor_id từ dependency xác thực và dùng session của request, không truyền ID người thao tác từ body. Service đọc lại User/membership/trạng thái từ DB; khách chỉ thao tác đơn của mình, vendor chỉ thao tác đơn thuộc quán liên kết. Đơn ngoài quyền và đơn không tồn tại cùng trả NotFoundError; tài khoản mất vai trò hợp lệ bị từ chối.
+`orders/service.py::transition_order(db, order_id, actor_id, target, reason=...)` đã được API sử dụng. Caller lấy actor_id từ dependency xác thực và dùng session của request, không nhận ID người thao tác từ body. Service đọc lại User/membership/trạng thái từ DB; khách chỉ thao tác đơn của mình, vendor chỉ thao tác đơn thuộc quán liên kết. Đơn ngoài quyền và đơn không tồn tại cùng trả NotFoundError; tài khoản mất vai trò hợp lệ bị từ chối.
 
-Từ chối bắt buộc lý do trim 1–500 ký tự; các thao tác khác không nhận lý do ở phiên bản này. Service khóa hàng Order khi DB hỗ trợ, UPDATE có điều kiện trạng thái cũ rồi ghi OrderStatusHistory cùng transaction. Chỉ commit khi cả hai thành công; lỗi nghiệp vụ/DB rollback. Không thay tổng tiền, snapshot hoặc dữ liệu giao hàng. Các quán tạm ngừng/đóng cửa vẫn có thể xử lý đơn đã tồn tại; điều kiện nhận đơn mới thuộc phần tạo đơn sau.
+Từ chối bắt buộc lý do trim 1–500 ký tự; các thao tác khác không nhận lý do ở phiên bản này. Service khóa hàng Order khi DB hỗ trợ, UPDATE có điều kiện trạng thái cũ rồi ghi OrderStatusHistory cùng transaction. Chỉ commit khi cả hai thành công; lỗi nghiệp vụ/DB rollback. Không thay tổng tiền, snapshot hoặc dữ liệu giao hàng. Các quán tạm ngừng/đóng cửa vẫn có thể xử lý đơn đã tồn tại; điều kiện nhận đơn mới được kiểm tra trong create_order.
 
-Service sở hữu commit/rollback nên không ghép các thay đổi không liên quan vào cùng session. Lịch sử pending ban đầu phải do service tạo đơn tương lai ghi cùng lúc tạo đơn; transition_order không tự bổ sung lịch sử cũ còn thiếu. Chưa có endpoint/router đơn hàng, idempotency tạo đơn, UI hoặc kiểm chứng khóa hàng cạnh tranh trên PostgreSQL.
+Service sở hữu commit/rollback nên không ghép các thay đổi không liên quan vào cùng session. Service tạo đơn ghi lịch sử pending cùng lúc tạo đơn; transition_order không tự bổ sung lịch sử cũ còn thiếu. Chưa có UI hoặc kiểm chứng khóa hàng cạnh tranh trên PostgreSQL.
 
 ## Model đánh giá món đã bổ sung
 
@@ -227,7 +233,7 @@ Khi revision đã được commit/áp dụng, thay đổi schema bằng revision
 
 Python >=3.11, FastAPI, SQLAlchemy, PostgreSQL và scikit-learn. Phụ thuộc được khai báo trong `requirements.txt` và `requirements-dev.txt`. Chạy từ thư mục này: `python -m uvicorn app.main:app --reload`; kiểm tra: `python -m pytest tests -q`. Xem [hướng dẫn cài đặt](../../docs/HUONG_DAN_CAI_DAT.md) để tạo môi trường trước khi chạy.
 
-Các phần F.5–F.9, API hồ sơ/duyệt quán, thực đơn/nguyên liệu, tìm kiếm F.10.1–F.10.3 và service chuyển trạng thái đơn F.10.4 đã được bổ sung. Tiếp theo là tạo đơn COD/idempotency và API đơn hàng, tách riêng cho commit sau. Alembic trong backend là nguồn schema duy nhất; các model BI hoặc đánh giá mù của phần sau sẽ dùng revision bổ sung khi được triển khai.
+Các phần F.5–F.9 và nghiệp vụ/API F.10.1–F.10.5 đã được bổ sung đến đơn COD/idempotency. Tiếp theo là đánh giá món đã mua, tách riêng cho commit sau. Alembic trong backend là nguồn schema duy nhất; các model BI hoặc đánh giá mù của phần sau sẽ dùng revision bổ sung khi được triển khai.
 
 Xem [README nhóm](../../README.md), [nguồn dữ liệu](../../docs/NGUON_DU_LIEU.md) và [kế hoạch](../../docs/KE_HOACH_THUC_HIEN.md).
 

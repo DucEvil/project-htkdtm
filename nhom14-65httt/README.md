@@ -6,11 +6,11 @@ Website đặt món trực tuyến tích hợp trí tuệ nhân tạo gợi ý �
 
 ## Trạng thái hiện tại
 
-Đang triển khai theo từng phần của [thiết kế cấu trúc](docs/THIET_KE_CAU_TRUC.md) để nhóm commit riêng từng nội dung. Đã có nền tảng FastAPI, React/Vite/TypeScript, cấu hình môi trường, Docker, models F.5, migration `001`, ERD/từ điển dữ liệu, auth backend/frontend và API hồ sơ/duyệt quán, thực đơn/món chuẩn/nguyên liệu, tìm kiếm F.10.1–F.10.3. Giao dịch, AI, ETL và dashboard sẽ bổ sung ở các lượt sau; chưa có giao diện tìm kiếm hoặc quản lý thực đơn. Xem [tiến độ](docs/TIEN_DO_TRIEN_KHAI.md).
+Đang triển khai theo từng phần của [thiết kế cấu trúc](docs/THIET_KE_CAU_TRUC.md) để nhóm commit riêng từng nội dung. Đã có nền tảng FastAPI, React/Vite/TypeScript, cấu hình môi trường, Docker, models F.5, migration `001`, ERD/từ điển dữ liệu, auth backend/frontend và API hồ sơ/duyệt quán, thực đơn/món chuẩn/nguyên liệu, tìm kiếm F.10.1–F.10.3. API đơn COD đã được bổ sung ở F.10.5; AI, ETL và dashboard triển khai sau; chưa có giao diện tìm kiếm hoặc quản lý thực đơn. Xem [tiến độ](docs/TIEN_DO_TRIEN_KHAI.md).
 
 Thông tin thành viên được ghi tại [danhsachnhom.md](danhsachnhom.md). Cần hoàn thiện các trường đang đánh dấu trước khi xác nhận hồ sơ nộp đầy đủ.
 
-Phần đơn hàng đã có quy tắc chuyển trạng thái và service ghi lịch sử cùng transaction (F.10.4); chưa có API tạo/xử lý đơn. Xem [README backend](src/backend/README.md#chuyển-trạng-thái-và-lịch-sử-đơn).
+Phần đơn hàng đã có API COD, kiểm tra điều kiện phục vụ, snapshot giá, chống gửi lặp và chuyển trạng thái/lịch sử cùng transaction (F.10.4–F.10.5). Chưa có giao diện đơn hàng. Xem [README backend](src/backend/README.md#api-đơn-cod-và-idempotency).
 
 ## Vấn đề và mục tiêu
 
@@ -40,7 +40,7 @@ ViFoodRec là nguồn chính cho đặc trưng món ăn. Dữ liệu quán, th�
 | Thành phần | Công nghệ dự kiến | Tình trạng |
 | :--- | :--- | :--- |
 | Giao diện web | React/Vite/TypeScript | Có đăng ký/đăng nhập, quản lý phiên, refresh, thông tin tài khoản và guard vai trò; chưa có trang giao dịch |
-| API nghiệp vụ và dịch vụ gợi ý | FastAPI/Python | Có auth, hồ sơ/duyệt quán, thực đơn vendor, catalog admin, tìm món/quán theo chữ và khoảng cách; chưa có giao dịch/gợi ý |
+| API nghiệp vụ và dịch vụ gợi ý | FastAPI/Python | Có auth, hồ sơ/duyệt quán, thực đơn vendor, catalog admin, tìm món/quán theo chữ và khoảng cách; có API đơn COD; chưa có gợi ý |
 | Cơ sở dữ liệu | PostgreSQL | Có migration 001 tạo 15 bảng OLTP; đã thử SQLite và sinh SQL PostgreSQL, chưa chạy PostgreSQL thực tế |
 | Xử lý đặc trưng và gợi ý | scikit-learn | Chưa triển khai |
 | Báo cáo phân tích | Power BI | Chưa triển khai |

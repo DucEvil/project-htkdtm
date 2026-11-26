@@ -1,4 +1,4 @@
-"""Dữ liệu đơn COD; logic tạo đơn và chuyển trạng thái được triển khai ở service sau."""
+"""Dữ liệu đơn COD; tạo đơn và chuyển trạng thái được thực hiện trong service."""
 
 import math
 import re
@@ -20,7 +20,6 @@ from sqlalchemy import (
     Uuid,
     false,
     func,
-    text,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 

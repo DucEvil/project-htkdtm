@@ -1,10 +1,10 @@
 # Hợp đồng API Vị Việt
 
-Tài liệu hiện mô tả auth F.8, hồ sơ/duyệt quán F.10.1, thực đơn/món chuẩn/nguyên liệu F.10.2 và tìm kiếm F.10.3. API khẩu vị, giao dịch và tracking chưa triển khai; sẽ bổ sung từng phần. OpenAPI tại `http://localhost:8000/docs` phản ánh request/response đang chạy.
+Tài liệu hiện mô tả auth F.8, hồ sơ/duyệt quán F.10.1, thực đơn F.10.2, tìm kiếm F.10.3 và đơn COD F.10.4–F.10.5. API khẩu vị, đánh giá và tracking chưa triển khai. OpenAPI tại `http://localhost:8000/docs` phản ánh request/response đang chạy.
 
 ## Quy ước chung
 
-Nghiệp vụ đơn hàng hiện có state machine/service chuyển trạng thái nội bộ theo E.2 (F.10.4), chưa có endpoint đơn hàng trong OpenAPI. Xem [README backend](../src/backend/README.md#chuyển-trạng-thái-và-lịch-sử-đơn) về quyền sở hữu, transaction và giới hạn; các đường dẫn orders trong thiết kế vẫn là kế hoạch cho lượt API tiếp theo.
+Nghiệp vụ đơn hàng dùng state machine E.2 và API COD ở F.10.5 bên dưới. Xem [README backend](../src/backend/README.md#chuyển-trạng-thái-và-lịch-sử-đơn) về quyền sở hữu và transaction.
 
 - Base URL local: `http://localhost:8000/api/v1`. Gửi body JSON với `Content-Type: application/json`.
 - Endpoint yêu cầu đăng nhập nhận `Authorization: Bearer <access_token>`. Refresh token chỉ gửi trong body `/auth/refresh`, không dùng thay access token.
@@ -124,7 +124,7 @@ Khi SECRET_KEY chưa cấu hình hợp lệ, thao tác cần ký/kiểm tra toke
 | `require_role(*roles)` | User có một trong các vai trò cho phép | Trả User, lỗi 403 khi không đủ quyền |
 | `require_vendor_owner` | Vai trò vendor và membership trùng `restaurant_id` trên route | Trả ID quán, lỗi 403 nếu sai vai trò/chưa có membership/khác quán |
 
-Admin không tự vượt qua guard sở hữu của vendor; router admin dùng guard riêng. Các API hồ sơ quán, duyệt và tạm ngừng quán bên dưới đã áp dụng guard thật; API quản lý thực đơn/đơn hàng/tài khoản admin chưa triển khai.
+Admin không tự vượt qua guard sở hữu của vendor; router admin dùng guard riêng. Các API hồ sơ, thực đơn và đơn hàng đã áp dụng guard thật; API quản lý tài khoản admin chưa triển khai.
 
 ## Phạm vi kiểm chứng
 
@@ -323,7 +323,7 @@ Mọi danh sách nhận `offset=0` trong 0–2147483647, `limit=20` trong 1–10
 | 409 | `CATALOG_IN_USE` | Danh mục còn được món bán tham chiếu |
 | 422 | `VALIDATION_ERROR` | Thiếu/thừa trường, sai kiểu/giới hạn, lặp ID hoặc xác nhận khi chưa có nguyên liệu |
 
-Không thay schema/revision `001`. Ghi món và liên kết nguyên liệu cùng transaction, rollback khi lỗi SQLAlchemy; khóa các hàng liên quan khi DB hỗ trợ. Kiểm thử chạy production app trên SQLite tạm được tạo bằng migration; chưa kiểm chứng PostgreSQL thực tế hoặc khóa hàng cạnh tranh. Tìm kiếm được triển khai riêng ở F.10.3; orders/reviews/tracking API chưa triển khai.
+Không thay schema/revision `001`. Ghi món và liên kết nguyên liệu cùng transaction, rollback khi lỗi SQLAlchemy; khóa các hàng liên quan khi DB hỗ trợ. Kiểm thử chạy production app trên SQLite tạm được tạo bằng migration; chưa kiểm chứng PostgreSQL thực tế hoặc khóa hàng cạnh tranh. Tìm kiếm và đơn hàng được triển khai riêng ở F.10.3/F.10.5; reviews/tracking API chưa triển khai.
 
 ## Tìm kiếm món và quán — F.10.3
 
@@ -374,4 +374,69 @@ Cả hai trả `{"items":[...],"total":3,"offset":0,"limit":20}`. Lọc đủ đ
 
 SQL lọc quán approved/món available và hộp tọa độ bao quanh bán kính; Python kiểm tra Haversine chính xác, chuẩn hóa chữ Unicode và sắp xếp/phân trang. Hộp tọa độ xử lý kinh tuyến 180° và vùng cực để không loại nhầm ứng viên hợp lệ. Nguyên liệu chỉ nạp theo lô cho trang món trả về, tránh truy vấn riêng từng món.
 
-Cách triển khai phù hợp tập dữ liệu MVP quanh trường; vẫn phải đọc toàn bộ ứng viên trong hộp tọa độ để tính đúng total/thứ tự, chưa có chỉ mục tìm kiếm không dấu hoặc chỉ mục không gian. Không cắt ngầm số ứng viên và không công bố cam kết hiệu năng cho dữ liệu lớn. Khi mở rộng cần đo tải và đưa tìm chữ/khoảng cách vào cơ chế chỉ mục thích hợp. Không cần extension DB, đổi model/migration hoặc thêm thư viện ở phần này. Chưa có giao diện SearchPage, tích hợp bản đồ hoặc API đặt đơn.
+Cách triển khai phù hợp tập dữ liệu MVP quanh trường; vẫn phải đọc toàn bộ ứng viên trong hộp tọa độ để tính đúng total/thứ tự, chưa có chỉ mục tìm kiếm không dấu hoặc chỉ mục không gian. Không cắt ngầm số ứng viên và không công bố cam kết hiệu năng cho dữ liệu lớn. Khi mở rộng cần đo tải và đưa tìm chữ/khoảng cách vào cơ chế chỉ mục thích hợp. Không cần extension DB, đổi model/migration hoặc thêm thư viện ở phần này. Chưa có giao diện SearchPage hoặc tích hợp bản đồ; API đặt đơn mô tả bên dưới.
+
+## Đơn COD và chống gửi lặp — F.10.5
+
+Prefix `/api/v1`, tất cả endpoint yêu cầu access token đúng vai trò. Admin không thay thế customer/vendor. COD là thanh toán khi nhận hàng; chưa có thanh toán trực tuyến hoặc cột trạng thái thanh toán riêng.
+
+| Method | Đường dẫn | Vai trò | Kết quả |
+| :--- | :--- | :--- | :--- |
+| POST | `/orders/` | customer | OrderDetail 201 khi tạo, 200 khi gửi lại hợp lệ |
+| GET | `/orders/` | customer | Mảng đơn của mình |
+| GET | `/orders/{order_id}` | customer | Chi tiết đơn của mình |
+| PATCH | `/orders/{order_id}/cancel` | customer | Hủy đơn pending, trả OrderDetail |
+| GET | `/vendor/orders` | vendor | Mảng đơn của quán từ membership |
+| GET | `/vendor/orders/{order_id}` | vendor | Chi tiết đơn của quán |
+| PATCH | `/vendor/orders/{order_id}/confirm` | vendor | pending → confirmed |
+| PATCH | `/vendor/orders/{order_id}/reject` | vendor | pending → rejected; body reason bắt buộc |
+| PATCH | `/vendor/orders/{order_id}/preparing` | vendor | confirmed → preparing |
+| PATCH | `/vendor/orders/{order_id}/delivering` | vendor | preparing → delivering |
+| PATCH | `/vendor/orders/{order_id}/complete` | vendor | delivering → completed |
+
+### Tạo đơn
+
+```json
+{
+  "restaurant_id": 1,
+  "items": [{"menu_item_id": 1, "quantity": 2, "expected_price": 40000}],
+  "delivery_address": "Số 1 Hà Nội",
+  "latitude": 21,
+  "longitude": 105,
+  "session_id": "59738c0b-55c7-4423-b530-9fcabda63168",
+  "idempotency_key": "f03f7b22-54eb-4c08-9438-ba829b874da8"
+}
+```
+
+Tất cả trường trong ví dụ bắt buộc. Mỗi lần đặt mới client sinh UUID v4 mới; retry giữ nguyên session_id, key và payload. Items có 1–100 dòng không trùng menu_item_id; quantity nguyên JSON 1–99, expected_price nguyên JSON 1–10.000.000 VNĐ. ID body nguyên JSON 1–2147483647; không nhận Boolean/chuỗi thay số nguyên. Địa chỉ trim dài 5–500; tọa độ số JSON hữu hạn đúng phạm vi vĩ độ/kinh độ. Body tạo/từ chối và từng dòng món cấm trường thừa; không nhận user_id, total, status, snapshot hoặc is_simulated từ client.
+
+Quán phải approved, đang mở theo giờ Việt Nam và bật accepting_orders. Khoảng cách Haversine từ tọa độ giao đến quán phải ≤ delivery_radius_km; không áp bán kính tìm kiếm của khách khi đặt. Mọi món phải thuộc cùng quán, đang bán và giá hiện tại bằng expected_price. Backend lấy tên/giá từ MenuItem, lưu snapshot, tính tổng quantity × giá và ghi lịch sử pending cùng transaction. Không tự sửa giá khách đang xem hoặc ghi đơn dở dang khi một dòng không hợp lệ. Địa chỉ dạng chữ chưa được geocode/đối chiếu với tọa độ; client chịu trách nhiệm chọn đúng điểm giao. Không có phí giao/thuế riêng trong bản mẫu.
+
+### Idempotency
+
+UNIQUE idempotency_key toàn hệ thống. Cùng khách, cùng nội dung trong vòng **dưới 24 giờ** kể từ tạo trả 200 với đơn đã có và trạng thái hiện tại; không tạo dòng món/lịch sử mới, không kiểm tra lại giá/khả dụng hiện tại. Hash payload gồm restaurant_id, items, địa chỉ đã trim, tọa độ và session_id; thứ tự các dòng món không ảnh hưởng. Giá kỳ vọng/số lượng/địa chỉ/session thay đổi là nội dung khác. Tọa độ -0 và 0 được coi như nhau.
+
+Key của khách khác hoặc payload khác trả 409 IDEMPOTENCY_CONFLICT, không tiết lộ đơn cũ. Từ đúng mốc 24 giờ trả 409 IDEMPOTENCY_EXPIRED; không xóa/reuse key hoặc tạo thêm đơn. Client phải kiểm tra lịch sử trước khi chủ động đặt mới bằng key mới. Lỗi trước commit không tiêu thụ key. Khóa hàng khách/quán/món khi DB hỗ trợ và UNIQUE bảo vệ khi ghi cạnh tranh; kiểm thử hiện có mô phỏng tranh chấp, chưa xác nhận chạy đồng thời PostgreSQL thực tế.
+
+### Đọc và xử lý đơn
+
+OrderDetail có id, restaurant_id, status, total, delivery_address, latitude, longitude, created_at, items và history. Mỗi item có menu_item_id/quantity/snapshot_price/snapshot_name, sắp theo menu_item_id. History có status/reason/created_at, sắp thời điểm rồi ID; actor_id được lưu DB để truy vết nhưng không trả trong DTO. Không trả hash/key/session/cờ mô phỏng hoặc thông tin tài khoản. Timestamp là ISO 8601; SQLite có thể bỏ offset khi đọc lại như quy ước chung.
+
+GET danh sách trả **mảng** theo thiết kế, mới nhất trước theo ID giảm dần; offset mặc định 0 trong 0–2147483647, limit mặc định 20 trong 1–100. Offset vượt dữ liệu trả []; không có total wrapper. ID path trong 1–2147483647. Khách chỉ thấy đơn của mình, vendor chỉ thấy đơn quán từ membership; đơn ngoài quyền và không tồn tại cùng 404, vendor chưa liên kết quán cũng 404. Chi tiết vendor bổ sung để xem địa chỉ giao/lịch sử khi xử lý đơn.
+
+PATCH reject nhận `{"reason":"Hết nguyên liệu"}`, trim 1–500; các PATCH khác không cần body. Mỗi thao tác thành công trả 200 với OrderDetail, ghi đúng một dòng lịch sử. Sai thứ tự, gọi lặp hoặc đổi trạng thái cuối trả 409; không tự coi lặp PATCH là thành công. Khách chỉ hủy pending; confirmed/preparing/delivering không được hủy. Quán đóng cửa/tạm ngừng vẫn xử lý được đơn đã nhận trước đó. Snapshot/tổng/địa chỉ giữ nguyên khi chuyển trạng thái; không có API sửa/xóa đơn.
+
+| HTTP | Mã lỗi | Trường hợp |
+| :--- | :--- | :--- |
+| 401 / 403 | UNAUTHENTICATED / FORBIDDEN | Thiếu/sai token hoặc sai vai trò |
+| 404 | NOT_FOUND | Quán không approved/tồn tại, đơn ngoài quyền/không tồn tại, thiếu membership |
+| 400 | OUTSIDE_DELIVERY_AREA | Tọa độ giao nằm ngoài phạm vi quán |
+| 400 | ORDER_ITEM_INVALID | Món không tồn tại hoặc thuộc quán khác |
+| 409 | RESTAURANT_UNAVAILABLE | Quán đóng cửa hoặc tắt nhận đơn |
+| 409 | ORDER_ITEM_UNAVAILABLE | Món ngừng bán |
+| 409 | ORDER_PRICE_CHANGED | Giá khác expected_price; details có menu_item_id/current_price |
+| 409 | IDEMPOTENCY_CONFLICT / IDEMPOTENCY_EXPIRED | Key đã dùng khác nội dung/chủ sở hữu hoặc hết 24 giờ |
+| 409 | INVALID_STATE_TRANSITION / ORDER_STATE_CHANGED | Sai thứ tự hoặc trạng thái thay đổi cạnh tranh |
+| 422 | VALIDATION_ERROR | Body/query/path sai giới hạn/kiểu hoặc thiếu/thừa trường |
+
+Schema vẫn revision 001. Chưa có API review, giao diện giỏ hàng/checkout/xử lý đơn hoặc thu phí trực tuyến. Không cam kết xử lý tải lớn hoặc khóa hàng PostgreSQL trước khi kiểm chứng môi trường thật.

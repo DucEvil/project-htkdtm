@@ -67,7 +67,7 @@ Model: [`Restaurant`](../src/backend/app/restaurants/models.py). Hồ sơ và đ
 
 CHECK: `ck_restaurants_name` và `ck_restaurants_address` giới hạn độ dài sau trim lần lượt 1–160, 1–500; `ck_restaurants_latitude` trong [-90, 90]; `ck_restaurants_longitude` trong [-180, 180]; `ck_restaurants_delivery_radius` lớn hơn 0 và không quá 50; `ck_restaurants_status` nhận `pending`, `approved`, `suspended`. Không có UNIQUE/index khai báo riêng.
 
-ORM trim tên/địa chỉ, chặn tọa độ/bán kính không hữu hạn, nhận giờ không kèm múi giờ với độ chính xác phút (`time` hoặc chuỗi `HH:MM`). API F.10.1 kiểm tra giờ đúng `HH:MM`; service tính `is_open` và `can_receive_orders` từ giờ Việt Nam, trạng thái duyệt và cờ nhận đơn. Khoảng qua đêm hợp lệ; hai mốc bằng nhau là 24 giờ. Các trường tính toán không thêm cột DB; DB chưa CHECK độ chính xác phút. Search F.10.3 tính distance_km từ vị trí khách trong query, lọc theo cả bán kính khách và delivery_radius_km của quán; không lưu vị trí khách vào bảng. Kiểm tra phạm vi tại lúc tạo đơn chưa triển khai.
+ORM trim tên/địa chỉ, chặn tọa độ/bán kính không hữu hạn, nhận giờ không kèm múi giờ với độ chính xác phút (`time` hoặc chuỗi `HH:MM`). API F.10.1 kiểm tra giờ đúng `HH:MM`; service tính `is_open` và `can_receive_orders` từ giờ Việt Nam, trạng thái duyệt và cờ nhận đơn. Khoảng qua đêm hợp lệ; hai mốc bằng nhau là 24 giờ. Các trường tính toán không thêm cột DB; DB chưa CHECK độ chính xác phút. Search F.10.3 tính distance_km từ vị trí khách trong query, lọc theo cả bán kính khách và delivery_radius_km của quán; không lưu vị trí khách vào bảng. API tạo đơn F.10.5 đã kiểm tra phạm vi giao tại thời điểm đặt.
 
 ## 4. `restaurant_memberships` — Liên kết người quản lý quán
 
@@ -174,9 +174,9 @@ UNIQUE: `uq_orders_idempotency_key` trên `(idempotency_key)`. CHECK: `ck_orders
 | `cancelled` | Đã hủy |
 | `rejected` | Quán từ chối |
 
-ORM yêu cầu UUID v4 cho session/key; yêu cầu hash gồm 64 ký tự hex và chuyển chữ thường; tổng tiền là số nguyên dương không quá giới hạn BIGINT; trim địa chỉ, chặn tọa độ không hữu hạn. DB chưa CHECK phiên bản UUID hoặc nội dung hex của hash. UNIQUE key chưa thực hiện phản hồi gửi lặp, xác thực người gửi, cửa sổ 24 giờ hoặc kiểm tra payload trùng/khác; service phải bổ sung.
+ORM yêu cầu UUID v4 cho session/key; hash gồm 64 ký tự hex; tổng tiền nguyên dương BIGINT; trim địa chỉ, chặn tọa độ không hữu hạn. API F.10.5 xác thực người gửi và tính hash từ payload, trả đơn cũ nếu cùng khách/nội dung dưới 24 giờ. Khác nội dung/chủ sở hữu hoặc hết hạn trả 409, không tái sử dụng key. DB chưa CHECK phiên bản UUID/nội dung hex; API/ORM thực hiện kiểm tra đó.
 
-Schema chưa bắt buộc có dòng món, chưa tính tổng hoặc kiểm tra cùng quán/khả dụng. `orders/state_machine.py` đã kiểm tra luồng E.2; `orders/service.py` đổi trạng thái và ghi lịch sử trong cùng transaction sau khi kiểm tra vai trò/quyền sở hữu. UPDATE có điều kiện trạng thái cũ để chặn ghi đè thay đổi cạnh tranh. Chưa có API tạo/chuyển trạng thái đơn.
+API tạo đơn bắt buộc 1–100 dòng, kiểm tra cùng quán/khả dụng/giá/phạm vi và tính tổng từ snapshot DB. `orders/state_machine.py` kiểm tra luồng E.2; service và API đổi trạng thái/ghi lịch sử cùng transaction sau khi kiểm tra vai trò/quyền sở hữu. UPDATE có điều kiện trạng thái cũ để chặn ghi đè cạnh tranh; ghi SQL trực tiếp không được các kiểm tra service bảo vệ.
 
 ## 10. `order_items` — Dòng món và thông tin tại lúc đặt
 
@@ -193,7 +193,7 @@ Model: [`OrderItem`](../src/backend/app/orders/models.py).
 
 UNIQUE: `uq_order_items_order_menu_item` trên `(order_id, menu_item_id)`. CHECK: `ck_order_items_quantity` trong 1–99; `ck_order_items_snapshot_price` trong (0, 10.000.000]; `ck_order_items_snapshot_name` trim dài 1–180. Index: `ix_order_items_order_id` trên `(order_id)`, `ix_order_items_menu_item_id` trên `(menu_item_id)`.
 
-ORM kiểm tra số nguyên cho số lượng/giá và trim tên. Snapshot không tự lấy từ menu; service phải đọc giá hợp lệ và lưu tại thời điểm tạo đơn. Thành tiền dòng được tính bằng `quantity * snapshot_price`, chưa có cột riêng. Không tự cập nhật snapshot theo thực đơn và chưa có trigger chặn sửa snapshot bằng SQL.
+ORM kiểm tra số nguyên cho số lượng/giá và trim tên. API tạo đơn đọc giá/tên từ MenuItem đã khóa, kiểm tra expected_price và lưu snapshot tại thời điểm tạo đơn. Thành tiền dòng được tính bằng `quantity * snapshot_price`, chưa có cột riêng. Không tự cập nhật snapshot theo thực đơn và chưa có trigger chặn sửa snapshot bằng SQL.
 
 ## 11. `order_status_history` — Lịch sử trạng thái đơn
 
@@ -210,7 +210,7 @@ Model: [`OrderStatusHistory`](../src/backend/app/orders/models.py).
 
 CHECK: `ck_order_history_status` dùng cùng bảy mã trạng thái Order; `ck_order_history_reason` NULL hoặc trim dài 1–500; `ck_order_history_rejection_reason` yêu cầu `reason IS NOT NULL` khi `status='rejected'`. Index: `ix_order_status_history_order_id` trên `(order_id)`, `ix_order_status_history_actor_id` trên `(actor_id)`.
 
-ORM trim lý do nếu có; quan hệ `Order.history` đọc theo `(created_at, id)`. Service chuyển trạng thái đã kiểm tra actor và ghi một dòng lịch sử cùng transaction với trạng thái mới; từ chối cần lý do 1–500 ký tự, các thao tác khác không nhận lý do. Không có trigger bảo vệ khi ghi SQL trực tiếp. Lịch sử pending ban đầu sẽ do service tạo đơn ghi; chưa có API sửa/xóa lịch sử.
+ORM trim lý do nếu có; quan hệ `Order.history` đọc theo `(created_at, id)`. Service chuyển trạng thái đã kiểm tra actor và ghi một dòng lịch sử cùng transaction với trạng thái mới; từ chối cần lý do 1–500 ký tự, các thao tác khác không nhận lý do. Không có trigger bảo vệ khi ghi SQL trực tiếp. Service tạo đơn đã ghi lịch sử pending ban đầu cùng transaction; chưa có API sửa/xóa lịch sử.
 
 ## 12. `reviews` — Đánh giá món đã mua
 

@@ -1,6 +1,6 @@
 # Cài đặt và tạo cơ sở dữ liệu Vị Việt
 
-Hướng dẫn khởi chạy backend có `/health`, tài liệu API tự sinh, API auth/hồ sơ quán/duyệt quán/thực đơn/danh mục/tìm kiếm và frontend đăng ký/đăng nhập. Đã có migration `001` tạo 15 bảng OLTP; chưa có API giao dịch, seed hoặc dashboard.
+Hướng dẫn khởi chạy backend có `/health`, OpenAPI, API auth/quán/thực đơn/danh mục/tìm kiếm/đơn COD và frontend đăng ký/đăng nhập. Đã có migration `001` tạo 15 bảng OLTP; chưa có seed, dashboard hoặc frontend đơn hàng.
 
 ## Cấu hình khóa JWT
 
@@ -75,6 +75,10 @@ Nếu có Make, các lệnh tương ứng là `make migrate`, `make migrate-stat
 Docker chưa được kiểm chứng trong phiên phát triển này vì máy không có Docker CLI trong PATH. Cần thử lại trên máy có Docker Desktop trước khi đánh dấu nghiệm thu.
 
 ## Kiểm tra
+
+Mốc hiện tại F.10.5: **1036 kiểm thử backend đạt**, gồm 86 ca API đơn COD mới và 950 ca trước; Ruff/format đạt. Kiểm thử API dùng SQLite tạm tạo bằng migration, gồm scope, validation, snapshot, idempotency 24 giờ, mô phỏng tranh chấp UNIQUE và rollback. Chưa kiểm chứng PostgreSQL thực tế. Các đoạn dưới giữ kết quả của mốc trước.
+
+Để thử đơn hàng trong Swagger: tạo quán approved đang mở/bật nhận đơn và món đang bán; đăng nhập customer, gọi POST `/api/v1/orders/` với payload tại [API contract F.10.5](API_CONTRACT.md#đơn-cod-và-chống-gửi-lặp--f105). Dùng UUID v4 mới cho session/key và giá hiện tại cho expected_price. Gửi nguyên payload lần hai nhận 200/cùng ID; sửa quantity với cùng key nhận 409. Đổi sang vendor đúng quán, gọi GET `/api/v1/vendor/orders`, PATCH confirm → preparing → delivering → complete; thử customer hủy một đơn pending khác. Chưa có giao diện checkout hoặc xử lý đơn.
 
 Ở lượt chuyển trạng thái đơn F.10.4, toàn bộ **950 kiểm thử backend đạt**, gồm 167 ca mới và 783 ca trước. Ruff/format đạt. Phần mới là service nội bộ, chưa có endpoint đơn hàng để thử trong Swagger; chạy `python -m pytest tests/test_order_state_machine.py -q` từ backend để kiểm tra riêng. Bộ kiểm thử dùng SQLite tạm, chưa xác nhận khóa hàng/cạnh tranh thực tế trên PostgreSQL. Chi tiết mốc API trước được giữ bên dưới.
 
