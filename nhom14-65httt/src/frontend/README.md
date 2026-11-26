@@ -1,10 +1,27 @@
 # Frontend Vị Việt
 
-Đã có bộ khung React/Vite/TypeScript với trang chủ, trang 404 và liên kết kiểm tra kết nối backend. Các màn hình nghiệp vụ chưa được triển khai và sẽ được bổ sung theo từng phần để commit riêng.
+Đã có frontend auth F.8 theo thiết kế cấu trúc: đăng ký/đăng nhập, AuthContext/useAuth, API client, AppShell/Navbar/Footer và RoleGuard. Giao diện gọi API backend thật; chưa có chức năng tìm món, đặt hàng hoặc dashboard quán/admin.
 
 Nội dung dưới đây là đặc tả định hướng, bám theo [đề cương](../../docs/De_cuong_Vi_Viet.docx) (mục 4, 5.3, 6, 7, 8). Phần công nghệ và lệnh chạy đã có được ghi riêng ở mục 6; các đề xuất cho chức năng chưa triển khai cần được chốt theo [thiết kế cấu trúc](../../docs/THIET_KE_CAU_TRUC.md).
 
 Phụ trách dự kiến xem tại [danhsachnhom.md](../../danhsachnhom.md).
+
+## Auth đã triển khai
+
+| Route | Nội dung hiện có |
+| :--- | :--- |
+| `/` | Trang giới thiệu, liên kết đăng ký/đăng nhập hoặc tài khoản |
+| `/register` | Đăng ký customer/vendor, xác nhận mật khẩu, chuyển về đăng nhập khi thành công |
+| `/login` | Đăng nhập bằng email/mật khẩu, hiển thị lỗi và chuyển đến trang theo vai trò |
+| `/account` | Thông tin tài khoản đã đăng nhập |
+| `/vendor`, `/admin` | Thông tin tài khoản có guard vai trò tương ứng; chưa có dashboard nghiệp vụ |
+| `/forbidden`, route không tồn tại | Thông báo không đủ quyền/trang 404 |
+
+API theo [contract auth](../../docs/API_CONTRACT.md). Mật khẩu giữ nguyên khi gửi, không lưu vào storage; role đăng ký chỉ có customer/vendor. Form có nhãn, autocomplete, validation, trạng thái chờ và khóa gửi lặp. Không thêm đăng nhập xã hội hoặc khôi phục mật khẩu khi backend chưa hỗ trợ.
+
+Token access/refresh được lưu dưới khóa `viviet.auth.v1` trong localStorage theo Markdown. Không lưu User/role để cấp quyền; khi mở lại trang phải gọi `/auth/me` trước khi hiển thị trang riêng. 401 của API được thử refresh một lần, các request đồng thời dùng chung một refresh; 401/422 từ refresh hoặc 401 sau thử lại xóa phiên. Lỗi mạng/5xx giữ token và cho thử lại; 403 không tự đăng xuất. Logout và đổi phiên vô hiệu hóa phản hồi cũ; sự kiện storage đồng bộ phiên giữa các tab. Nếu storage bị chặn, phiên còn trong bộ nhớ và giao diện thông báo có thể cần đăng nhập lại khi tải lại.
+
+Logout chỉ xóa phiên trình duyệt, chưa thu hồi token ở máy chủ. localStorage có thể được JavaScript cùng origin đọc; không coi đây là cookie HttpOnly. Backend vẫn kiểm tra quyền mỗi API, RoleGuard không thay thế kiểm tra membership của quán. Sau đăng nhập chỉ nhận đích quay lại thuộc `/account`, `/vendor`, `/admin`, không nhận URL ngoài hoặc đường dẫn có dấu gạch chéo ngược.
 
 ## 1. Các màn hình dự kiến
 
@@ -26,7 +43,7 @@ Phụ trách dự kiến xem tại [danhsachnhom.md](../../danhsachnhom.md).
 | `/restaurants/:id` | Khách | Thông tin quán, giờ mở, thực đơn, trạng thái món |
 | `/cart`, `/checkout` | Khách | Giỏ hàng một quán, xác nhận địa chỉ giao, thanh toán khi nhận |
 | `/orders`, `/orders/:id` | Khách | Lịch sử và tiến trình đơn, hủy đơn, đánh giá sau hoàn tất |
-| `/owner/*` | Chủ quán | Hồ sơ quán, thực đơn, nguyên liệu, đơn hàng, thống kê |
+| `/vendor/*` | Chủ quán | Hồ sơ quán, thực đơn, nguyên liệu, đơn hàng, thống kê |
 | `/admin/*` | Quản trị viên | Duyệt quán, món chuẩn và nhãn, tài khoản, chất lượng dữ liệu |
 
 Chặn route theo vai trò chỉ để cải thiện trải nghiệm; quyền thật do backend kiểm tra ở mọi API.
@@ -100,13 +117,13 @@ Phục vụ 150 trường hợp so sánh danh sách phổ biến với mô hình
 - Xin đồng thuận trước khi lưu hồ sơ khẩu vị và vị trí; giải thích dữ liệu dùng để gợi ý.
 - Không lưu tọa độ chính xác lâu dài trong `localStorage`; ưu tiên giữ trong phiên.
 - Không đưa khóa bí mật vào mã nguồn trình duyệt. Khóa Google Maps phía trình duyệt luôn bị lộ, nên phải giới hạn theo HTTP referrer và chỉ bật API cần dùng.
-- Backend auth F.8 hiện nhận/trả JWT trong JSON và header Bearer theo [API contract](../../docs/API_CONTRACT.md), chưa có cookie `HttpOnly` hoặc giao diện auth. Cơ chế lưu token phía trình duyệt sẽ được triển khai ở phần frontend riêng; không ghi token ra log. Cookie `HttpOnly` là hướng có thể bổ sung sau khi thống nhất luồng cookie/CSRF với backend.
+- Auth F.8 nhận/trả JWT trong JSON và header Bearer, frontend persist token trong localStorage theo thiết kế; không ghi token ra log. Cookie `HttpOnly` là hướng có thể bổ sung sau khi thống nhất luồng cookie/CSRF với backend.
 
 ## 6. Công nghệ, lệnh chạy và cấu trúc
 
 ### Bộ khung hiện có
 
-Node.js >=20, React 18, Vite 5, TypeScript 5.6 và React Router. Đã có `package.json`, `package-lock.json`, cấu hình môi trường mẫu và Dockerfile.
+Node.js 20.19+, 22.12+ hoặc 24+ theo `engines` của package; React 18, Vite 5, TypeScript 5.6 và React Router. Đã có `package.json`, `package-lock.json`, cấu hình môi trường mẫu và Dockerfile. Vitest dùng Vite riêng trong dependencies để chạy bộ kiểm thử.
 
 Từ thư mục `src/frontend/`:
 
@@ -115,34 +132,35 @@ npm ci
 npm run dev
 ```
 
-Frontend chạy tại `http://localhost:5173`. Kiểm tra biên dịch bằng `npm run build`; dùng `npm run format` để định dạng và `npm run format:check` để kiểm tra định dạng.
+Frontend chạy tại `http://localhost:5173`. `npm run build` kiểm tra TypeScript của nguồn, tests/config và tạo bản production; `npm run lint`, `npm run format:check` kiểm tra mã/định dạng. `npm test` chạy 43 ca API client và React UI với Vitest/Testing Library, không cần backend. `npm run test:e2e` chạy ba kịch bản trình duyệt với backend thật; cần khởi động riêng backend/DB tạm và frontend theo [hướng dẫn](../../docs/HUONG_DAN_CAI_DAT.md#kiểm-thử-auth-trên-trình-duyệt).
 
 `VITE_API_BASE_URL` trong cấu hình mẫu là `/api/v1`. Vite chuyển `/api` và `/health` tới backend local ở `http://127.0.0.1:8000`; Docker đặt `API_PROXY_TARGET=http://backend:8000`.
 
 Xem [hướng dẫn cài đặt](../../docs/HUONG_DAN_CAI_DAT.md) và [tiến độ từng phần](../../docs/TIEN_DO_TRIEN_KHAI.md).
 
-### Cấu trúc mở rộng (đề xuất)
+### Cấu trúc auth hiện có
 
-Thư viện gọi API có cache (ví dụ TanStack Query), Google Maps JavaScript API và cây thư mục dưới đây là đề xuất tham khảo từ đặc tả frontend. Chúng chưa được triển khai; cấu trúc cuối cùng cần đối chiếu với [thiết kế cấu trúc chung](../../docs/THIET_KE_CAU_TRUC.md) trước khi lập trình từng module.
+Đường dẫn theo F.8 của [thiết kế cấu trúc chung](../../docs/THIET_KE_CAU_TRUC.md). Chưa có cache truy vấn, bản đồ, giỏ hàng hoặc các trang nghiệp vụ.
 
 ```text
 src/frontend/
 ├── package.json
 ├── .env.example          # chỉ chứa tên biến và giá trị mẫu
 ├── src/
-│   ├── api/              # client API, kiểu dữ liệu, xử lý lỗi chung
-│   ├── features/
-│   │   ├── auth/
-│   │   ├── taste/        # khai báo khẩu vị
-│   │   ├── recommend/    # Top 5, lý do, phản hồi
-│   │   ├── restaurant/   # quán, thực đơn, bản đồ
-│   │   ├── cart-order/
-│   │   ├── owner/
-│   │   └── admin/
-│   ├── tracking/         # ghi sự kiện, session_id, gửi theo lô
-│   ├── components/       # thành phần dùng chung
-│   └── routes/           # khai báo route và chặn theo vai trò
-└── tests/
+│   ├── api/client.ts, auth.ts
+│   ├── types/auth.ts
+│   ├── contexts/AuthContext.tsx, authState.ts
+│   ├── hooks/useAuth.ts
+│   ├── components/layout/  # AppShell, Navbar, Footer, RoleGuard
+│   ├── pages/auth/         # AuthLayout, LoginPage, RegisterPage
+│   ├── pages/HomePage.tsx, AccountPage.tsx
+│   ├── utils/auth.ts       # nhãn vai trò, đích điều hướng nội bộ
+│   ├── router.tsx
+│   └── styles.css
+├── tests/                 # client/session và React UI
+├── e2e/auth.spec.ts        # backend thật và bố cục desktop/mobile
+├── vitest.config.ts
+└── playwright.config.ts
 ```
 
 ### Biến môi trường (đề xuất)
@@ -162,7 +180,7 @@ Mọi biến `VITE_*` đều lộ ra trình duyệt, vì vậy không đặt bí
 Danh sách endpoint, định dạng lỗi và mã trạng thái cần thống nhất với [backend](../backend/README.md) và ghi lại khi triển khai. Yêu cầu tối thiểu từ phía frontend:
 
 - API gợi ý trả về `request_id`, danh sách món theo thứ hạng, lý do cho từng món, cờ chưa cá nhân hóa và nguyên nhân khi thiếu ứng viên.
-- API tạo đơn nhận khóa chống gửi lặp (ví dụ header `Idempotency-Key`) và trả lỗi riêng cho các trường hợp món hết bán, giá thay đổi, ngoài phạm vi, quán đóng cửa.
+- API tạo đơn sẽ nhận `idempotency_key` trong body theo thiết kế E.4 và trả lỗi riêng cho các trường hợp món hết bán, giá thay đổi, ngoài phạm vi, quán đóng cửa.
 - Định dạng lỗi thống nhất có mã lỗi máy đọc được để hiển thị thông báo tiếng Việt phù hợp.
 - Có cơ chế cập nhật trạng thái đơn (polling định kỳ là đủ cho bản mẫu).
 

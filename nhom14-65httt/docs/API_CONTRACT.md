@@ -126,4 +126,6 @@ Admin không tự vượt qua guard sở hữu của vendor; router admin sẽ d
 
 ## Phạm vi kiểm chứng
 
-API auth được kiểm thử với FastAPI TestClient và SQLite tạm có schema tạo bằng migration `001`, gồm dữ liệu tài khoản, token và phân quyền. Chưa chạy PostgreSQL/Docker thực tế hoặc tích hợp giao diện auth. Backend nhận/trả token trong JSON và header Bearer; chưa triển khai cookie HttpOnly hay storage trình duyệt. Phần frontend F.8 tiếp theo sẽ tích hợp theo contract này.
+API auth được kiểm thử với FastAPI TestClient và SQLite tạm có schema tạo bằng migration `001`, gồm dữ liệu tài khoản, token và phân quyền. Frontend F.8 đã tích hợp và được kiểm tra bằng Playwright/Edge với backend thật trên DB SQLite tạm: đăng ký/đăng nhập, tải lại, route theo vai trò và logout. Chưa chạy PostgreSQL/Docker thực tế.
+
+Frontend lưu hai token trong `localStorage` dưới khóa `viviet.auth.v1`, không lưu password hoặc dùng User/role trong storage để cấp quyền. Sau tải lại, frontend gọi `/auth/me`; nếu access hết hạn thì gọi `/auth/refresh` và thử lại request một lần. Refresh bị từ chối xóa phiên; lỗi mạng/5xx cho phép thử lại. Request đồng thời dùng chung một refresh; phản hồi từ phiên trước không khôi phục được phiên sau logout/đổi tài khoản. Logout và thay đổi storage được đồng bộ giữa các tab. Backend vẫn nhận token qua JSON/Bearer, chưa có cookie HttpOnly hoặc thu hồi token phía máy chủ.

@@ -17,7 +17,7 @@ Mật khẩu dùng Passlib PBKDF2-SHA256 với 600.000 vòng và salt ngẫu nhi
 
 Dependency `get_current_user`, `require_role(*roles)`, `require_vendor_owner` có thể import từ `app.auth.dependencies` hoặc `app.dependencies`. Guard đọc lại vai trò/membership từ DB; admin không tự bỏ qua quyền sở hữu quán của vendor. Các router vendor/admin nghiệp vụ chưa có.
 
-Refresh dùng JWT không lưu trạng thái: token cũ vẫn còn hiệu lực đến hạn, chưa có thu hồi từng phiên/thiết bị hoặc logout phía máy chủ. Không gọi việc cấp token mới là rotation có chống dùng lại. Giao diện auth, nơi lưu token và logout cục bộ sẽ được tích hợp ở lượt riêng; backend hiện chưa cấp cookie HttpOnly. Phần này không thay đổi schema hoặc revision `001`.
+Refresh dùng JWT không lưu trạng thái: token cũ vẫn còn hiệu lực đến hạn, chưa có thu hồi từng phiên/thiết bị hoặc logout phía máy chủ. Không gọi việc cấp token mới là rotation có chống dùng lại. Frontend auth đã tích hợp token trong localStorage, tải lại User từ `/me`, tự refresh một lần và logout cục bộ; backend chưa cấp cookie HttpOnly. Phần auth không thay đổi schema hoặc revision `001`.
 
 ## Model tài khoản đã bổ sung
 
@@ -187,7 +187,7 @@ Khi revision đã được commit/áp dụng, thay đổi schema bằng revision
 
 Python >=3.11, FastAPI, SQLAlchemy, PostgreSQL và scikit-learn. Phụ thuộc được khai báo trong `requirements.txt` và `requirements-dev.txt`. Chạy từ thư mục này: `python -m uvicorn app.main:app --reload`; kiểm tra: `python -m pytest tests -q`. Xem [hướng dẫn cài đặt](../../docs/HUONG_DAN_CAI_DAT.md) để tạo môi trường trước khi chạy.
 
-Các models F.5, migration F.6, tài liệu dữ liệu F.7 và auth backend F.8 đã được bổ sung. Tiếp theo là phần frontend auth còn lại của F.8. Kiểm thử auth ở F.9 được viết cùng backend để có thể kiểm tra trước khi commit; kiểm thử tích hợp frontend sẽ bổ sung sau. Alembic trong backend là nguồn schema duy nhất; các model BI hoặc đánh giá mù của phần sau sẽ dùng revision bổ sung khi được triển khai.
+Các models F.5, migration F.6, tài liệu dữ liệu F.7 và auth backend/frontend F.8 cùng kiểm thử F.9 đã được bổ sung. Tiếp theo là các API nghiệp vụ F.10, triển khai tách theo module. Alembic trong backend là nguồn schema duy nhất; các model BI hoặc đánh giá mù của phần sau sẽ dùng revision bổ sung khi được triển khai.
 
 Xem [README nhóm](../../README.md), [nguồn dữ liệu](../../docs/NGUON_DU_LIEU.md) và [kế hoạch](../../docs/KE_HOACH_THUC_HIEN.md).
 

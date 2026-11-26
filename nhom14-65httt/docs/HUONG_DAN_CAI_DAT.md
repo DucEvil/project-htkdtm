@@ -1,6 +1,6 @@
 # Cài đặt và tạo cơ sở dữ liệu Vị Việt
 
-Hướng dẫn khởi chạy backend có `/health`, tài liệu API tự sinh, API auth và frontend tối thiểu. Đã có migration `001` tạo 15 bảng OLTP, gồm tracking; chưa có API giao dịch, seed, dashboard hoặc giao diện auth.
+Hướng dẫn khởi chạy backend có `/health`, tài liệu API tự sinh, API auth và frontend đăng ký/đăng nhập. Đã có migration `001` tạo 15 bảng OLTP, gồm tracking; chưa có API giao dịch, seed hoặc dashboard.
 
 ## Cấu hình khóa JWT
 
@@ -14,7 +14,7 @@ Giữ nguyên khóa giữa các lần khởi động nếu muốn token tiếp t
 
 ## Chạy local trên Windows
 
-Cần Python 3.11 trở lên và Node.js 20 trở lên. Với PostgreSQL, DB/tài khoản trong `.env` cần tồn tại và máy chủ DB đang chạy; có thể chạy riêng DB bằng `docker compose up db -d` từ thư mục nhóm nếu có Docker. Để thử local chưa có PostgreSQL, dùng lựa chọn SQLite được chú thích trong đoạn lệnh dưới. Từ thư mục `nhom14-65httt/`:
+Cần Python 3.11 trở lên; Node.js 20.19+, 22.12+ hoặc 24+ theo `engines` frontend. Với PostgreSQL, DB/tài khoản trong `.env` cần tồn tại và máy chủ DB đang chạy; có thể chạy riêng DB bằng `docker compose up db -d` từ thư mục nhóm nếu có Docker. Để thử local chưa có PostgreSQL, dùng lựa chọn SQLite được chú thích trong đoạn lệnh dưới. Từ thư mục `nhom14-65httt/`:
 
 ```powershell
 # Chỉ copy ở lần đầu; sau đó cấu hình SECRET_KEY như hướng dẫn phía trên:
@@ -46,6 +46,8 @@ npm run dev
 
 Frontend: `http://localhost:5173`. Vite chuyển `/api` và `/health` sang backend local. `.env` backend luôn được đọc từ thư mục nhóm, không phụ thuộc thư mục chạy lệnh. Frontend dùng cấu hình riêng tại `src/frontend/.env.local` nếu cần; xem `.env.example` bên cạnh.
 
+Mở `/register` để tạo customer/vendor, sau đó đăng nhập ở `/login`. Khách đến `/account`, chủ quán đến `/vendor`, admin đã được cấp hợp lệ đến `/admin`; hiện các trang này chỉ hiển thị tài khoản và kiểm tra vai trò, chưa có dashboard. Tải lại trang để kiểm tra phục hồi qua `/me`; logout chỉ xóa phiên trình duyệt. Chưa có tài khoản admin mẫu; đăng ký công khai không nhận admin.
+
 ## Chạy bằng Docker
 
 Từ thư mục nhóm, sau khi copy `.env.example` thành `.env`:
@@ -74,9 +76,46 @@ Docker chưa được kiểm chứng trong phiên phát triển này vì máy kh
 
 # Từ src/frontend
 npm run build
+npm run lint
+npm run format:check
+npm test
 ```
 
 Toàn bộ 425 kiểm thử đạt, gồm 84 ca auth, các model OLTP và 23 ca migration. Kiểm thử auth dùng API thật trên SQLite tạm được migration tạo, gồm đăng ký/đăng nhập, JWT/refresh, vai trò/quyền sở hữu và dữ liệu không hợp lệ. Migration kiểm tra nâng/hạ/nâng lại, lệch schema, constraint, đường dẫn, URL và mặc định JSON. PostgreSQL mới kiểm tra SQL offline; chưa xác nhận PostgreSQL/Docker thực tế hoặc API giao dịch/tracking.
+
+Frontend có 43 kiểm thử Vitest/React UI và ba kịch bản Playwright đạt với backend thật trên SQLite tạm; đã kiểm tra ảnh login/register ở 1280px và 390px. Build, TypeScript (gồm tests/config), lint và format check đạt. Kết quả 425 ca backend là mốc của commit backend auth; lượt frontend không đổi mã Python. npm audit còn bốn cảnh báo thuộc Vite 5/React Router 6 đã có; chưa nâng major toolchain trong phần auth này.
+
+## Kiểm thử auth trên trình duyệt
+
+Ba kịch bản E2E tạo tài khoản thử qua giao diện, vì vậy chạy backend với DB SQLite riêng. Sau khi đã cài dependencies, mở terminal tại thư mục nhóm:
+
+```powershell
+New-Item -ItemType Directory -Force .runtime | Out-Null
+$testDatabase = Join-Path (Get-Location).Path '.runtime/auth-e2e.db'
+$backendPython = Join-Path (Get-Location).Path 'src/backend/.venv/Scripts/python.exe'
+$env:DATABASE_URL = 'sqlite:///' + $testDatabase.Replace('\', '/')
+$env:SECRET_KEY = & $backendPython -c "import secrets; print(secrets.token_urlsafe(48))"
+Set-Location src/backend
+& $backendPython -m alembic upgrade head
+& $backendPython -m uvicorn app.main:app --host 127.0.0.1 --port 8001
+```
+
+Terminal thứ hai, từ `src/frontend/`:
+
+```powershell
+$env:API_PROXY_TARGET = 'http://127.0.0.1:8001'
+npm run dev -- --host 127.0.0.1 --port 5174 --strictPort
+```
+
+Terminal thứ ba, từ `src/frontend/` trên Windows có Microsoft Edge:
+
+```powershell
+$env:E2E_BASE_URL = 'http://127.0.0.1:5174'
+$env:E2E_BROWSER_CHANNEL = 'msedge'
+npm run test:e2e
+```
+
+Nếu chưa có Edge, có thể cài Chromium dành cho Playwright bằng `npx playwright install chromium`, bỏ biến `E2E_BROWSER_CHANNEL` và chạy lại. Bộ test không tự khởi động server hay chọn DB thay bạn. Không trỏ E2E vào DB ứng dụng cần giữ; dùng Ctrl+C để dừng hai server thử sau khi kiểm tra. Ảnh kiểm tra nằm trong `.runtime/playwright-results/`, không đưa vào Git. Trên Windows bị chặn `npm.ps1`, dùng `npm.cmd` thay `npm`.
 
 ## Thay đổi schema sau này
 
