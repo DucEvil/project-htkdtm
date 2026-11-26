@@ -7,6 +7,7 @@ from sqlalchemy import engine_from_config, pool
 
 from app.config import settings
 from app.database import Base
+from app.users.models import User  # noqa: F401 - đăng ký bảng users vào Base.metadata
 
 # Alembic Config object
 config = context.config

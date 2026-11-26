@@ -1,6 +1,6 @@
 # Cài đặt Phase 0
 
-Phase này chỉ khởi chạy backend có `/health`, tài liệu API tự sinh và frontend tối thiểu. Chưa có model, bảng nghiệp vụ, đăng nhập, đặt đơn, AI hay BI.
+Hướng dẫn khởi chạy backend có `/health`, tài liệu API tự sinh và frontend tối thiểu. Đã bổ sung model `User`, nhưng chưa có migration tạo bảng nghiệp vụ trong DB ứng dụng, đăng nhập, đặt đơn, AI hay BI.
 
 ## Chạy local trên Windows
 
@@ -34,7 +34,7 @@ Từ thư mục nhóm, sau khi copy `.env.example` thành `.env`:
 docker compose up --build
 ```
 
-Compose chạy PostgreSQL 16, backend ở cổng 8000 và frontend ở cổng 5173. Backend dùng hostname `db`; Vite proxy tới `backend:8000` trong mạng Docker. Chưa cần chạy migrate/seed ở Phase 0 vì chưa có models hoặc revision. Các lệnh đó sẽ được bổ sung và kiểm tra theo từng phase.
+Compose chạy PostgreSQL 16, backend ở cổng 8000 và frontend ở cổng 5173. Backend dùng hostname `db`; Vite proxy tới `backend:8000` trong mạng Docker. Chưa cần chạy migrate/seed vì chưa có migration revision hoặc dữ liệu mẫu. Các lệnh đó sẽ được bổ sung và kiểm tra theo từng phần.
 
 Docker chưa được kiểm chứng trong phiên phát triển này vì máy không có Docker CLI trong PATH. Cần thử lại trên máy có Docker Desktop trước khi đánh dấu nghiệm thu.
 
@@ -48,6 +48,6 @@ Docker chưa được kiểm chứng trong phiên phát triển này vì máy kh
 npm run build
 ```
 
-Các kiểm tra Phase 0 gồm health, request ID, CORS, cấu trúc lỗi và cấu hình URL DB. Chúng không xác nhận kết nối PostgreSQL hoặc các chức năng ở phase sau.
+Các kiểm tra gồm health, request ID, CORS, cấu trúc lỗi, cấu hình URL DB và lưu User model với ràng buộc email/vai trò trên SQLite. Chúng không xác nhận kết nối PostgreSQL hoặc các chức năng ở phần sau.
 
 Không đưa `.env`, `.venv/`, `node_modules/`, `dist/` hay `.runtime/` vào commit.
