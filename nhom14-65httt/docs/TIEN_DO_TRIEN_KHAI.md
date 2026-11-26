@@ -2,20 +2,21 @@
 
 Mỗi lượt triển khai chỉ thêm một phần để nhóm kiểm tra và commit riêng. Trình tự dưới đây theo phần F của [thiết kế](THIET_KE_CAU_TRUC.md). Có file khung không đồng nghĩa chức năng đã hoàn tất.
 
-Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của mục F** để commit riêng từng model, không phải tên mục nguyên bản của tài liệu. Migration vẫn chờ bước 6; API và giao diện sẽ được triển khai sau models theo các bước tiếp theo.
+Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của mục F** để commit riêng từng model, không phải tên mục nguyên bản của tài liệu. Migration dùng bước 6, ERD/từ điển dữ liệu dùng bước 7. Bảng tiến độ phản ánh trạng thái hiện tại; các mục kết quả bên dưới giữ mốc kiểm tra của từng lượt triển khai.
 
 | Phần | Nội dung | Trạng thái trong mã nguồn hiện tại |
 | :--- | :--- | :--- |
 | Phase 0 | Cấu hình môi trường, Docker, backend/frontend chạy tối thiểu | Đã chuẩn bị; xem hướng dẫn cài đặt và kết quả kiểm tra |
-| Phase 1.1 | `users/models.py`: tài khoản và vai trò | Đã bổ sung model và kiểm thử; chưa có migration hoặc API auth |
-| Phase 1.2 | `preferences/models.py`: khẩu vị | Đã bổ sung model, liên kết User và kiểm thử; chưa có migration/API |
-| Phase 1.3 | `restaurants/models.py`: quán và thành viên quản lý | Đã bổ sung hai model và kiểm thử; chưa có migration/API |
-| Phase 1.4 | `menu/models.py`: món chuẩn, món bán, nguyên liệu | Đã bổ sung bốn model và kiểm thử; chưa có migration/API |
-| Phase 1.5 | `orders/models.py`: đơn, món đặt và lịch sử | Đã bổ sung ba model và kiểm thử; chưa có migration/service/API |
-| Phase 1.6 | `reviews/models.py`: đánh giá món | Đã bổ sung model và kiểm thử; chưa có migration/service/API |
-| Phase 1.7 | `tracking/models.py`: yêu cầu gợi ý, hiển thị, sự kiện | Đã bổ sung ba model và kiểm thử; chưa có migration/service/API |
-| Phase 1.8 | Migration ban đầu, ERD và từ điển dữ liệu | Chờ các model được chốt |
-| Phase 1.9 | Auth backend, frontend và kiểm thử | Chờ models/migration |
+| Phase 1.1 | `users/models.py`: tài khoản và vai trò | Có model, kiểm thử, migration 001; chưa có API auth |
+| Phase 1.2 | `preferences/models.py`: khẩu vị | Có model, kiểm thử, migration 001; chưa có API |
+| Phase 1.3 | `restaurants/models.py`: quán và thành viên quản lý | Có hai model, kiểm thử, migration 001; chưa có API |
+| Phase 1.4 | `menu/models.py`: món chuẩn, món bán, nguyên liệu | Có bốn model, kiểm thử, migration 001; chưa có API |
+| Phase 1.5 | `orders/models.py`: đơn, món đặt và lịch sử | Có ba model, kiểm thử, migration 001; chưa có service/API |
+| Phase 1.6 | `reviews/models.py`: đánh giá món | Có model, kiểm thử, migration 001; chưa có service/API |
+| Phase 1.7 | `tracking/models.py`: yêu cầu gợi ý, hiển thị, sự kiện | Có ba model, kiểm thử, migration 001; chưa có service/API |
+| F.6 | Migration khởi tạo | Đã có revision 001 tạo 15 bảng; kiểm thử SQLite và SQL PostgreSQL offline |
+| F.7 | ERD và từ điển dữ liệu | Chưa viết; làm riêng sau migration |
+| Phase 1.9 | Auth backend, frontend và kiểm thử | Chưa triển khai; tiếp sau tài liệu dữ liệu |
 | Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Chưa đưa vào mã nguồn hiện tại |
 | Phase 3 | AI, tracking và dữ liệu | Chưa đưa vào mã nguồn hiện tại |
 | Phase 4 | ETL, BI, Power BI và đánh giá | Chưa đưa vào mã nguồn hiện tại |
@@ -32,7 +33,7 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Backend: 5 kiểm thử đạt (health/request ID, định dạng lỗi, CORS, cấu hình URL DB).
 - Frontend: `npm run build` và `npm run format:check` đạt.
 - Chưa kiểm chứng Docker/PostgreSQL vì môi trường phát triển không có Docker CLI.
-- Bộ khung, phần hợp nhất tài liệu và models từ tài khoản đến Review đã được commit. Các models tracking là phần cuối của F.5; tiếp theo là migration F.6 rồi ERD/từ điển dữ liệu F.7, mỗi lượt tách riêng để commit.
+- Bộ khung, phần hợp nhất tài liệu và toàn bộ models F.5 đã được commit. Sau migration F.6 là ERD/từ điển dữ liệu F.7, mỗi lượt tách riêng để commit.
 
 ## Phần tài khoản và vai trò
 
@@ -105,11 +106,23 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Chốt sáu mã sự kiện theo nội dung tracking trong Markdown; thống nhất ba tên `rec_*` từng được đề xuất trong README frontend thành `impression`, `click`, `feedback`, và mô tả riêng occurred_at/received_at. Chưa có client hoặc API tracking thực thi.
 - Kết quả: 318 kiểm thử đạt, gồm 66 ca tracking và 252 ca đã có. Kiểm thử dữ liệu dùng SQLite; chưa kiểm chứng PostgreSQL.
 - Đã khai báo đủ các models liệt kê ở F.5. Chưa tạo migration F.6, API tiếp nhận, kiểm tra thời gian/hiển thị, ETL/quy thuộc/KPI hoặc model đánh giá mù ở phần AI sau.
-- Chưa tự commit/push; giữ migration cho lượt riêng sau khi models được người dùng commit.
+- Phần models tracking đã được người dùng commit; migration được triển khai ở lượt riêng sau đó.
+
+## Migration khởi tạo F.6
+
+- Tạo `alembic/versions/001_initial_schema.py`, revision gốc `001`, đúng 15 bảng OLTP đã chốt ở F.5. Không nhập models đang phát triển trong file migration, không đưa bảng BI/đánh giá mù chưa triển khai vào schema ban đầu.
+- Có PK, FK, UNIQUE, CHECK, index và mặc định phía DB; `downgrade` bỏ theo thứ tự ngược phụ thuộc. Mặc định Boolean dùng `sa.false()` để sinh SQL đúng cho cả PostgreSQL/SQLite.
+- Cấu hình Alembic dùng `%(here)s` để không phụ thuộc thư mục chạy lệnh, bật so sánh kiểu/mặc định và bật FK khi migrate SQLite. Sửa lỗi escape URL kết nối hai lần với ký tự `%`.
+- Thêm lệnh `migrate-status`, `migrate-check` và hướng dẫn nâng schema local/Docker; chưa chạy migration vào DB ứng dụng của người dùng. Chưa có seed/API/BI.
+- Thêm hỗ trợ so sánh mặc định JSON dạng literal trên PostgreSQL để tránh dùng toán tử bằng không được hỗ trợ cho kiểu `json`; các kiểu khác tiếp tục dùng cơ chế Alembic.
+- Toàn bộ 341 kiểm thử đạt, gồm 23 ca migration: nâng/hạ/nâng lại khi có dữ liệu, chạy head lặp không xóa dữ liệu, đối chiếu PK/FK/index/UNIQUE/CHECK, phát hiện schema lệch, ghi dữ liệu ORM trên schema do migration tạo, URL/đường dẫn, mặc định JSON và SQL PostgreSQL offline.
+- PostgreSQL/Docker thực tế chưa được kiểm chứng vì môi trường không có CLI/server tương ứng. Các thao tác nâng/hạ kiểm thử dùng SQLite tạm; không sử dụng DB cần giữ dữ liệu.
+- Chưa tự commit/push migration; ERD và từ điển dữ liệu F.7 được để riêng cho lượt sau.
 
 ## Dọn bản nháp cục bộ
 
 - Theo yêu cầu người dùng, chỉ dọn bản nháp khi bản chính tương ứng đã được tích hợp, kiểm thử, commit và không có thay đổi chưa commit.
-- Đã xóa sáu bản `models.py` cũ trong `.runtime/pending-implementation/src/backend/app/users/`, `preferences/`, `restaurants/`, `menu/`, `orders/`, `reviews/`. Bản chính của chúng vẫn nằm trong `src/` và lịch sử Git.
-- Các schema/service/router chưa tích hợp và công cụ Python/uv đang dùng để kiểm tra vẫn được giữ lại. Bản nháp tracking chỉ dọn sau khi phần tracking được commit và đã bảo toàn phần BlindEvaluation chưa tích hợp cùng nằm trong file nháp đó.
+- Đã xóa bảy bản `models.py` cũ trong `.runtime/pending-implementation/src/backend/app/users/`, `preferences/`, `restaurants/`, `menu/`, `orders/`, `reviews/`, `tracking/`. Bản chính của chúng vẫn nằm trong `src/` và lịch sử Git.
+- Trước khi dọn tracking đã bảo toàn nguyên lớp BlindEvaluation chưa tích hợp sang bản nháp `src/backend/app/ai/evaluation_models.py` trong `.runtime/pending-implementation/`. Các schema/service/router chưa tích hợp và công cụ Python/uv đang dùng để kiểm tra vẫn được giữ lại.
+- DB rỗng dùng để sinh migration ở `.runtime/migration-generation/` đã được dọn sau khi sinh xong. Các bản nháp migration cũ chưa được dùng hoặc chép đè vào migration hiện tại.
 - Không xóa toàn bộ `.runtime/` trong lúc công cụ ở đó vẫn phục vụ kiểm thử; không thêm bản nháp vào commit.

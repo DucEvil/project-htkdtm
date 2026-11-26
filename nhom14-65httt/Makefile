@@ -1,4 +1,4 @@
-.PHONY: help dev dev-db stop migrate migrate-new seed load-vifoodrec test etl \
+.PHONY: help dev dev-db stop migrate migrate-new migrate-check migrate-status seed load-vifoodrec test etl \
         lint-backend lint-frontend install-backend install-frontend
 
 help: ## Hiển thị trợ giúp
@@ -24,6 +24,12 @@ migrate: ## Chạy migration lên bản mới nhất
 
 migrate-new: ## Tạo migration mới (msg="mô tả")
 	docker compose exec backend alembic revision --autogenerate -m "$(msg)"
+
+migrate-check: ## Kiểm tra schema hiện tại so với models
+	docker compose exec backend alembic check
+
+migrate-status: ## Xem revision hiện tại của cơ sở dữ liệu
+	docker compose exec backend alembic current
 
 seed: ## Nạp dữ liệu mẫu
 	docker compose exec backend python -m scripts.seed

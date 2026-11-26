@@ -1,6 +1,6 @@
 # Backend Vị Việt
 
-Đã có nền tảng FastAPI: `/health`, tài liệu OpenAPI tại `/docs`, cấu hình môi trường, SQLAlchemy, Alembic, middleware request ID/CORS/logging và định dạng lỗi thống nhất. Đã khai báo các models OLTP liệt kê ở bước F.5, gồm tracking; chưa có migration revision hoặc API nghiệp vụ.
+Đã có nền tảng FastAPI: `/health`, tài liệu OpenAPI tại `/docs`, cấu hình môi trường, SQLAlchemy, Alembic, middleware request ID/CORS/logging và định dạng lỗi thống nhất. Đã có các models OLTP ở F.5 và migration `001` tạo 15 bảng; chưa có API nghiệp vụ.
 
 ## Model tài khoản đã bổ sung
 
@@ -16,7 +16,7 @@
 | `is_simulated` | Phân biệt tài khoản mô phỏng; mặc định `false` |
 | `created_at` | Thời điểm tạo; mặc định UTC phía Python, có mặc định phía DB |
 
-Alembic đã import model để nhận metadata. Chưa tạo bảng trong DB ứng dụng; migration ban đầu sẽ được viết sau khi các model được chốt. Kiểm thử dùng DB SQLite riêng trong bộ nhớ, không thay đổi DB ứng dụng. Khai báo vai trò ở đây chưa phải chức năng xác thực hoặc phân quyền API.
+Alembic đã import model để nhận metadata và User nằm trong migration `001`. Cần chạy `alembic upgrade head` để tạo bảng trong DB ứng dụng. Kiểm thử dùng DB SQLite riêng, không thay đổi DB ứng dụng. Khai báo vai trò ở đây chưa phải chức năng xác thực hoặc phân quyền API.
 
 ## Model khẩu vị đã bổ sung
 
@@ -53,7 +53,7 @@ Giờ phục vụ có độ chính xác đến phút. Chấp nhận khoảng qua
 
 `RestaurantMembership.user_id` vừa là khóa chính vừa tham chiếu `users.id`: mỗi tài khoản quản lý tối đa một quán, phù hợp API `/vendor/restaurant` trong bản thiết kế. `restaurant_id` tham chiếu `restaurants.id`, có index và cho phép nhiều tài khoản cùng liên kết một quán. Đây là quy ước MVP; chưa mở rộng một tài khoản quản lý chuỗi nhiều quán.
 
-Khóa ngoại chặn xóa tài khoản/quán đang có membership để không làm mất liên kết ngoài ý muốn; cần xử lý membership trước khi xóa. FK chỉ kiểm tra đối tượng tồn tại, chưa thay thế kiểm tra vai trò `vendor` và quyền sở hữu trên API. Phần đó thuộc module auth/vendor theo các bước tiếp theo của Markdown. Alembic đã nhận metadata của hai model; chưa tạo migration hay bảng trong DB ứng dụng.
+Khóa ngoại chặn xóa tài khoản/quán đang có membership để không làm mất liên kết ngoài ý muốn; cần xử lý membership trước khi xóa. FK chỉ kiểm tra đối tượng tồn tại, chưa thay thế kiểm tra vai trò `vendor` và quyền sở hữu trên API. Phần đó thuộc module auth/vendor theo các bước tiếp theo của Markdown. Hai model đã có trong migration `001`; bảng trong DB ứng dụng được tạo khi chạy upgrade.
 
 ## Models món chuẩn, thực đơn và nguyên liệu đã bổ sung
 
@@ -90,7 +90,7 @@ Tổng tiền là số nguyên VNĐ dương dùng BIGINT để không tràn số
 
 FK chặn xóa khách/quán/món bán đang được giao dịch tham chiếu và chặn xóa Order còn chi tiết hoặc lịch sử. Thay đổi tên/giá trong MenuItem không tự thay đổi snapshot đã lưu ở OrderItem. Lịch sử được đọc theo thời điểm rồi ID để giữ thứ tự ổn định.
 
-Model hiện chưa tự tạo snapshot từ menu, tính tổng, kiểm tra các món cùng quán, khả dụng, vai trò người thao tác hoặc chuyển trạng thái hợp lệ. Những việc đó sẽ được thực hiện trong transaction của `orders/service.py` và `orders/state_machine.py` ở phần nghiệp vụ theo Markdown. Bộ test model không thay thế 30 ca giao dịch/API yêu cầu trong đề cương; migration cũng chưa được tạo.
+Model hiện chưa tự tạo snapshot từ menu, tính tổng, kiểm tra các món cùng quán, khả dụng, vai trò người thao tác hoặc chuyển trạng thái hợp lệ. Những việc đó sẽ được thực hiện trong transaction của `orders/service.py` và `orders/state_machine.py` ở phần nghiệp vụ theo Markdown. Bộ test model không thay thế 30 ca giao dịch/API yêu cầu trong đề cương. Các bảng đơn hàng đã có trong migration `001`.
 
 ## Model đánh giá món đã bổ sung
 
@@ -108,7 +108,7 @@ Theo mục C.5, D.14 và F.5 của [thiết kế](../../docs/THIET_KE_CAU_TRUC.m
 
 UNIQUE trên `(order_id, menu_item_id)` ngăn đánh giá trùng một món trong cùng đơn. Cùng món bán được đánh giá lại khi có đơn mua khác. Quan hệ `order_item` chỉ đọc giúp lấy tên/giá snapshot đã mua dù thực đơn sau đó thay đổi. FK chặn xóa dữ liệu giao dịch đang được Review tham chiếu.
 
-Model chưa kiểm tra người gửi có sở hữu đơn hoặc đơn đã hoàn tất. Hai điều kiện đó thuộc `reviews/service.py` và auth khi triển khai mục F.10; hiện chưa có API gửi đánh giá. Các giới hạn điểm/nhận xét, thời điểm và cờ mô phỏng là chi tiết dữ liệu được ghi để dùng thống nhất. Chưa tạo migration.
+Model chưa kiểm tra người gửi có sở hữu đơn hoặc đơn đã hoàn tất. Hai điều kiện đó thuộc `reviews/service.py` và auth khi triển khai mục F.10; hiện chưa có API gửi đánh giá. Các giới hạn điểm/nhận xét, thời điểm và cờ mô phỏng là chi tiết dữ liệu được ghi để dùng thống nhất. Bảng Review đã có trong migration `001`.
 
 ## Models yêu cầu gợi ý, hiển thị và tương tác đã bổ sung
 
@@ -127,6 +127,28 @@ FK ghép đảm bảo sự kiện có request phải khớp tài khoản/session
 Việc tạo dòng RecommendationImpression khi trả danh sách chưa chứng minh món đã hiện trên màn hình. Chỉ khi service nhận sự kiện hiển thị hợp lệ mới ghi `displayed_at`; KPI sau này phải loại các dòng chưa có giá trị này. Nhiều click khác `event_id` vẫn được lưu riêng; CTR sẽ đếm impression có click, không lấy số dòng click làm mẫu số hoặc số lần hiển thị.
 
 `occurred_at` là thời điểm phát sinh do client gửi kèm múi giờ; `received_at` do máy chủ/ORM cấp mặc định. Thời điểm gán qua ORM được chuẩn hóa UTC. Kiểm tra đồng hồ client, cửa sổ tiếp nhận, thứ tự hiển thị trước click, xác thực người gửi và xử lý HTTP khi gửi lại vẫn chờ service/auth. Model hiện chỉ bảo vệ cấu trúc dữ liệu; không tự đánh dấu hiển thị, kết thúc phiên hoặc quy thuộc đơn hàng.
+
+## Migration khởi tạo
+
+`alembic/versions/001_initial_schema.py` là revision gốc, tạo đúng 15 bảng OLTP ở F.5 cùng PK, FK, UNIQUE, CHECK, index và mặc định phía DB. Chưa tạo bảng fact, BI views, dữ liệu mẫu hoặc bảng đánh giá mù của các phần sau. Migration dùng các thao tác cố định, không import models đang phát triển để tạo schema.
+
+Sau khi cài dependencies và có DB theo `.env`, chạy từ thư mục backend:
+
+```powershell
+python -m alembic upgrade head
+python -m alembic current
+python -m alembic check
+```
+
+`current` cần báo `001 (head)`. `check` dùng để phát hiện thay đổi schema/model mà Alembic hỗ trợ so sánh, gồm kiểu cột và mặc định. Bổ sung constraint phức tạp vẫn cần review/test; không dựa riêng vào autogenerate. Lệnh nâng tới head lần nữa không tạo lại bảng hoặc xóa dữ liệu.
+
+`alembic.ini` dùng đường dẫn theo vị trí file cấu hình, nên cũng có thể gọi từ thư mục nhóm với `python -m alembic -c src/backend/alembic.ini upgrade head`. URL kết nối được truyền nguyên dạng đã mã hóa từ Settings, không escape `%` hai lần. SQLite bật kiểm tra FK trong migration; mặc định Boolean được viết bằng biểu thức SQLAlchemy để sinh đúng SQL theo từng hệ quản trị.
+
+`migration_support.py` so sánh các giá trị mặc định JSON dạng literal khi kiểm tra schema PostgreSQL, tránh phép so sánh bằng không được hỗ trợ cho kiểu `json`. Các kiểu dữ liệu khác vẫn do Alembic so sánh.
+
+Đã kiểm thử nâng/hạ/nâng lại, schema lệch model, dữ liệu/constraint trên DB tạo từ migration và sinh SQL PostgreSQL offline. Chưa chạy PostgreSQL hoặc Docker thực tế trong môi trường này. Các bài test chỉ dùng DB tạm. Hạ về `base` sẽ xóa các bảng và dữ liệu, chỉ dùng trên DB kiểm thử có thể bỏ; không chạy trên DB cần giữ dữ liệu.
+
+Khi revision đã được commit/áp dụng, thay đổi schema bằng revision kế tiếp thay vì sửa hoặc sinh lại `001`. Xem hướng dẫn cài đặt để chạy migration local/Docker. ERD và từ điển dữ liệu sẽ được viết riêng ở F.7.
 
 ## Phạm vi dự kiến
 
@@ -148,7 +170,7 @@ Việc tạo dòng RecommendationImpression khi trả danh sách chưa chứng m
 
 Python >=3.11, FastAPI, SQLAlchemy, PostgreSQL và scikit-learn. Phụ thuộc được khai báo trong `requirements.txt` và `requirements-dev.txt`. Chạy từ thư mục này: `python -m uvicorn app.main:app --reload`; kiểm tra: `python -m pytest tests -q`. Xem [hướng dẫn cài đặt](../../docs/HUONG_DAN_CAI_DAT.md) để tạo môi trường trước khi chạy.
 
-Các models của bước F.5 đã được khai báo. Tiếp theo là bước F.6: migration ban đầu, sau đó ERD/từ điển dữ liệu ở F.7. Alembic trong backend là nguồn schema duy nhất; chưa đưa các model BI hoặc đánh giá mù của phần sau vào migration hiện tại.
+Các models F.5 và migration F.6 đã được bổ sung. Tiếp theo là ERD/từ điển dữ liệu F.7. Alembic trong backend là nguồn schema duy nhất; các model BI hoặc đánh giá mù của phần sau sẽ dùng revision bổ sung khi được triển khai.
 
 Xem [README nhóm](../../README.md), [nguồn dữ liệu](../../docs/NGUON_DU_LIEU.md) và [kế hoạch](../../docs/KE_HOACH_THUC_HIEN.md).
 
