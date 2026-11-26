@@ -1,6 +1,6 @@
 # Hợp đồng API Vị Việt
 
-Tài liệu hiện mô tả auth F.8 và hồ sơ/duyệt quán ở phần đầu F.10. API khẩu vị, thực đơn, tìm kiếm, giao dịch và tracking chưa triển khai; sẽ bổ sung từng phần. OpenAPI tại `http://localhost:8000/docs` phản ánh request/response đang chạy.
+Tài liệu hiện mô tả auth F.8, hồ sơ/duyệt quán F.10.1 và thực đơn/món chuẩn/nguyên liệu F.10.2. API khẩu vị, tìm kiếm, giao dịch và tracking chưa triển khai; sẽ bổ sung từng phần. OpenAPI tại `http://localhost:8000/docs` phản ánh request/response đang chạy.
 
 ## Quy ước chung
 
@@ -134,7 +134,7 @@ Giao diện đăng ký yêu cầu đọc/đồng ý nội dung điều khoản v
 
 ## Hồ sơ quán và duyệt quán — F.10.1
 
-Prefix chung vẫn là `/api/v1`. Đây là phần API backend; màn hình hồ sơ/duyệt quán sẽ triển khai ở F.12. Các endpoint thực đơn và tìm kiếm chưa có trong phần này.
+Prefix chung vẫn là `/api/v1`. Đây là phần API backend; màn hình hồ sơ/duyệt quán sẽ triển khai ở F.12. Endpoint thực đơn được mô tả ở F.10.2 bên dưới; tìm kiếm chưa triển khai.
 
 | Method | Đường dẫn | Quyền | Kết quả |
 | :--- | :--- | :--- | :--- |
@@ -230,3 +230,95 @@ Hai endpoint danh sách nhận `offset` mặc định 0, trong 0–2147483647; `
 | 422 | `VALIDATION_ERROR` | Trường thiếu/thừa, kiểu/giới hạn/giờ không hợp lệ |
 
 Phần này không đổi schema/revision `001`. Ghi hồ sơ và trạng thái dùng khóa hàng `FOR UPDATE` khi hệ quản trị hỗ trợ; PK membership vẫn bảo vệ liên kết duy nhất. Kiểm thử hiện dùng SQLite tạm và có ca mô phỏng race/lỗi ghi để kiểm tra rollback; chưa xác nhận khóa hàng hoặc cạnh tranh thực tế trên PostgreSQL.
+
+## Thực đơn, món chuẩn và nguyên liệu — F.10.2
+
+Prefix `/api/v1`. Đây là API backend, chưa có giao diện quản lý thực đơn. Bổ sung 17 thao tác API; danh mục nguyên liệu và các thao tác sửa/xóa món chuẩn cụ thể hóa yêu cầu CRUD của thiết kế, không thêm bảng mới.
+
+| Method | Đường dẫn | Quyền | Kết quả |
+| :--- | :--- | :--- | :--- |
+| GET | `/restaurants/{restaurant_id}/menu` | Công khai | Mảng món đang bán của quán approved |
+| GET | `/menu-items/{item_id}` | Công khai | Chi tiết món đang bán của quán approved |
+| GET | `/canonical-dishes` | Công khai | Trang danh mục món chuẩn để tra cứu/chọn món |
+| GET | `/ingredients` | Công khai | Trang danh mục nguyên liệu |
+| GET | `/vendor/menu-items` | vendor | Trang thực đơn của mình, gồm cả món ngừng bán |
+| GET | `/vendor/menu-items/{item_id}` | vendor | Chi tiết món của mình |
+| POST | `/vendor/menu-items` | vendor | Tạo món của mình, trả 201 |
+| PUT | `/vendor/menu-items/{item_id}` | vendor | Thay toàn bộ dữ liệu món của mình, trả 200 |
+| DELETE | `/vendor/menu-items/{item_id}` | vendor | Ngừng bán, trả 204 không body |
+| GET | `/admin/canonical-dishes` | admin | Trang món chuẩn có thông tin nội bộ |
+| POST | `/admin/canonical-dishes` | admin | Tạo món chuẩn, trả 201 |
+| PUT | `/admin/canonical-dishes/{entry_id}` | admin | Thay toàn bộ món chuẩn, trả 200 |
+| DELETE | `/admin/canonical-dishes/{entry_id}` | admin | Xóa mục chưa được dùng, trả 204 |
+| GET | `/admin/ingredients` | admin | Trang nguyên liệu có thông tin nội bộ |
+| POST | `/admin/ingredients` | admin | Tạo nguyên liệu, trả 201 |
+| PUT | `/admin/ingredients/{entry_id}` | admin | Đổi tên nguyên liệu, trả 200 |
+| DELETE | `/admin/ingredients/{entry_id}` | admin | Xóa mục chưa được dùng, trả 204 |
+
+### Quản lý món bán
+
+POST/PUT vendor nhận cùng cấu trúc sau:
+
+```json
+{
+  "canonical_dish_id": 1,
+  "name": "Phở bò tái",
+  "price": 45000,
+  "is_available": true,
+  "ingredients_verified": true,
+  "ingredient_ids": [1, 2]
+}
+```
+
+POST bắt buộc `canonical_dish_id`, `name`, `price`; mặc định hai cờ false và `ingredient_ids=[]`. PUT yêu cầu đủ sáu trường; danh sách nguyên liệu thay toàn bộ liên kết trong cùng transaction với tên/giá/cờ. Danh sách có thể rỗng nếu `ingredients_verified=false`; `true` bắt buộc khai báo ít nhất một nguyên liệu thực tế. Cờ này là xác nhận của vendor, không bảo đảm an toàn thực phẩm hoặc thay thế kiểm tra nguyên liệu cần tránh.
+
+Tên trim dài 1–180. Giá là số nguyên JSON trong 1–10.000.000 VNĐ; không nhận chuỗi, số thập phân hoặc Boolean. Các ID body là số nguyên JSON trong 1–2147483647; `ingredient_ids` tối đa 100 ID khác nhau. Cờ nhận đúng Boolean JSON. Món chuẩn hoặc nguyên liệu không tồn tại trả 404 và không lưu dở dang. Mọi body ghi đều cấm trường thừa, gồm `restaurant_id`, `user_id`, `id`, `is_simulated`.
+
+Server lấy quán từ membership của vendor; không cho chọn quán đích. Vendor chưa có membership trả 404. Món ngoài quán của mình và món không tồn tại cùng trả 404; admin không được dùng API vendor. Nhiều vendor cùng membership quán có thể quản lý chung. Chủ quán pending/suspended vẫn chuẩn bị thực đơn nhưng món chưa được công khai.
+
+DELETE vendor chỉ đặt `is_available=false`, giữ ID, nguyên liệu, dữ liệu đơn hàng/đánh giá/tracking. Gọi lặp trả 204; GET vendor vẫn xem được, PUT có thể bật bán lại. Không có API xóa vĩnh viễn MenuItem. Thay tên/giá không sửa snapshot của đơn đã có.
+
+### Quản lý danh mục
+
+POST món chuẩn nhận ví dụ sau; PUT yêu cầu đủ cả bảy trường (kể cả `source_id` với giá trị null nếu không có):
+
+```json
+{
+  "name": "Phở bò",
+  "region": "Bắc",
+  "method": "nước",
+  "spice_level": 0,
+  "ingredients": ["bò", "bánh phở"],
+  "labels": ["Truyền thống"],
+  "source_id": null
+}
+```
+
+`name`, `region`, `method` bắt buộc khi POST; bốn trường còn lại mặc định lần lượt 0, [], [], null. Tên trim 1–180; vùng/cách chế biến trim 1–40; mức cay số nguyên 0–3. `source_id` tùy chọn, khi có trim 1–120. Tên và source_id có UNIQUE riêng; tên giữ hoa/thường theo model hiện có, không tự gộp các tên gần giống. Cho phép nhiều dòng có source_id null.
+
+`ingredients`/`labels` là mảng tối đa 100 chuỗi; từng chuỗi trim 1–100 ký tự, loại trùng không phân biệt hoa/thường. Nguyên liệu chuyển chữ thường, nhãn giữ cách viết đầu tiên sau trim. Đây là đặc trưng dùng chung; nguyên liệu thực tế của món bán lấy từ `ingredient_ids`, không suy ra từ JSON món chuẩn.
+
+POST/PUT nguyên liệu chỉ nhận `{"name":"hành"}`; trim/chuyển chữ thường, dài 1–100, tên duy nhất. Các mục tạo mới luôn `is_simulated=false`; API không cho sửa cờ mô phỏng. Sửa catalog có hiệu lực ở lần đọc món tiếp theo; không sửa snapshot giao dịch.
+
+DELETE catalog xóa vật lý mục chưa được tham chiếu. Món chuẩn có bất kỳ MenuItem nào, hoặc nguyên liệu còn trong MenuItemIngredient, trả 409 `CATALOG_IN_USE`, kể cả món đã ngừng bán. Mục không tồn tại trả 404. Không tự xóa các liên kết để vượt qua ràng buộc tham chiếu.
+
+### Response và phạm vi công khai
+
+MenuItem công khai trả `id`, `restaurant_id`, `restaurant_name`, `canonical_dish_id`, `name`, `price`, `is_available`, `ingredients_verified`, đối tượng `canonical_dish` và mảng `ingredients` thực tế. `canonical_dish` gồm id/name/region/method/spice_level/ingredients/labels; mỗi nguyên liệu thực tế chỉ gồm id/name, sắp xếp theo ID. Response vendor thêm `is_simulated` của món bán. Response catalog admin thêm `is_simulated` và `source_id` của món chuẩn; catalog công khai và mọi catalog lồng trong MenuItem không trả các trường nội bộ đó.
+
+Món công khai phải đang bán và quán approved. Món ngừng bán, quán pending/suspended và ID không tồn tại đều trả 404 ở chi tiết. Menu quán chưa công khai/không tồn tại trả 404; quán approved không còn món trả []. Quán approved đóng cửa hoặc tắt nhận đơn vẫn cho đọc món đang bán; API này chưa kiểm tra khoảng cách, vị trí, khẩu vị hoặc điều kiện đặt đơn.
+
+Mọi danh sách nhận `offset=0` trong 0–2147483647, `limit=20` trong 1–100; sắp xếp tăng theo ID. Menu quán công khai trả **mảng** theo thiết kế; các danh sách catalog/vendor/admin trả `{"items":[...],"total":3,"offset":0,"limit":20}`. Offset vượt dữ liệu trả mảng rỗng nhưng total giữ tổng số mục phù hợp. ID path trong 1–2147483647.
+
+| HTTP | Mã lỗi | Trường hợp |
+| :--- | :--- | :--- |
+| 401 | `UNAUTHENTICATED` | Thiếu/sai/hết hạn access token ở API quản lý |
+| 403 | `FORBIDDEN` | Sai vai trò |
+| 404 | `NOT_FOUND` | Không có membership, món/danh mục không tồn tại, món ngoài quyền hoặc chưa công khai |
+| 409 | `DISH_NAME_EXISTS` | Trùng tên món chuẩn |
+| 409 | `DISH_SOURCE_EXISTS` | Trùng mã nguồn món chuẩn |
+| 409 | `INGREDIENT_EXISTS` | Trùng tên nguyên liệu đã chuẩn hóa |
+| 409 | `CATALOG_IN_USE` | Danh mục còn được món bán tham chiếu |
+| 422 | `VALIDATION_ERROR` | Thiếu/thừa trường, sai kiểu/giới hạn, lặp ID hoặc xác nhận khi chưa có nguyên liệu |
+
+Không thay schema/revision `001`. Ghi món và liên kết nguyên liệu cùng transaction, rollback khi lỗi SQLAlchemy; khóa các hàng liên quan khi DB hỗ trợ. Kiểm thử chạy production app trên SQLite tạm được tạo bằng migration; chưa kiểm chứng PostgreSQL thực tế hoặc khóa hàng cạnh tranh. Chưa triển khai search/orders/reviews/tracking API trong phần này.

@@ -98,7 +98,7 @@ Model: [`CanonicalDish`](../src/backend/app/menu/models.py). Đặc trưng món 
 
 UNIQUE: `uq_canonical_dishes_name` trên `(name)`, `uq_canonical_dishes_source_id` trên `(source_id)`; cho phép nhiều dòng không có `source_id`. CHECK: `ck_canonical_dishes_name` trim dài 1–180; `ck_canonical_dishes_region` và `ck_canonical_dishes_method` trim dài 1–40; `ck_canonical_dishes_source_id` NULL hoặc trim dài 1–120; `ck_canonical_dishes_spice_level` trong 0–3. Không có index khai báo riêng.
 
-ORM trim các chuỗi, chuẩn hóa danh sách như khẩu vị; nguyên liệu chuyển chữ thường, nhãn giữ cách viết sau trim. Tên món không tự chuyển chữ thường, UNIQUE không phải quy tắc gộp tên tương đương. JSON nguyên liệu đặc trưng không chứng minh thành phần thực tế của món bán.
+ORM trim các chuỗi, chuẩn hóa danh sách như khẩu vị; nguyên liệu chuyển chữ thường, nhãn giữ cách viết sau trim. Tên món không tự chuyển chữ thường, UNIQUE không phải quy tắc gộp tên tương đương. JSON nguyên liệu đặc trưng không chứng minh thành phần thực tế của món bán. API F.10.2 giới hạn mỗi danh sách 100 chuỗi, mỗi chuỗi trim 1–100 ký tự; admin quản lý catalog, xóa mục còn có MenuItem trả 409. source_id/cờ mô phỏng chỉ trả trong catalog admin; API không cho client sửa cờ mô phỏng.
 
 ## 6. `ingredients` — Danh mục nguyên liệu
 
@@ -110,7 +110,7 @@ Model: [`Ingredient`](../src/backend/app/menu/models.py).
 | `name` | VARCHAR(100) | Không | — | Tên nguyên liệu, UNIQUE |
 | `is_simulated` | BOOLEAN | Không | false | Cờ mô phỏng |
 
-`uq_ingredients_name` UNIQUE `(name)`; `ck_ingredients_name` trim dài 1–100. Không có index riêng. ORM trim và chuyển tên về chữ thường; ghi SQL trực tiếp chưa tự chuẩn hóa tên.
+`uq_ingredients_name` UNIQUE `(name)`; `ck_ingredients_name` trim dài 1–100. Không có index riêng. ORM và API F.10.2 trim/chuyển tên về chữ thường; ghi SQL trực tiếp chưa tự chuẩn hóa tên. Admin CRUD danh mục; xóa nguyên liệu còn được MenuItemIngredient sử dụng trả 409.
 
 ## 7. `menu_items` — Món bán tại quán
 
@@ -129,7 +129,7 @@ Model: [`MenuItem`](../src/backend/app/menu/models.py).
 
 CHECK: `ck_menu_items_name` trim dài 1–180; `ck_menu_items_price` trong (0, 10.000.000]. Index: `ix_menu_items_restaurant_id` trên `(restaurant_id)`, `ix_menu_items_canonical_dish_id` trên `(canonical_dish_id)`. Không có UNIQUE tên hoặc UNIQUE cặp quán/món chuẩn.
 
-ORM trim tên, chặn giá không phải số nguyên hợp lệ. Cờ xác nhận nguyên liệu không tự tạo liên kết hoặc bảo đảm an toàn với nguyên liệu cần tránh; logic kiểm tra do service triển khai sau. Các FK giao dịch/tracking có thể chặn xóa món, nên cần nghiệp vụ ngừng bán thay vì xóa lịch sử.
+ORM trim tên, chặn giá không phải số nguyên hợp lệ. API F.10.2 lấy quán từ membership vendor, lưu món và liên kết nguyên liệu cùng transaction; ingredients_verified=true cần ít nhất một ID nguyên liệu thực tế. Cờ xác nhận không bảo đảm an toàn với nguyên liệu cần tránh. DELETE vendor chỉ đặt is_available=false, giữ bản ghi/liên kết và các tham chiếu giao dịch/tracking; PUT có thể bật bán lại. Chỉ món đang bán của quán approved được đọc công khai; đóng cửa/tắt nhận đơn không ẩn thực đơn. Không thêm cột hoặc sửa migration cho các quy tắc API này.
 
 ## 8. `menu_item_ingredients` — Nguyên liệu thực tế của món bán
 

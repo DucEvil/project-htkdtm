@@ -1,6 +1,6 @@
 # Backend Vị Việt
 
-Đã có nền tảng FastAPI: `/health`, tài liệu OpenAPI tại `/docs`, cấu hình môi trường, SQLAlchemy, Alembic, middleware request ID/CORS/logging và định dạng lỗi thống nhất. Đã có models F.5, migration `001`, auth F.8 và API hồ sơ/duyệt quán đầu F.10. API thực đơn, tìm kiếm, đơn hàng và gợi ý chưa triển khai.
+Đã có nền tảng FastAPI: `/health`, tài liệu OpenAPI tại `/docs`, cấu hình môi trường, SQLAlchemy, Alembic, middleware request ID/CORS/logging và định dạng lỗi thống nhất. Đã có models F.5, migration `001`, auth F.8, API hồ sơ/duyệt quán F.10.1 và thực đơn/món chuẩn/nguyên liệu F.10.2. API tìm kiếm, đơn hàng và gợi ý chưa triển khai.
 
 ## Auth backend
 
@@ -15,7 +15,7 @@
 
 Mật khẩu dùng Passlib PBKDF2-SHA256 với 600.000 vòng và salt ngẫu nhiên; không phụ thuộc bcrypt. Đăng ký công khai không nhận admin hoặc trường ngoài schema. Email kiểm tra theo định dạng cơ bản, chưa xác minh hộp thư. JWT chỉ dùng HS256, có hạn dùng và phân biệt access/refresh; thay SECRET_KEY mẫu trước khi dùng token. Chưa có giới hạn tần suất đăng nhập/khôi phục mật khẩu.
 
-Dependency `get_current_user`, `require_role(*roles)`, `require_vendor_owner` có thể import từ `app.auth.dependencies` hoặc `app.dependencies`. Guard đọc lại vai trò/membership từ DB; admin không tự bỏ qua quyền sở hữu quán của vendor. Router vendor/admin hiện có phần hồ sơ/duyệt quán; menu, đơn hàng và các chức năng quản trị khác sẽ bổ sung sau.
+Dependency `get_current_user`, `require_role(*roles)`, `require_vendor_owner` có thể import từ `app.auth.dependencies` hoặc `app.dependencies`. Guard đọc lại vai trò/membership từ DB; admin không tự bỏ qua quyền sở hữu quán của vendor. Router vendor/admin hiện có hồ sơ/duyệt quán, thực đơn và danh mục; đơn hàng và các chức năng quản trị khác sẽ bổ sung sau.
 
 ## API hồ sơ và duyệt quán
 
@@ -27,7 +27,17 @@ Dependency `get_current_user`, `require_role(*roles)`, `require_vendor_owner` c�
 
 Service tính giờ mở theo `Asia/Ho_Chi_Minh`, hỗ trợ qua đêm và quy ước hai giờ bằng nhau là 24 giờ. Response có `is_open` và `can_receive_orders` (approved + cờ nhận đơn + giờ mở), chưa bao gồm điều kiện vị trí khách/khả dụng món. DB vẫn giữ TIME địa phương và không có cột tính toán mới. Quán pending/suspended bị ẩn ở công khai nhưng chủ quán vẫn xem/sửa hồ sơ của mình với cờ nhận đơn false.
 
-Ghi dữ liệu có rollback và khóa hàng khi DB hỗ trợ; kiểm thử SQLite tạm chưa chứng minh cạnh tranh/khóa trên PostgreSQL. Không thay models hoặc migration `001`; giao diện hồ sơ/duyệt quán sẽ triển khai theo F.12, menu API làm ở lượt riêng tiếp theo.
+Ghi dữ liệu có rollback và khóa hàng khi DB hỗ trợ; kiểm thử SQLite tạm chưa chứng minh cạnh tranh/khóa trên PostgreSQL. Không thay models hoặc migration `001`; giao diện hồ sơ/duyệt quán sẽ triển khai theo F.12.
+
+## API thực đơn, món chuẩn và nguyên liệu
+
+`menu/` có schema/service/router đọc công khai; `vendor/` quản lý món của quán lấy từ membership; `admin/` quản lý catalog. Chi tiết 17 thao tác, body và response ở [API contract F.10.2](../../docs/API_CONTRACT.md#thực-đơn-món-chuẩn-và-nguyên-liệu--f102).
+
+- Công khai: GET `/api/v1/restaurants/{restaurant_id}/menu`, `/menu-items/{item_id}`, `/canonical-dishes`, `/ingredients`. Món phải đang bán và thuộc quán approved; quán đóng cửa/tắt nhận đơn vẫn cho đọc thực đơn.
+- Vendor: GET/POST `/api/v1/vendor/menu-items`, GET/PUT/DELETE `/{item_id}` dưới prefix đó. PUT thay toàn bộ sáu trường; DELETE ngừng bán, giữ ID/liên kết/lịch sử, PUT có thể bật lại. Món ngoài quán hoặc chưa có membership trả 404.
+- Admin: GET/POST `/api/v1/admin/canonical-dishes` và `/ingredients`, PUT/DELETE `/{entry_id}` dưới từng prefix. Xóa mục còn được sử dụng trả 409, kể cả món đã ngừng bán. Chuẩn hóa tên nguyên liệu, kiểm tra UNIQUE tên/source_id và cấm client tự gán cờ mô phỏng.
+
+Giá là số nguyên VNĐ; các cờ nhận đúng Boolean JSON. Xác nhận nguyên liệu yêu cầu danh sách ID thực tế không rỗng; không suy thành phần thực tế từ JSON món chuẩn. Ghi món và thay liên kết nguyên liệu có tính nguyên tử/rollback. Menu quán trả mảng; các danh sách khác trả page có total/offset/limit. Chưa có frontend thực đơn hoặc kiểm tra điều kiện đặt đơn; không đổi schema.
 
 Refresh dùng JWT không lưu trạng thái: token cũ vẫn còn hiệu lực đến hạn, chưa có thu hồi từng phiên/thiết bị hoặc logout phía máy chủ. Không gọi việc cấp token mới là rotation có chống dùng lại. Frontend auth đã tích hợp token trong localStorage hoặc sessionStorage theo lựa chọn ghi nhớ, tải lại User từ `/me`, tự refresh một lần và logout cục bộ; backend chưa cấp cookie HttpOnly. Phần auth không thay đổi schema hoặc revision `001`.
 
@@ -97,11 +107,11 @@ Theo mục C.5, D.16/33/34 và F.5 của [thiết kế](../../docs/THIET_KE_CAU_
 
 Tên món tối đa 180 ký tự; vùng miền/cách chế biến tối đa 40 ký tự; mã nguồn tối đa 120 ký tự khi có. Tên được bỏ khoảng trắng đầu/cuối. Nguyên liệu đặc trưng và nhãn dùng MutableList để lưu cập nhật tại chỗ; khi gán danh sách qua ORM sẽ loại phần tử trùng, chuỗi rỗng và dữ liệu sai kiểu.
 
-Giá dùng số nguyên VNĐ, lớn hơn 0 và không quá 10.000.000. Món mới mặc định `is_available=false`, `ingredients_verified=false`; API quản lý quán sẽ bật các cờ sau khi xác nhận dữ liệu. CanonicalDish, MenuItem và Ingredient đều có `is_simulated`, mặc định false.
+Giá dùng số nguyên VNĐ, lớn hơn 0 và không quá 10.000.000. Món mới mặc định `is_available=false`, `ingredients_verified=false`; API vendor cho chủ quán đặt các cờ và yêu cầu danh sách nguyên liệu khi xác nhận. CanonicalDish, MenuItem và Ingredient đều có `is_simulated`, mặc định false.
 
-Nguyên liệu JSON của món chuẩn là đặc trưng tham khảo, không tự thay thế nguyên liệu thực tế trong MenuItemIngredient. Việc nhập nguồn, xác nhận nguyên liệu và lọc món theo nguyên liệu cần tránh sẽ được triển khai ở các service sau. Model hiện chưa chứng minh một món đáp ứng điều kiện lọc chỉ từ cờ xác nhận.
+Nguyên liệu JSON của món chuẩn là đặc trưng tham khảo, không tự thay thế nguyên liệu thực tế trong MenuItemIngredient. API vendor đã nhận danh sách nguyên liệu thực tế và cờ xác nhận; nhập nguồn và lọc theo nguyên liệu cần tránh sẽ triển khai ở phần sau. Model chưa chứng minh một món đáp ứng điều kiện lọc chỉ từ cờ xác nhận.
 
-Một món chuẩn có thể được nhiều quán bán với tên và giá khác nhau. FK chặn xóa quán/món chuẩn còn MenuItem và nguyên liệu còn được liên kết. Xóa một MenuItem chưa có tham chiếu khác sẽ xóa các liên kết nguyên liệu đi kèm, giữ lại danh mục. OrderItem đã có FK chặn xóa MenuItem từng được đặt; thao tác ngừng bán qua API sẽ được triển khai ở service sau.
+Một món chuẩn có thể được nhiều quán bán với tên và giá khác nhau. FK chặn xóa quán/món chuẩn còn MenuItem và nguyên liệu còn được liên kết. Nếu xóa MenuItem trực tiếp khi chưa có tham chiếu khác, các liên kết nguyên liệu bị xóa theo và danh mục vẫn còn. API vendor luôn ngừng bán bằng cờ, giữ cả món lẫn liên kết; OrderItem có FK bảo vệ món từng được đặt và snapshot giữ tên/giá lần mua.
 
 ## Models đơn hàng, chi tiết và lịch sử đã bổ sung
 
@@ -199,7 +209,7 @@ Khi revision đã được commit/áp dụng, thay đổi schema bằng revision
 
 Python >=3.11, FastAPI, SQLAlchemy, PostgreSQL và scikit-learn. Phụ thuộc được khai báo trong `requirements.txt` và `requirements-dev.txt`. Chạy từ thư mục này: `python -m uvicorn app.main:app --reload`; kiểm tra: `python -m pytest tests -q`. Xem [hướng dẫn cài đặt](../../docs/HUONG_DAN_CAI_DAT.md) để tạo môi trường trước khi chạy.
 
-Các phần F.5–F.9 và API hồ sơ/duyệt quán F.10.1 đã được bổ sung. Tiếp theo là API thực đơn/nguyên liệu của F.10, tách riêng cho commit sau. Alembic trong backend là nguồn schema duy nhất; các model BI hoặc đánh giá mù của phần sau sẽ dùng revision bổ sung khi được triển khai.
+Các phần F.5–F.9 và API hồ sơ/duyệt quán, thực đơn/nguyên liệu F.10.1–F.10.2 đã được bổ sung. Tiếp theo là API tìm kiếm trong F.10, tách riêng cho commit sau. Alembic trong backend là nguồn schema duy nhất; các model BI hoặc đánh giá mù của phần sau sẽ dùng revision bổ sung khi được triển khai.
 
 Xem [README nhóm](../../README.md), [nguồn dữ liệu](../../docs/NGUON_DU_LIEU.md) và [kế hoạch](../../docs/KE_HOACH_THUC_HIEN.md).
 
