@@ -11,7 +11,7 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | Phase 1.2 | `preferences/models.py`: khẩu vị | Đã bổ sung model, liên kết User và kiểm thử; chưa có migration/API |
 | Phase 1.3 | `restaurants/models.py`: quán và thành viên quản lý | Đã bổ sung hai model và kiểm thử; chưa có migration/API |
 | Phase 1.4 | `menu/models.py`: món chuẩn, món bán, nguyên liệu | Đã bổ sung bốn model và kiểm thử; chưa có migration/API |
-| Phase 1.5 | `orders/models.py`: đơn, món đặt và lịch sử | Chưa đưa vào mã nguồn hiện tại |
+| Phase 1.5 | `orders/models.py`: đơn, món đặt và lịch sử | Đã bổ sung ba model và kiểm thử; chưa có migration/service/API |
 | Phase 1.6 | `reviews/models.py`: đánh giá món | Chưa đưa vào mã nguồn hiện tại |
 | Phase 1.7 | `tracking/models.py`: yêu cầu gợi ý, hiển thị, sự kiện | Chưa đưa vào mã nguồn hiện tại |
 | Phase 1.8 | Migration ban đầu, ERD và từ điển dữ liệu | Chờ các model được chốt |
@@ -32,7 +32,7 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Backend: 5 kiểm thử đạt (health/request ID, định dạng lỗi, CORS, cấu hình URL DB).
 - Frontend: `npm run build` và `npm run format:check` đạt.
 - Chưa kiểm chứng Docker/PostgreSQL vì môi trường phát triển không có Docker CLI.
-- Bộ khung, phần hợp nhất tài liệu và models tài khoản/khẩu vị/quán đã được commit. Sau thực đơn là riêng các models trong `orders/models.py`; mỗi lượt chỉ thêm một phần.
+- Bộ khung, phần hợp nhất tài liệu và models tài khoản/khẩu vị/quán/thực đơn đã được commit. Sau models đơn hàng là riêng Review trong `reviews/models.py`; mỗi lượt chỉ thêm một phần.
 
 ## Phần tài khoản và vai trò
 
@@ -75,4 +75,21 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Kết quả: 155 kiểm thử đạt, gồm 50 ca thực đơn và 105 ca đã có. Kiểm thử dữ liệu dùng SQLite; chưa kiểm chứng PostgreSQL.
 - Chưa tạo migration, seed, API quản lý thực đơn, kiểm tra quyền vendor hoặc thuật toán lọc nguyên liệu; các phần đó vẫn chờ đúng bước trong Markdown.
 - Đã kiểm tra bản nháp cục bộ không bị theo dõi bởi Git hoặc tham chiếu từ mã nguồn chạy chính; ghi thêm README cảnh báo bản nháp có thể cũ ngay trong thư mục nháp.
-- Chưa tự commit/push; chưa thêm models đơn hàng vào lượt này.
+- Phần thực đơn đã được người dùng commit; không gộp models đơn hàng vào commit đó.
+
+## Phần đơn hàng, món đặt và lịch sử trạng thái
+
+- Theo mục F.5, thêm Order, OrderItem và OrderStatusHistory tại `src/backend/app/orders/models.py`; Alembic đã nhận metadata.
+- Theo C.5, D.10–13 và E.2, lưu dữ liệu giao dịch, tên/giá tại thời điểm đặt, đủ bảy trạng thái, lịch sử tài khoản thao tác/thời điểm/lý do. Từ chối đơn bắt buộc có lý do.
+- Theo E.4/E.5, idempotency key có UNIQUE toàn bảng và cùng session sử dụng UUID v4; lưu thêm SHA-256 của nội dung yêu cầu để hỗ trợ service gửi lặp sau này. Model chưa thực hiện phản hồi HTTP hoặc cửa sổ 24 giờ.
+- Tổng tiền dùng BIGINT, snapshot dùng số nguyên VNĐ, mỗi món tối đa một dòng/đơn. FK bảo vệ dữ liệu giao dịch đang có tham chiếu. Các giới hạn và phần kiểm tra nghiệp vụ chưa triển khai được ghi rõ trong README backend.
+- Kết quả: 219 kiểm thử đạt, gồm 64 ca dữ liệu đơn hàng và 155 ca đã có. Kiểm thử dùng SQLite; chưa kiểm chứng PostgreSQL. Chưa thay thế các ca giao dịch/API và state machine trong Markdown.
+- Chưa có migration, tạo đơn qua API, transaction đặt đơn, kiểm tra quyền, tính tổng/snapshot tự động hoặc state machine.
+- Chưa tự commit/push; chưa thêm Review hoặc tracking vào lượt này.
+
+## Dọn bản nháp cục bộ
+
+- Theo yêu cầu người dùng, chỉ dọn bản nháp khi bản chính tương ứng đã được tích hợp, kiểm thử, commit và không có thay đổi chưa commit.
+- Đã xóa bốn bản `models.py` cũ trong `.runtime/pending-implementation/src/backend/app/users/`, `preferences/`, `restaurants/`, `menu/`. Bản chính của chúng vẫn nằm trong `src/` và lịch sử Git.
+- Các schema/service/router chưa tích hợp và công cụ Python/uv đang dùng để kiểm tra vẫn được giữ lại. Bản nháp Order sẽ chỉ dọn sau khi phần Order được người dùng commit.
+- Không xóa toàn bộ `.runtime/` trong lúc công cụ ở đó vẫn phục vụ kiểm thử; không thêm bản nháp vào commit.

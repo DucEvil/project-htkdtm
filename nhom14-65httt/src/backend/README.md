@@ -1,6 +1,6 @@
 # Backend Vị Việt
 
-Đã có nền tảng FastAPI: `/health`, tài liệu OpenAPI tại `/docs`, cấu hình môi trường, SQLAlchemy, Alembic, middleware request ID/CORS/logging và định dạng lỗi thống nhất. Đã bổ sung models tài khoản, khẩu vị, quán/người quản lý, món chuẩn/thực đơn/nguyên liệu; chưa có migration revision hoặc API nghiệp vụ.
+Đã có nền tảng FastAPI: `/health`, tài liệu OpenAPI tại `/docs`, cấu hình môi trường, SQLAlchemy, Alembic, middleware request ID/CORS/logging và định dạng lỗi thống nhất. Đã bổ sung models tài khoản, khẩu vị, quán/người quản lý, món chuẩn/thực đơn/nguyên liệu và đơn hàng; chưa có migration revision hoặc API nghiệp vụ.
 
 ## Model tài khoản đã bổ sung
 
@@ -72,7 +72,25 @@ Giá dùng số nguyên VNĐ, lớn hơn 0 và không quá 10.000.000. Món mớ
 
 Nguyên liệu JSON của món chuẩn là đặc trưng tham khảo, không tự thay thế nguyên liệu thực tế trong MenuItemIngredient. Việc nhập nguồn, xác nhận nguyên liệu và lọc món theo nguyên liệu cần tránh sẽ được triển khai ở các service sau. Model hiện chưa chứng minh một món đáp ứng điều kiện lọc chỉ từ cờ xác nhận.
 
-Một món chuẩn có thể được nhiều quán bán với tên và giá khác nhau. FK chặn xóa quán/món chuẩn còn MenuItem và nguyên liệu còn được liên kết. Xóa một MenuItem chưa có tham chiếu khác sẽ xóa các liên kết nguyên liệu đi kèm, giữ lại danh mục; khi có đơn hàng, quy tắc bảo vệ lịch sử và ngừng bán sẽ được bổ sung ở phần đơn hàng/service.
+Một món chuẩn có thể được nhiều quán bán với tên và giá khác nhau. FK chặn xóa quán/món chuẩn còn MenuItem và nguyên liệu còn được liên kết. Xóa một MenuItem chưa có tham chiếu khác sẽ xóa các liên kết nguyên liệu đi kèm, giữ lại danh mục. OrderItem đã có FK chặn xóa MenuItem từng được đặt; thao tác ngừng bán qua API sẽ được triển khai ở service sau.
+
+## Models đơn hàng, chi tiết và lịch sử đã bổ sung
+
+Theo mục C.5, D.10–13, E.2/E.4/E.5 và F.5 của [thiết kế](../../docs/THIET_KE_CAU_TRUC.md), `app/orders/models.py` định nghĩa ba model và `OrderStatus` với đủ bảy giá trị: `pending`, `confirmed`, `preparing`, `delivering`, `completed`, `cancelled`, `rejected`.
+
+| Model | Dữ liệu/ràng buộc |
+| :--- | :--- |
+| `Order` | Tham chiếu khách và một quán; trạng thái mặc định pending, tổng tiền, địa chỉ/tọa độ giao, session, idempotency key, hash nội dung yêu cầu, thời điểm tạo, cờ mô phỏng |
+| `OrderItem` | Tham chiếu Order và MenuItem; lưu `snapshot_name`, `snapshot_price`, số lượng; mỗi MenuItem xuất hiện tối đa một dòng trong cùng đơn |
+| `OrderStatusHistory` | Trạng thái, tài khoản thao tác, thời điểm, lý do tùy chọn; từ chối đơn bắt buộc có lý do ở DB |
+
+Theo E.4, `Order.idempotency_key` có UNIQUE toàn bảng. Key và session nhận UUID v4 từ client, được chuẩn hóa qua kiểu UUID; backend không tự cấp key cho mỗi lần nhận request. `payload_hash` là trường bổ sung chứa SHA-256 dạng hex để service sau này phát hiện cùng key nhưng khác nội dung. Chính sách trả lại đơn cũ, kiểm tra người gửi và cửa sổ 24 giờ chưa được triển khai ở model.
+
+Tổng tiền là số nguyên VNĐ dương dùng BIGINT để không tràn số khi cộng nhiều món. Giá chụp mỗi món trong (0, 10.000.000], số lượng 1–99, tên chụp tối đa 180 ký tự; đây là giới hạn triển khai chi tiết. Địa chỉ dài 5–500 ký tự; tọa độ nằm trong giới hạn địa lý hợp lệ. Các thời điểm mặc định UTC; thời điểm gán trực tiếp qua ORM phải có múi giờ và được đổi về UTC. `is_simulated` của Order mặc định false.
+
+FK chặn xóa khách/quán/món bán đang được giao dịch tham chiếu và chặn xóa Order còn chi tiết hoặc lịch sử. Thay đổi tên/giá trong MenuItem không tự thay đổi snapshot đã lưu ở OrderItem. Lịch sử được đọc theo thời điểm rồi ID để giữ thứ tự ổn định.
+
+Model hiện chưa tự tạo snapshot từ menu, tính tổng, kiểm tra các món cùng quán, khả dụng, vai trò người thao tác hoặc chuyển trạng thái hợp lệ. Những việc đó sẽ được thực hiện trong transaction của `orders/service.py` và `orders/state_machine.py` ở phần nghiệp vụ theo Markdown. Bộ test model không thay thế 30 ca giao dịch/API yêu cầu trong đề cương; migration cũng chưa được tạo.
 
 ## Phạm vi dự kiến
 
@@ -94,7 +112,7 @@ Một món chuẩn có thể được nhiều quán bán với tên và giá kh�
 
 Python >=3.11, FastAPI, SQLAlchemy, PostgreSQL và scikit-learn. Phụ thuộc được khai báo trong `requirements.txt` và `requirements-dev.txt`. Chạy từ thư mục này: `python -m uvicorn app.main:app --reload`; kiểm tra: `python -m pytest tests -q`. Xem [hướng dẫn cài đặt](../../docs/HUONG_DAN_CAI_DAT.md) để tạo môi trường trước khi chạy.
 
-Các module được thêm theo từng phần; tiếp theo là `orders/models.py` với Order, OrderItem và OrderStatusHistory. Alembic trong backend là nguồn schema duy nhất; chỉ thêm migration sau khi các models liên quan được chốt.
+Các module được thêm theo từng phần; tiếp theo là `reviews/models.py` với Review. Alembic trong backend là nguồn schema duy nhất; chỉ thêm migration sau khi các models liên quan được chốt.
 
 Xem [README nhóm](../../README.md), [nguồn dữ liệu](../../docs/NGUON_DU_LIEU.md) và [kế hoạch](../../docs/KE_HOACH_THUC_HIEN.md).
 

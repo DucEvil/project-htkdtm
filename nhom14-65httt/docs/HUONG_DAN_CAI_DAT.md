@@ -1,6 +1,6 @@
 # Cài đặt Phase 0
 
-Hướng dẫn khởi chạy backend có `/health`, tài liệu API tự sinh và frontend tối thiểu. Đã bổ sung models tài khoản, khẩu vị, quán/người quản lý, món chuẩn/thực đơn/nguyên liệu, nhưng chưa có migration tạo bảng nghiệp vụ trong DB ứng dụng hoặc API nghiệp vụ.
+Hướng dẫn khởi chạy backend có `/health`, tài liệu API tự sinh và frontend tối thiểu. Đã bổ sung models tài khoản, khẩu vị, quán/người quản lý, thực đơn/nguyên liệu và đơn hàng, nhưng chưa có migration tạo bảng nghiệp vụ trong DB ứng dụng hoặc API nghiệp vụ.
 
 ## Chạy local trên Windows
 
@@ -48,7 +48,7 @@ Docker chưa được kiểm chứng trong phiên phát triển này vì máy kh
 npm run build
 ```
 
-Các kiểm tra gồm health, request ID, CORS, cấu trúc lỗi, cấu hình URL DB và các ràng buộc dữ liệu của models tài khoản, khẩu vị, quán/người quản lý, món chuẩn/thực đơn/nguyên liệu trên SQLite. Chúng không xác nhận kết nối PostgreSQL hoặc các chức năng ở phần sau.
+Các kiểm tra gồm health, request ID, CORS, cấu trúc lỗi, cấu hình URL DB và các ràng buộc dữ liệu của models tài khoản, khẩu vị, quán/người quản lý, thực đơn/nguyên liệu và đơn hàng trên SQLite. Chúng không xác nhận kết nối PostgreSQL, API giao dịch hoặc các chức năng ở phần sau.
 
 Các bước chạy và kiểm tra ở trên không cần `.runtime/pending-implementation/`. Khi clone trên máy khác, cài lại môi trường từ requirements và `package-lock.json`; không cần sao chép bản nháp cục bộ.
 
