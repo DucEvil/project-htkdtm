@@ -37,7 +37,7 @@ Ghi dữ liệu có rollback và khóa hàng khi DB hỗ trợ; kiểm thử SQL
 - Vendor: GET/POST `/api/v1/vendor/menu-items`, GET/PUT/DELETE `/{item_id}` dưới prefix đó. PUT thay toàn bộ sáu trường; DELETE ngừng bán, giữ ID/liên kết/lịch sử, PUT có thể bật lại. Món ngoài quán hoặc chưa có membership trả 404.
 - Admin: GET/POST `/api/v1/admin/canonical-dishes` và `/ingredients`, PUT/DELETE `/{entry_id}` dưới từng prefix. Xóa mục còn được sử dụng trả 409, kể cả món đã ngừng bán. Chuẩn hóa tên nguyên liệu, kiểm tra UNIQUE tên/source_id và cấm client tự gán cờ mô phỏng.
 
-Giá là số nguyên VNĐ; các cờ nhận đúng Boolean JSON. Xác nhận nguyên liệu yêu cầu danh sách ID thực tế không rỗng; không suy thành phần thực tế từ JSON món chuẩn. Ghi món và thay liên kết nguyên liệu có tính nguyên tử/rollback. Menu quán trả mảng; các danh sách khác trả page có total/offset/limit. Chưa có frontend thực đơn hoặc kiểm tra điều kiện đặt đơn; không đổi schema.
+Giá là số nguyên VNĐ; các cờ nhận đúng Boolean JSON. Xác nhận nguyên liệu yêu cầu danh sách ID thực tế không rỗng; không suy thành phần thực tế từ JSON món chuẩn. Ghi món và thay liên kết nguyên liệu có tính nguyên tử/rollback. Menu quán trả mảng; các danh sách khác trả page có total/offset/limit. Frontend F.12.3 đã đọc thực đơn và chi tiết món công khai; màn hình quản lý thực đơn chưa có. Điều kiện đặt đơn được kiểm tra ở service orders; không đổi schema.
 
 ## API tìm kiếm món và quán
 

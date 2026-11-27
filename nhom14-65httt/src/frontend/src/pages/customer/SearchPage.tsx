@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
+import { Link } from "react-router-dom";
 import { searchDishes, searchRestaurants } from "../../api/search";
 import { errorMessage } from "../../api/client";
 import LocationPicker from "../../components/map/LocationPicker";
@@ -230,12 +231,18 @@ export default function SearchPage() {
                                 </span>
                                 <span>{distance(item.distance_km)} km</span>
                               </div>
-                              <h2>{item.name}</h2>
+                              <h2>
+                                <Link to={`/menu-items/${item.id}`}>
+                                  {item.name}
+                                </Link>
+                              </h2>
                               <p className="result-price">
                                 {price.format(item.price)}
                               </p>
                               <p className="result-restaurant">
-                                {item.restaurant_name}
+                                <Link to={`/restaurants/${item.restaurant_id}`}>
+                                  {item.restaurant_name}
+                                </Link>
                               </p>
                               <p
                                 className={
@@ -275,7 +282,11 @@ export default function SearchPage() {
                                   {distance(restaurant.distance_km)} km
                                 </span>
                               </div>
-                              <h2>{restaurant.name}</h2>
+                              <h2>
+                                <Link to={`/restaurants/${restaurant.id}`}>
+                                  {restaurant.name}
+                                </Link>
+                              </h2>
                               <p>{restaurant.address}</p>
                               <p
                                 className={

@@ -245,6 +245,8 @@ Phần này không đổi schema/revision `001`. Ghi hồ sơ và trạng thái 
 
 Prefix `/api/v1`. Đây là API backend, chưa có giao diện quản lý thực đơn. Bổ sung 17 thao tác API; danh mục nguyên liệu và các thao tác sửa/xóa món chuẩn cụ thể hóa yêu cầu CRUD của thiết kế, không thêm bảng mới.
 
+Frontend F.12.3 đã nối phần đọc công khai: `/restaurants/:id` gọi chi tiết quán và thực đơn, `/menu-items/:id` gọi chi tiết món và quán tương ứng. Thực đơn client dùng offset tăng 12/limit 13 để dò còn trang sau (API trả mảng không có total). Đọc được khi chưa đăng nhập/vị trí; không suy ra khả năng giao hoặc đặt đơn từ response công khai. Giao diện quản lý vendor/admin vẫn chưa có.
+
 | Method | Đường dẫn | Quyền | Kết quả |
 | :--- | :--- | :--- | :--- |
 | GET | `/restaurants/{restaurant_id}/menu` | Công khai | Mảng món đang bán của quán approved |

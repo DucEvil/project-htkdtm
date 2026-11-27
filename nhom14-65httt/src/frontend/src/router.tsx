@@ -7,6 +7,8 @@ import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import PreferencePage from "./pages/customer/PreferencePage";
 import SearchPage from "./pages/customer/SearchPage";
+import RestaurantPage from "./pages/customer/RestaurantPage";
+import DishDetailPage from "./pages/customer/DishDetailPage";
 
 export default function AppRouter() {
   return (
@@ -16,6 +18,8 @@ export default function AppRouter() {
       <Route element={<AppShell />}>
         <Route index element={<HomePage />} />
         <Route path="search" element={<SearchPage />} />
+        <Route path="restaurants/:id" element={<RestaurantPage />} />
+        <Route path="menu-items/:id" element={<DishDetailPage />} />
         <Route element={<RoleGuard />}>
           <Route path="account" element={<AccountPage />} />
         </Route>
