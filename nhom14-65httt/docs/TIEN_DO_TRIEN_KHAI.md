@@ -30,6 +30,7 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | F.11.1 | Kiểu dữ liệu và API client công khai frontend | Có tám hàm đọc quán/món/danh mục/tìm kiếm và 15 kiểm thử mới; chưa có màn hình F.12 |
 | F.11.2 | API client nghiệp vụ khách hàng | Có bảy hàm khẩu vị/đơn COD/đánh giá và 21 kiểm thử mới; chưa có màn hình F.12 |
 | F.11.3 | API client chủ quán | Có 15 hàm hồ sơ/thực đơn/xử lý đơn và 34 kiểm thử mới; chưa có màn hình F.12 |
+| F.11.4 | API client quản trị | Có 11 hàm duyệt/tạm ngừng quán, món chuẩn/nguyên liệu và 28 kiểm thử mới; chưa có màn hình F.12 |
 | F.10 còn lại | Các nghiệp vụ khác | Tiếp tục tách từng module để commit |
 | Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Đã có backend hồ sơ/duyệt quán, thực đơn/catalog và tìm kiếm; đã có API đơn COD; chưa có màn hình nghiệp vụ |
 | Phase 3 | AI, tracking và dữ liệu | Đã có model/API nhận tracking; AI, ETL và KPI chưa triển khai |
@@ -266,6 +267,13 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - API dùng phiên/token/refresh chung; backend lấy quán từ membership. Danh sách món trả Page, danh sách đơn trả mảng. Hàm đọc nhận AbortSignal; lỗi backend được giữ nguyên. DELETE món ngừng bán, giữ dữ liệu lịch sử và trả void với 204; từ chối đơn gửi reason.
 - Toàn bộ 124 kiểm thử frontend đạt (90 trước + 34 mới); TypeScript, lint, format, production build và diff check đạt. Kiểm thử mới bao phủ 15 request, thiếu phiên, lỗi scope/vai trò/trạng thái, 204 và hủy tải với fetch thay thế.
 - Chưa có giao diện vendor hoặc API client admin; sẽ tiếp tục từng phần để commit riêng. Không đổi backend/dependencies; chưa stage/commit/push.
+
+## API quản trị frontend F.11.4
+
+- Tiếp tục bước 11 sau commit vendor, thêm `api/admin.ts` với 11 hàm quản trị quán và catalog theo backend đang có. Thêm AdminRestaurantQuery, types detail/input của món chuẩn/nguyên liệu, tái sử dụng types quán và phân trang.
+- Query hỗ trợ lọc trạng thái và bỏ trường chưa chọn; GET có AbortSignal. POST dùng mặc định khi bỏ trường tùy chọn, PUT món chuẩn yêu cầu đủ đặc trưng và source_id nullable. Hai DELETE trả void với 204; lỗi catalog đang sử dụng 409 được giữ lại. PATCH duyệt/tạm ngừng dùng response máy chủ, không tự bật nhận đơn.
+- 28 ca mới kiểm tra request/token/thiếu phiên, bộ lọc/phân trang, 204, lỗi quyền/không tồn tại/catalog đang dùng, hủy tải và refresh giữ payload PUT. Toàn bộ 152 kiểm thử frontend đạt (124 trước + 28 mới); TypeScript, lint, format, production build và diff check đạt.
+- Chưa có giao diện admin; các trang nghiệp vụ tiếp tục theo bước 12. API gợi ý/tracking frontend phụ thuộc phần tương ứng ở bước 15–16. Không đổi backend/dependencies; chưa stage/commit/push.
 
 ## Dọn bản nháp cục bộ
 

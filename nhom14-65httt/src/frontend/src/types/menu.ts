@@ -46,3 +46,34 @@ export interface MenuItemUpdate extends MenuItemCreate {
   ingredients_verified: boolean;
   ingredient_ids: number[];
 }
+
+export interface IngredientInput {
+  name: string;
+}
+
+export interface IngredientDetail extends IngredientPublic {
+  is_simulated: boolean;
+}
+
+export interface CanonicalDishDetail extends CanonicalDishPublic {
+  source_id: string | null;
+  is_simulated: boolean;
+}
+
+export interface CanonicalDishCreate {
+  name: string;
+  region: string;
+  method: string;
+  spice_level?: 0 | 1 | 2 | 3;
+  ingredients?: string[];
+  labels?: string[];
+  source_id?: string | null;
+}
+
+/** PUT thay toàn bộ đặc trưng; source_id có thể null nhưng phải được gửi. */
+export interface CanonicalDishUpdate extends CanonicalDishCreate {
+  spice_level: 0 | 1 | 2 | 3;
+  ingredients: string[];
+  labels: string[];
+  source_id: string | null;
+}

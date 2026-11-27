@@ -75,6 +75,30 @@ Ngừng bán dùng DELETE nhưng giữ món và dữ liệu lịch sử; 204 tr�
 
 34 ca mới trong `tests/vendorApi.test.ts` kiểm tra 15 request, token và thiếu phiên, response 204, phân trang, lỗi quyền/phạm vi/trạng thái và hủy tải. Toàn bộ 124 kiểm thử frontend đạt (90 trước + 34 mới); TypeScript, lint, format và production build đạt. Fetch được thay thế trong kiểm thử; luồng giao diện vendor sẽ được kiểm tra khi triển khai ở F.12.
 
+## API quản trị đã chuẩn bị — F.11.4
+
+`src/api/admin.ts` có 11 hàm gọi endpoint admin hiện có. Types catalog được bổ sung trong `types/menu.ts`, bộ lọc quán ở `types/admin.ts`; dùng lại `RestaurantDetail`, `RestaurantStatus` và `Page<T>`. Chưa có giao diện duyệt quán hoặc quản lý danh mục.
+
+| Hàm | Method và đường dẫn dưới `/api/v1/admin` | Kết quả |
+| :--- | :--- | :--- |
+| `listAdminRestaurants` | GET `/restaurants` | `Page<RestaurantDetail>` |
+| `approveAdminRestaurant` | PATCH `/restaurants/{id}/approve` | `RestaurantDetail` |
+| `suspendAdminRestaurant` | PATCH `/restaurants/{id}/suspend` | `RestaurantDetail` |
+| `listAdminCanonicalDishes` | GET `/canonical-dishes` | `Page<CanonicalDishDetail>` |
+| `createAdminCanonicalDish` | POST `/canonical-dishes` | `CanonicalDishDetail` |
+| `updateAdminCanonicalDish` | PUT `/canonical-dishes/{id}` | `CanonicalDishDetail` |
+| `deleteAdminCanonicalDish` | DELETE `/canonical-dishes/{id}` | `void` (204) |
+| `listAdminIngredients` | GET `/ingredients` | `Page<IngredientDetail>` |
+| `createAdminIngredient` | POST `/ingredients` | `IngredientDetail` |
+| `updateAdminIngredient` | PUT `/ingredients/{id}` | `IngredientDetail` |
+| `deleteAdminIngredient` | DELETE `/ingredients/{id}` | `void` (204) |
+
+Danh sách nhận `{ offset?, limit? }`; danh sách quán nhận thêm `status?: "pending" | "approved" | "suspended"`. Bỏ status để lấy mọi trạng thái; các GET nhận `{ signal }` ở đối số cuối. PATCH duyệt/tạm ngừng không có body; dùng cờ nhận đơn từ response vì duyệt không tự bật nhận đơn.
+
+POST món chuẩn cho phép bỏ mức cay/danh sách/source_id để dùng mặc định backend. PUT yêu cầu đủ các trường, gồm `source_id` có thể null; tên, vùng và phương pháp bắt buộc cho cả hai. Nguyên liệu gửi `{ name }`, máy chủ chuẩn hóa và trả bản ghi. Types detail giữ source_id/cờ mô phỏng cho quản trị, khác types công khai. Hai DELETE thành công 204 trả undefined; mục đang được dùng trả `ApiError` 409 `CATALOG_IN_USE`.
+
+Mọi request dùng phiên/refresh của ApiClient; backend xác nhận role admin từ DB. Lỗi 403/404/409 giữ nguyên và không tự xóa phiên. 28 ca mới trong `tests/adminApi.test.ts` kiểm tra 11 request và token/thiếu phiên, bộ lọc, phân trang, response 204, lỗi nghiệp vụ, hủy tải và PUT gửi lại sau refresh giữ source_id null. Toàn bộ 152 kiểm thử frontend đạt (124 trước + 28 mới); TypeScript, lint, format và production build đạt. Fetch được thay thế trong kiểm thử; chưa kiểm thử màn hình quản trị trên trình duyệt.
+
 ## Auth đã triển khai
 
 | Route | Nội dung hiện có |

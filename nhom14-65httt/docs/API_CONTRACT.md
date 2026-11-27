@@ -8,6 +8,8 @@ F.11.2 bổ sung bảy hàm API frontend khẩu vị, đơn COD và đánh giá 
 
 F.11.3 bổ sung 15 hàm API frontend cho hồ sơ quán, thực đơn và xử lý đơn vendor; xem [API chủ quán frontend](../src/frontend/README.md#api-chủ-quán-đã-chuẩn-bị--f113). Quán được backend xác định từ membership; DELETE món chỉ ngừng bán và trả 204. Chưa có giao diện vendor.
 
+F.11.4 bổ sung 11 hàm API frontend admin cho duyệt/tạm ngừng quán và CRUD món chuẩn/nguyên liệu; xem [API quản trị frontend](../src/frontend/README.md#api-quản-trị-đã-chuẩn-bị--f114). Các hàm yêu cầu phiên đăng nhập, backend kiểm tra role admin; danh sách quán hỗ trợ bộ lọc status. Chưa có giao diện quản trị.
+
 ## Quy ước chung
 
 Nghiệp vụ đơn hàng dùng state machine E.2 và API COD ở F.10.5 bên dưới. Xem [README backend](../src/backend/README.md#chuyển-trạng-thái-và-lịch-sử-đơn) về quyền sở hữu và transaction.
