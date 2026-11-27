@@ -6,6 +6,7 @@ import AccountPage from "./pages/AccountPage";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import PreferencePage from "./pages/customer/PreferencePage";
+import SearchPage from "./pages/customer/SearchPage";
 
 export default function AppRouter() {
   return (
@@ -14,6 +15,7 @@ export default function AppRouter() {
       <Route path="register" element={<RegisterPage />} />
       <Route element={<AppShell />}>
         <Route index element={<HomePage />} />
+        <Route path="search" element={<SearchPage />} />
         <Route element={<RoleGuard />}>
           <Route path="account" element={<AccountPage />} />
         </Route>

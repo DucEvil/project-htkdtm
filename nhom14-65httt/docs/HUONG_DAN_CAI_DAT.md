@@ -1,6 +1,6 @@
 # Cài đặt và tạo cơ sở dữ liệu Vị Việt
 
-Hướng dẫn khởi chạy backend có `/health`, OpenAPI, API auth/quán/thực đơn/danh mục/tìm kiếm/đơn COD/đánh giá/khẩu vị/tracking và frontend đăng ký/đăng nhập. Đã có migration `001` tạo 15 bảng OLTP; chưa có seed, dashboard hoặc frontend nghiệp vụ.
+Hướng dẫn khởi chạy backend có `/health`, OpenAPI, API auth/quán/thực đơn/danh mục/tìm kiếm/đơn COD/đánh giá/khẩu vị/tracking và frontend auth, khẩu vị, tìm kiếm theo vị trí. Đã có migration `001` tạo 15 bảng OLTP; chưa có seed, dashboard hoặc giao diện đặt/xử lý đơn.
 
 ## Cấu hình khóa JWT
 
@@ -38,7 +38,7 @@ Sau khi đăng nhập bằng vendor, có thể tạo quán qua POST `/api/v1/ven
 
 Để thử thực đơn trong `/docs`, dùng admin đã được cấp hợp lệ tạo nguyên liệu qua POST `/api/v1/admin/ingredients`, tạo món chuẩn qua POST `/api/v1/admin/canonical-dishes`, ghi lại ID trả về. Đổi sang access token vendor có quán, POST `/api/v1/vendor/menu-items` với canonical_dish_id/name/price; món mặc định chưa bán/chưa xác nhận nguyên liệu. PUT `/{item_id}` với đủ sáu trường theo [API contract F.10.2](API_CONTRACT.md#thực-đơn-món-chuẩn-và-nguyên-liệu--f102), đặt is_available=true và ingredient_ids thực tế. Với quán approved, GET công khai `/api/v1/restaurants/{restaurant_id}/menu` và `/api/v1/menu-items/{item_id}` sẽ trả món đó. DELETE vendor ngừng bán, món vẫn còn trong GET vendor; xóa catalog đang dùng trả 409. Chưa có seed hoặc giao diện quản lý thực đơn; không đăng ký công khai được tài khoản admin.
 
-Thử tìm kiếm công khai qua `/api/v1/search/dishes?q=pho&lat=21.0285&lng=105.8542&radius=5` và `/api/v1/search/restaurants?q=&lat=21.0285&lng=105.8542`. Thay tọa độ bằng điểm trong phạm vi giao của quán đã tạo. Chỉ quán approved/món đang bán trong phạm vi mới xuất hiện; quán đóng cửa vẫn hiện trạng thái để khách cân nhắc. Kiểm tra thêm q tiếng Việt không dấu, radius nhỏ và offset vượt tổng để thấy kết quả lọc/phân trang. Không có dữ liệu phù hợp trả page rỗng; thiếu vị trí trả 422. [API contract F.10.3](API_CONTRACT.md#tìm-kiếm-món-và-quán--f103) mô tả đầy đủ response và giới hạn; chưa có SearchPage hoặc bản đồ.
+Thử tìm kiếm công khai qua `/api/v1/search/dishes?q=pho&lat=21.0285&lng=105.8542&radius=5` và `/api/v1/search/restaurants?q=&lat=21.0285&lng=105.8542`. Thay tọa độ bằng điểm trong phạm vi giao của quán đã tạo. Chỉ quán approved/món đang bán trong phạm vi mới xuất hiện; quán đóng cửa vẫn hiện trạng thái để khách cân nhắc. Kiểm tra thêm q tiếng Việt không dấu, radius nhỏ và offset vượt tổng để thấy kết quả lọc/phân trang. Không có dữ liệu phù hợp trả page rỗng; thiếu vị trí trả 422. [API contract F.10.3](API_CONTRACT.md#tìm-kiếm-món-và-quán--f103) mô tả đầy đủ response và giới hạn; SearchPage đã có ở F.12.2, chưa tích hợp bản đồ.
 
 Sau migrate, `current` cần báo `001 (head)`, `check` không báo thay đổi schema mới. File SQLite local là dữ liệu phát sinh và được Git bỏ qua. Nếu dùng biến môi trường DATABASE_URL cho SQLite, cần giữ cùng giá trị khi chạy backend và các lệnh Alembic. Không cần seed ở bước này vì chưa có dữ liệu mẫu.
 
@@ -75,6 +75,10 @@ Nếu có Make, các lệnh tương ứng là `make migrate`, `make migrate-stat
 Docker chưa được kiểm chứng trong phiên phát triển này vì máy không có Docker CLI trong PATH. Cần thử lại trên máy có Docker Desktop trước khi đánh dấu nghiệm thu.
 
 ## Kiểm tra
+
+Mốc F.12.2: **188 kiểm thử frontend đạt** (165 trước + 23 ca tìm kiếm/vị trí mới). TypeScript/lint/format/build đạt. Bốn kịch bản Playwright khẩu vị và tìm kiếm đạt trên Edge với API được kiểm soát trong test; hai ca search mới kiểm tra phân trang, chế độ, rỗng/lỗi/retry, từ chối định vị và responsive. Đã xem ảnh 360/1280px, kiểm tra không tràn ngang ở 360/390/768/1280px. Chưa chạy UI search với backend/PostgreSQL thật.
+
+Thử thủ công: mở **Tìm món, quán** hoặc `/search`, bấm định vị (localhost hoặc HTTPS) rồi cấp quyền; có thể nhập tọa độ trong phần thủ công nếu không muốn cấp quyền. Vị trí phải nằm trong bán kính phục vụ quán đã approved có món đang bán. Nhập từ khóa, chọn bán kính, bấm tìm/Enter; đổi qua Quán ăn và thử phân trang. Không có dữ liệu phù hợp sẽ hiện rỗng. Tên địa điểm chỉ là nhãn, chưa tự đổi địa chỉ thành tọa độ; không có bản đồ tương tác. Vị trí chỉ giữ trong bộ nhớ, tải lại phải chọn lại. Chạy riêng test tìm kiếm với frontend dev server bằng `npx playwright test e2e/search.spec.ts` (đặt E2E_BASE_URL và E2E_BROWSER_CHANNEL=msedge như phần trình duyệt); test không cần backend vì chặn response API.
 
 Mốc F.12.1: **165 kiểm thử frontend đạt** (152 trước + 13 ca khẩu vị mới), TypeScript/lint/format/build đạt. Hai kịch bản Playwright mới dùng Edge và API được kiểm soát trong test đạt: luồng bỏ qua/lưu lỗi/thử lại/tải lại, bốn kích thước 360/390/768/1280px, focus và bàn phím. Đã xem ảnh desktop/mobile; chưa chạy UI khẩu vị với backend/PostgreSQL thật.
 

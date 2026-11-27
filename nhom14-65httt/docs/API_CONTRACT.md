@@ -382,7 +382,7 @@ Cả hai trả `{"items":[...],"total":3,"offset":0,"limit":20}`. Lọc đủ đ
 
 SQL lọc quán approved/món available và hộp tọa độ bao quanh bán kính; Python kiểm tra Haversine chính xác, chuẩn hóa chữ Unicode và sắp xếp/phân trang. Hộp tọa độ xử lý kinh tuyến 180° và vùng cực để không loại nhầm ứng viên hợp lệ. Nguyên liệu chỉ nạp theo lô cho trang món trả về, tránh truy vấn riêng từng món.
 
-Cách triển khai phù hợp tập dữ liệu MVP quanh trường; vẫn phải đọc toàn bộ ứng viên trong hộp tọa độ để tính đúng total/thứ tự, chưa có chỉ mục tìm kiếm không dấu hoặc chỉ mục không gian. Không cắt ngầm số ứng viên và không công bố cam kết hiệu năng cho dữ liệu lớn. Khi mở rộng cần đo tải và đưa tìm chữ/khoảng cách vào cơ chế chỉ mục thích hợp. Không cần extension DB, đổi model/migration hoặc thêm thư viện ở phần này. Chưa có giao diện SearchPage hoặc tích hợp bản đồ; API đặt đơn mô tả bên dưới.
+Cách triển khai phù hợp tập dữ liệu MVP quanh trường; vẫn phải đọc toàn bộ ứng viên trong hộp tọa độ để tính đúng total/thứ tự, chưa có chỉ mục tìm kiếm không dấu hoặc chỉ mục không gian. Không cắt ngầm số ứng viên và không công bố cam kết hiệu năng cho dữ liệu lớn. Khi mở rộng cần đo tải và đưa tìm chữ/khoảng cách vào cơ chế chỉ mục thích hợp. Không cần extension DB, đổi model/migration hoặc thêm thư viện ở phần này. Frontend F.12.2 có `/search`, định vị hoặc nhập tọa độ, tìm món/quán và phân trang 12 mục; chưa tích hợp bản đồ/geocoding. Tên địa điểm nhập tay chỉ là nhãn trong bộ nhớ client, không gửi vào API search. API đặt đơn mô tả bên dưới.
 
 ## Đơn COD và chống gửi lặp — F.10.5
 

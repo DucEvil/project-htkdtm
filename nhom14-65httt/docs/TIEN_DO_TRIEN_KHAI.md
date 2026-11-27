@@ -21,19 +21,20 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | F.9 | Kiểm thử auth | Backend 84 ca; frontend 54 ca unit/UI và bốn kịch bản E2E đạt |
 | F.10.1 | Hồ sơ quán vendor, duyệt/tạm ngừng admin và quán công khai | Đã có tám thao tác API, 92 kiểm thử mới; chưa có giao diện quản lý quán |
 | F.10.2 | Thực đơn vendor, catalog admin và món công khai | Đã có 17 thao tác API, 167 kiểm thử mới; chưa có giao diện quản lý thực đơn |
-| F.10.3 | Tìm món/quán theo chữ, Haversine và phạm vi giao | Đã có hai GET công khai, 99 kiểm thử mới; chưa có SearchPage/bản đồ |
+| F.10.3 | Tìm món/quán theo chữ, Haversine và phạm vi giao | Có hai GET công khai, 99 kiểm thử backend; SearchPage ở F.12.2, bản đồ chưa tích hợp |
 | F.10.4 | Quy tắc chuyển trạng thái và lịch sử đơn | Có state machine/service và 167 kiểm thử, đã nối API F.10.5 |
 | F.10.5 | Tạo đơn COD, idempotency và API đơn hàng | Có 11 thao tác API customer/vendor; chưa có UI |
 | F.10.6 | Đánh giá món đã mua sau đơn hoàn tất | Có POST customer, 30 kiểm thử mới; chưa có ReviewForm |
 | F.10.7 | Hồ sơ khẩu vị năm câu hỏi | Có GET/PUT customer, 36 kiểm thử backend; PreferencePage ở F.12.1 |
 | F.10.8 | Tiếp nhận sự kiện tương tác | Có POST batch customer, 31 kiểm thử mới; chưa có API sinh gợi ý/UI |
-| F.11.1 | Kiểu dữ liệu và API client công khai frontend | Có tám hàm đọc quán/món/danh mục/tìm kiếm và 15 kiểm thử mới; chưa có màn hình F.12 |
+| F.11.1 | Kiểu dữ liệu và API client công khai frontend | Có tám hàm đọc quán/món/danh mục/tìm kiếm, SearchPage dùng API ở F.12.2 |
 | F.11.2 | API client nghiệp vụ khách hàng | Có bảy hàm khẩu vị/đơn COD/đánh giá, màn hình khẩu vị ở F.12.1; đơn/đánh giá chưa có UI |
 | F.11.3 | API client chủ quán | Có 15 hàm hồ sơ/thực đơn/xử lý đơn và 34 kiểm thử mới; chưa có màn hình F.12 |
 | F.11.4 | API client quản trị | Có 11 hàm duyệt/tạm ngừng quán, món chuẩn/nguyên liệu và 28 kiểm thử mới; chưa có màn hình F.12 |
 | F.12.1 | Màn hình khẩu vị customer | Có route /onboarding/taste, đọc/lưu, validation, bỏ qua; 13 ca unit/UI và hai kịch bản trình duyệt mới |
+| F.12.2 | Chọn vị trí và tìm món/quán | Có /search, LocationContext/useLocation/LocationPicker, định vị hoặc tọa độ thủ công; chưa có MapView/geocoding |
 | F.10 còn lại | Các nghiệp vụ khác | Tiếp tục tách từng module để commit |
-| Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Có backend nghiệp vụ, frontend API và màn hình khẩu vị; màn hình tìm kiếm/đơn/vendor/admin chưa có |
+| Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Có backend nghiệp vụ, frontend API, màn hình khẩu vị/tìm kiếm; màn hình thực đơn/đơn/vendor/admin chưa có |
 | Phase 3 | AI, tracking và dữ liệu | Đã có model/API nhận tracking; AI, ETL và KPI chưa triển khai |
 | Phase 4 | ETL, BI, Power BI và đánh giá | Chưa đưa vào mã nguồn hiện tại |
 | Phase 5 | Tích hợp, kiểm thử và bàn giao | Chưa thực hiện |
@@ -282,6 +283,13 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Đọc hồ sơ thật từ API; chỉ NOT_FOUND 404 được coi chưa khai báo. Lỗi tải có retry, không mở form ghi đè. Form năm câu giữ nhãn vùng có sẵn, validation giới hạn API, đồng ý lưu ở client, focus lỗi, trạng thái gửi/khóa gửi lặp và lỗi theo trường. Chỉ hiện lưu thành công sau response PUT; bỏ qua không ghi/xóa dữ liệu.
 - Bố cục hai cột desktop, một cột mobile, màu/font đồng bộ auth, vùng chạm 48px và giảm chuyển động. Không lưu câu trả lời ở storage, không đổi schema/backend hoặc triển khai lịch sử đồng ý.
 - 165 kiểm thử frontend đạt (152 trước + 13 mới); hai kịch bản Playwright mới đạt với Edge/API kiểm soát trong test. Đã kiểm tra ảnh và không tràn ngang ở 360/390/768/1280px, focus và gửi bằng bàn phím, lưu lỗi/giữ dữ liệu/thử lại/tải lại. Chưa kiểm tra khẩu vị trên trình duyệt với backend/PostgreSQL thật. TypeScript/lint/format/build/diff check đạt; chưa stage/commit/push.
+
+## Chọn vị trí và tìm kiếm F.12.2
+
+- Tiếp tục bước 12 sau commit khẩu vị, thêm route /search công khai và liên kết từ Navbar. SearchPage gọi hai API search thật, hiển thị món/quán, từ khóa, bán kính, khoảng cách/giá/khả dụng/nguyên liệu và phân trang 12 mục.
+- Thêm LocationContext/useLocation và LocationPicker. Chỉ định vị khi bấm nút, fallback nhập tọa độ khi không có quyền/hỗ trợ hoặc quá thời gian; nhãn địa điểm không tự geocode. Dữ liệu vị trí chỉ ở bộ nhớ AppShell, không ghi storage/tracking. Xóa vị trí ẩn kết quả, định vị trả muộn không ghi đè nhập tay.
+- Hủy và bỏ phản hồi tìm kiếm cũ; đổi vị trí/bộ lọc/chế độ về trang đầu. Có chưa chọn vị trí, tải, rỗng, lỗi/retry; không tự nới bán kính hoặc cá nhân hóa. Chưa có MapView/geocoding, nhập địa chỉ để suy ra tọa độ hoặc trang chi tiết/thực đơn/đặt món.
+- 188 kiểm thử frontend đạt (165 trước + 23 mới). Bốn kịch bản Playwright khẩu vị/tìm kiếm đạt, gồm hai mới với API kiểm soát. Đã xem ảnh desktop/mobile; không tràn ngang ở 360/390/768/1280px. Chưa chạy UI search với backend/PostgreSQL thật; TypeScript/lint/format/build/diff check đạt. Chưa stage/commit/push.
 
 ## Dọn bản nháp cục bộ
 

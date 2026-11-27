@@ -1,10 +1,10 @@
 # Frontend Vị Việt
 
-Đã có frontend auth F.8 theo thiết kế cấu trúc: đăng ký/đăng nhập, AuthContext/useAuth, API client, AppShell/Navbar/Footer và RoleGuard. F.12.1 có trang khai báo khẩu vị gọi backend thật; chưa có giao diện tìm món, đặt hàng hoặc dashboard quán/admin.
+Đã có frontend auth F.8 theo thiết kế cấu trúc: đăng ký/đăng nhập, AuthContext/useAuth, API client, AppShell/Navbar/Footer và RoleGuard. F.12.1 có trang khẩu vị, F.12.2 có tìm món/quán và chọn vị trí gọi backend thật; chưa có giao diện đặt hàng hoặc dashboard quán/admin.
 
 ## API công khai đã chuẩn bị — F.11.1
 
-Các module `src/api/restaurants.ts`, `menu.ts`, `search.ts` dùng chung `ApiClient` hiện có. Kiểu response ở `src/types/restaurant.ts`, `menu.ts`, `search.ts`, phân trang dùng `Page<T>` và `PaginationQuery` ở `common.ts`; đã đối chiếu schema backend F.10.1–F.10.3. Đây là lớp gọi API để màn hình ở F.12 sử dụng; chưa có SearchPage hoặc trang thực đơn.
+Các module `src/api/restaurants.ts`, `menu.ts`, `search.ts` dùng chung `ApiClient` hiện có. Kiểu response ở `src/types/restaurant.ts`, `menu.ts`, `search.ts`, phân trang dùng `Page<T>` và `PaginationQuery` ở `common.ts`; đã đối chiếu schema backend F.10.1–F.10.3. SearchPage đã dùng hai API search ở F.12.2; trang thực đơn chưa có.
 
 | Hàm | Endpoint GET dưới `/api/v1` | Kết quả |
 | :--- | :--- | :--- |
@@ -111,6 +111,18 @@ CSS riêng `preferences.css` dùng màu/font hiện có, card 28px, lựa chọn
 
 Toàn bộ 165 kiểm thử frontend đạt (152 trước + 13 mới). Hai kịch bản Playwright mới đạt trên Edge với API được chặn và trả response kiểm soát trong test: bỏ qua, lỗi/thử lại/tải lại, payload qua API client thật, responsive 360/390/768/1280px và bàn phím. Đã xem ảnh desktop/mobile; chưa chạy luồng khẩu vị với PostgreSQL/backend thật trong trình duyệt. Backend khẩu vị vẫn có bộ kiểm thử SQLite riêng đã ghi tại F.10.7. TypeScript, lint, format và build đạt.
 
+## Chọn vị trí và tìm kiếm đã triển khai — F.12.2
+
+Route công khai `/search`, mở từ **Tìm món, quán** trên thanh điều hướng. `SearchPage` dùng hai API search hiện có, chuyển Món ăn/Quán ăn, tìm theo từ khóa (tối đa 180 ký tự), bán kính 1/3/5/10/20/50 km, phân trang 12 mục. Để trống từ khóa để khám phá gần vị trí đã chọn. Thay bộ lọc/chế độ hoặc vị trí quay về trang đầu; đang gõ chưa gọi API cho đến khi gửi form. Kết quả có khoảng cách đường thẳng, giá VNĐ, trạng thái mở/nhận đơn, địa chỉ/giờ quán hoặc nguyên liệu món. Chưa có trang chi tiết/thực đơn/giỏ hàng, nên chưa có thao tác đặt món từ thẻ kết quả.
+
+`LocationProvider` trong AppShell giữ tọa độ/tên địa điểm trong bộ nhớ, chia sẻ qua `useLocation`. `components/map/LocationPicker.tsx` không tự xin quyền; người dùng bấm định vị mới gọi Geolocation API, chờ tối đa 10 giây. Khi bị từ chối/không hỗ trợ/quá hạn có lỗi tiếng Việt và vẫn nhập tay được. Nhập vĩ độ -90..90, kinh độ -180..180, chấp nhận 0; tên địa điểm tùy chọn chỉ là nhãn. Nút xóa xóa vị trí và ô nhập, ẩn kết quả. Không ghi tọa độ/nhãn vào storage hoặc tracking; chỉ gửi tọa độ đến API tìm kiếm. Định vị trả muộn không ghi đè lựa chọn nhập tay mới hơn.
+
+**Giới hạn bản đồ:** chưa có MapView hoặc dịch vụ geocoding. Tên địa điểm/địa chỉ nhập vào không tự đổi thành tọa độ; người dùng cần định vị hoặc lấy tọa độ từ bản đồ bên ngoài rồi nhập. Chức năng nhập địa chỉ để xác định điểm theo thiết kế còn chờ tích hợp dịch vụ bản đồ. Vị trí mất khi tải lại hoặc rời AppShell (ví dụ tới trang login).
+
+Có trạng thái chưa chọn vị trí, tải, rỗng, lỗi/thử lại và phân trang theo total API. Đổi vị trí/truy vấn hủy yêu cầu cũ, không cho phản hồi cũ ghi đè kết quả mới. Không tự nới bán kính, không cá nhân hóa theo khẩu vị. Quán đóng cửa vẫn xuất hiện theo backend và ghi rõ trạng thái; thông tin nguyên liệu không bảo đảm an toàn dị ứng.
+
+188 kiểm thử frontend đạt (165 trước + 23 mới). Hai kịch bản Playwright tìm kiếm mới và hai kịch bản khẩu vị đạt với Edge/API kiểm soát trong test; đã xem ảnh 360/1280px và kiểm tra không tràn ngang ở 360/390/768/1280px. Kiểm tra tọa độ 0/biên/sai, quyền định vị bị từ chối, phản hồi cũ/định vị muộn, từ khóa/bán kính/chế độ, phân trang, lỗi/thử lại/xóa vị trí. Chưa chạy UI search với backend/PostgreSQL thật. TypeScript/lint/format/build đạt.
+
 ## Auth đã triển khai
 
 | Route | Nội dung hiện có |
@@ -120,6 +132,7 @@ Toàn bộ 165 kiểm thử frontend đạt (152 trước + 13 mới). Hai kịc
 | `/login` | Đăng nhập bằng email/mật khẩu, hiển thị lỗi và chuyển đến trang theo vai trò |
 | `/account` | Thông tin tài khoản đã đăng nhập |
 | `/onboarding/taste` | Customer đọc/lưu năm câu khẩu vị, đồng ý lưu hoặc bỏ qua về tài khoản |
+| `/search` | Công khai: chọn vị trí, tìm món/quán theo từ khóa và khoảng cách, phân trang |
 | `/vendor`, `/admin` | Thông tin tài khoản có guard vai trò tương ứng; chưa có dashboard nghiệp vụ |
 | `/forbidden`, route không tồn tại | Thông báo không đủ quyền/trang 404 |
 

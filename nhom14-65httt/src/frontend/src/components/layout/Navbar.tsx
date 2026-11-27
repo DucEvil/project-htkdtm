@@ -21,6 +21,7 @@ export default function Navbar() {
         <NavLink to="/" end>
           Trang chủ
         </NavLink>
+        <NavLink to="/search">Tìm món, quán</NavLink>
         {user ? (
           <>
             <NavLink to={roleHome(user.role)}>{roleLabels[user.role]}</NavLink>

@@ -6,7 +6,7 @@ Website đặt món trực tuyến tích hợp trí tuệ nhân tạo gợi ý �
 
 ## Trạng thái hiện tại
 
-Đang triển khai theo từng phần của [thiết kế cấu trúc](docs/THIET_KE_CAU_TRUC.md) để nhóm commit riêng từng nội dung. Đã có nền tảng FastAPI, React/Vite/TypeScript, cấu hình môi trường, Docker, models F.5, migration `001`, ERD/từ điển dữ liệu, auth backend/frontend và API hồ sơ/duyệt quán, thực đơn/món chuẩn/nguyên liệu, tìm kiếm F.10.1–F.10.3. API đơn COD đã được bổ sung ở F.10.5; AI, ETL và dashboard triển khai sau; chưa có giao diện tìm kiếm hoặc quản lý thực đơn. Xem [tiến độ](docs/TIEN_DO_TRIEN_KHAI.md).
+Đang triển khai theo từng phần của [thiết kế cấu trúc](docs/THIET_KE_CAU_TRUC.md) để nhóm commit riêng từng nội dung. Đã có nền tảng FastAPI, React/Vite/TypeScript, cấu hình môi trường, Docker, models F.5, migration `001`, ERD/từ điển dữ liệu, auth backend/frontend và API hồ sơ/duyệt quán, thực đơn/món chuẩn/nguyên liệu, tìm kiếm F.10.1–F.10.3. API đơn COD đã được bổ sung ở F.10.5; frontend đã có khẩu vị và tìm kiếm F.12.1–F.12.2. AI, ETL, dashboard và giao diện quản lý thực đơn triển khai sau. Xem [tiến độ](docs/TIEN_DO_TRIEN_KHAI.md).
 
 Thông tin thành viên được ghi tại [danhsachnhom.md](danhsachnhom.md). Cần hoàn thiện các trường đang đánh dấu trước khi xác nhận hồ sơ nộp đầy đủ.
 
@@ -14,7 +14,7 @@ Phần đơn hàng đã có API COD, snapshot giá, chống gửi lặp và chuy
 
 Customer có thể lưu năm câu trả lời khẩu vị qua API F.10.7 và màn hình `/onboarding/taste` ở F.12.1; mở từ tài khoản, bỏ qua không tạo hồ sơ. API F.10.8 tiếp nhận batch sự kiện tương tác và ghi nhận hiển thị thực tế; luồng sinh gợi ý và giao diện tracking sẽ tích hợp sau.
 
-Frontend F.11.1 đã có types và tám hàm gọi API đọc quán, món, danh mục, tìm kiếm, chuẩn bị cho các trang khách hàng F.12. Xem [README frontend](src/frontend/README.md#api-công-khai-đã-chuẩn-bị--f111); chưa có giao diện tìm kiếm/thực đơn.
+Frontend F.11.1 đã có types và tám hàm gọi API đọc quán, món, danh mục, tìm kiếm. F.12.2 có `/search` để tìm món/quán với định vị hoặc tọa độ thủ công; chưa có bản đồ/geocoding hoặc trang thực đơn. Xem [README frontend](src/frontend/README.md#chọn-vị-trí-và-tìm-kiếm-đã-triển-khai--f122).
 
 F.11.2 bổ sung types và bảy hàm gọi API khách hàng: khẩu vị, đơn COD và đánh giá món đã mua. Dùng phiên đăng nhập hiện có, giữ key khi gửi lại đơn; các màn hình nghiệp vụ sẽ tích hợp ở F.12.
 

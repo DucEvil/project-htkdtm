@@ -43,6 +43,8 @@ Giá là số nguyên VNĐ; các cờ nhận đúng Boolean JSON. Xác nhận ng
 
 `app/search/` có schema, service và router theo C.5/F.10. GET công khai `/api/v1/search/dishes` và `/api/v1/search/restaurants` nhận lat/lng bắt buộc, q tùy chọn, radius mặc định 5 km (tối đa 50), offset/limit như các API danh sách. Xem [API contract F.10.3](../../docs/API_CONTRACT.md#tìm-kiếm-món-và-quán--f103).
 
+Frontend F.12.2 đã có `/search` gọi hai API này, định vị hoặc tọa độ nhập tay, kết quả món/quán và phân trang; bản đồ/geocoding chưa được tích hợp.
+
 Tìm chữ tiếng Việt có/không dấu, không phân biệt hoa/thường; mọi từ phải khớp trong tên món bán/món chuẩn/quán, hoặc tên/địa chỉ khi tìm quán. Chỉ trả quán approved, món đang bán và trong cả bán kính khách lẫn phạm vi giao của quán. Quán đóng cửa/tắt nhận đơn vẫn xuất hiện cùng trạng thái công khai. Không áp bộ lọc AI/khẩu vị vào tìm kiếm.
 
 Khoảng cách Haversine đường chim bay; sắp theo khoảng cách chưa làm tròn rồi ID, lọc trước total/phân trang. SQL giới hạn vùng ứng viên, Python chuẩn hóa Unicode và tính khoảng cách; phù hợp tập dữ liệu MVP, chưa có chỉ mục không gian/tìm kiếm cho dữ liệu lớn. Trả public DTO cùng distance_km, món có thêm restaurant để hiển thị giờ/trạng thái. Không ghi vị trí khách, không gọi Maps/geocode, không đổi schema/dependencies hoặc frontend.
