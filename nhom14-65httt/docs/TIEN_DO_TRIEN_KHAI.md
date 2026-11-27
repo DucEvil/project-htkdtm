@@ -24,11 +24,11 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | F.10.3 | Tìm món/quán theo chữ, Haversine và phạm vi giao | Có hai GET công khai, 99 kiểm thử backend; SearchPage ở F.12.2, bản đồ chưa tích hợp |
 | F.10.4 | Quy tắc chuyển trạng thái và lịch sử đơn | Có state machine/service và 167 kiểm thử, đã nối API F.10.5 |
 | F.10.5 | Tạo đơn COD, idempotency và API đơn hàng | Có 11 thao tác API customer/vendor; chưa có UI |
-| F.10.6 | Đánh giá món đã mua sau đơn hoàn tất | Có POST customer, 30 kiểm thử mới; chưa có ReviewForm |
+| F.10.6 | Đánh giá món đã mua sau đơn hoàn tất | Có POST customer, 30 kiểm thử backend; ReviewForm ở F.12.7 |
 | F.10.7 | Hồ sơ khẩu vị năm câu hỏi | Có GET/PUT customer, 36 kiểm thử backend; PreferencePage ở F.12.1 |
 | F.10.8 | Tiếp nhận sự kiện tương tác | Có POST batch customer, 31 kiểm thử mới; chưa có API sinh gợi ý/UI |
 | F.11.1 | Kiểu dữ liệu và API client công khai frontend | Có tám hàm đọc quán/món/danh mục/tìm kiếm, SearchPage dùng API ở F.12.2 |
-| F.11.2 | API client nghiệp vụ khách hàng | Có bảy hàm khẩu vị/đơn COD/đánh giá, màn hình khẩu vị ở F.12.1; đơn/đánh giá chưa có UI |
+| F.11.2 | API client nghiệp vụ khách hàng | Có bảy hàm khẩu vị/đơn COD/đánh giá, UI đã nối ở F.12.1 và F.12.5–F.12.7 |
 | F.11.3 | API client chủ quán | Có 15 hàm hồ sơ/thực đơn/xử lý đơn và 34 kiểm thử mới; chưa có màn hình F.12 |
 | F.11.4 | API client quản trị | Có 11 hàm duyệt/tạm ngừng quán, món chuẩn/nguyên liệu và 28 kiểm thử mới; chưa có màn hình F.12 |
 | F.12.1 | Màn hình khẩu vị customer | Có route /onboarding/taste, đọc/lưu, validation, bỏ qua; 13 ca unit/UI và hai kịch bản trình duyệt mới |
@@ -36,9 +36,10 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | F.12.3 | Chi tiết quán/thực đơn/món | Có hai route công khai, liên kết từ tìm kiếm, phân trang; thêm món vào giỏ ở F.12.4 |
 | F.12.4 | Giỏ hàng một quán | Có /cart, CartContext/useCart, thêm/gộp/sửa/xóa, đổi quán và link checkout |
 | F.12.5 | Checkout COD và chống gửi trùng | Có /checkout customer, CheckoutForm/useIdempotency, xác nhận địa chỉ/tọa độ, gửi API và link theo dõi đơn |
-| F.12.6 | Lịch sử/chi tiết đơn customer | Có /orders và /orders/:id, phân trang/snapshot/timeline, polling và hủy pending; đánh giá làm riêng |
+| F.12.6 | Lịch sử/chi tiết đơn customer | Có /orders và /orders/:id, phân trang/snapshot/timeline, polling và hủy pending; đánh giá ở F.12.7 |
+| F.12.7 | Đánh giá món sau mua | Có ReviewForm trong đơn completed, sao/nhận xét/validation và POST; chưa có API đọc lại/sửa/xóa review |
 | F.10 còn lại | Các nghiệp vụ khác | Tiếp tục tách từng module để commit |
-| Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Có backend nghiệp vụ, frontend API, khẩu vị/tìm kiếm/thực đơn/giỏ/checkout/đơn customer; đánh giá, vendor/admin chưa có UI |
+| Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Có backend nghiệp vụ, frontend API, khẩu vị/tìm kiếm/thực đơn/giỏ/checkout/đơn/đánh giá customer; vendor/admin chưa có UI |
 | Phase 3 | AI, tracking và dữ liệu | Đã có model/API nhận tracking; AI, ETL và KPI chưa triển khai |
 | Phase 4 | ETL, BI, Power BI và đánh giá | Chưa đưa vào mã nguồn hiện tại |
 | Phase 5 | Tích hợp, kiểm thử và bàn giao | Chưa thực hiện |
@@ -324,6 +325,13 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - useCustomerOrder polling15 giây cho trạng thái chưa kết thúc khi tab hiện, đọc khi trở lại tab; dừng trạng thái cuối/unmount, có cập nhật thủ công. Lỗi refresh giữ dữ liệu cũ có cảnh báo/khóa hủy; 401/403/404 ẩn dữ liệu cũ.
 - Hủy pending có dialog/Escape/focus, khóa PATCH lặp, chỉ dùng response server. Lỗi/409 hủy GET lại, không tự PATCH; GET đang chờ không ghi đè kết quả hủy. Chưa có ReviewForm, không thêm nút đánh giá chưa hoạt động.
 - 271 kiểm thử frontend đạt (247 trước + 24 mới), hai Playwright orders mới và hai checkout đạt với Edge/API kiểm soát. Đã xem ảnh và không tràn ngang ở 360/390/768/1280px; TypeScript/lint/format/build/diff check đạt. Chưa kiểm tra UI đơn với backend/PostgreSQL thật; không đổi backend/dependencies, chưa stage/commit/push.
+
+## Đánh giá món đã mua F.12.7
+
+- Sau commit lịch sử/chi tiết đơn, thêm ReviewForm tại components/order và gắn riêng mỗi OrderItem khi đơn completed. Dùng API POST review hiện có, điểm1–5/nhận xét2000 ký tự, không đổi backend/schema.
+- Chọn sao bằng radio native, nhãn/focus/bàn phím, counter, validation theo trường, ref chống gửi lặp và disabled khi đang gửi/lỗi tải trạng thái. Lỗi mạng/422 giữ câu trả lời; 403/404/ORDER_NOT_COMPLETED khóa gửi tiếp, yêu cầu tải lại để kiểm tra quyền/trạng thái.
+- Chỉ thông báo lưu khi response review hợp lệ đúng order/món. 409 REVIEW_ALREADY_EXISTS chuyển trạng thái trung lập, không giả sao/nhận xét cũ. Chưa có GET/sửa/xóa review; reload có thể hiện form lại cho tới khi POST báo trùng. Không lưu câu trả lời vào storage/tracking.
+- 297 kiểm thử frontend đạt (271 trước + 26 mới), hai Playwright reviews mới và hai orders đạt với Edge/API kiểm soát. Đã xem ảnh mobile/desktop, không tràn ngang 360/390/768/1280px, xác nhận radio keyboard và nhiều form độc lập. TypeScript/lint/format/build/diff check đạt; chưa kiểm tra UI review với backend/PostgreSQL thật; chưa stage/commit/push.
 
 ## Dọn bản nháp cục bộ
 

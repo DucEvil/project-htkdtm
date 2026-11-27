@@ -179,7 +179,7 @@ Theo mục C.5, D.14 và F.5 của [thiết kế](../../docs/THIET_KE_CAU_TRUC.m
 
 UNIQUE trên `(order_id, menu_item_id)` ngăn đánh giá trùng một món trong cùng đơn. Cùng món bán được đánh giá lại khi có đơn mua khác. Quan hệ `order_item` chỉ đọc giúp lấy tên/giá snapshot đã mua dù thực đơn sau đó thay đổi. FK chặn xóa dữ liệu giao dịch đang được Review tham chiếu.
 
-`reviews/service.py` đã kiểm tra người gửi sở hữu đơn, trạng thái completed và món thực sự có trong OrderItem; router cung cấp POST `/api/v1/orders/{order_id}/review`. Mỗi món trong một đơn chỉ đánh giá một lần, duplicate trả 409. Response dùng tên/giá snapshot và không lộ cờ mô phỏng; xem [API contract F.10.6](../../docs/API_CONTRACT.md#đánh-giá-món-đã-mua--f106). Bảng Review đã có trong migration `001`; chưa có frontend ReviewForm hoặc API đọc/sửa/xóa đánh giá.
+`reviews/service.py` đã kiểm tra người gửi sở hữu đơn, trạng thái completed và món thực sự có trong OrderItem; router cung cấp POST `/api/v1/orders/{order_id}/review`. Mỗi món trong một đơn chỉ đánh giá một lần, duplicate trả 409. Response dùng tên/giá snapshot và không lộ cờ mô phỏng; xem [API contract F.10.6](../../docs/API_CONTRACT.md#đánh-giá-món-đã-mua--f106). Bảng Review đã có trong migration `001`; frontend ReviewForm đã nối POST ở F.12.7; API đọc/sửa/xóa đánh giá chưa có.
 
 ## Models yêu cầu gợi ý, hiển thị và tương tác đã bổ sung
 

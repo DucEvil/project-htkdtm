@@ -29,7 +29,7 @@ Phụ trách dự kiến xem tại [danhsachnhom.md](../../danhsachnhom.md).
 
 ## API nghiệp vụ khách hàng đã chuẩn bị — F.11.2
 
-`src/types/preference.ts`, `order.ts`, `review.ts` mô tả payload/response theo backend F.10.5–F.10.7. Các hàm ở `src/api/preferences.ts`, `orders.ts`, `reviews.ts` dùng phiên đăng nhập và cơ chế refresh của API client chung. Khẩu vị đã nối vào F.12.1, checkout COD ở F.12.5; lịch sử/chi tiết đơn đã có ở F.12.6, giao diện đánh giá chưa có.
+`src/types/preference.ts`, `order.ts`, `review.ts` mô tả payload/response theo backend F.10.5–F.10.7. Các hàm ở `src/api/preferences.ts`, `orders.ts`, `reviews.ts` dùng phiên đăng nhập và cơ chế refresh của API client chung. Khẩu vị đã nối vào F.12.1, checkout COD ở F.12.5; lịch sử/chi tiết đơn đã có ở F.12.6, ReviewForm đã có ở F.12.7.
 
 | Hàm | Endpoint dưới `/api/v1` | Kết quả |
 | :--- | :--- | :--- |
@@ -167,9 +167,21 @@ Customer mở `/orders` từ Navbar/tài khoản, hoặc `/orders/:id` từ rece
 
 `OrderDetailPage` và `useCustomerOrder` đọc GET chi tiết, hiển thị trạng thái, món/giá lúc mua, COD, địa chỉ/tọa độ và timeline thực tế từ history (gồm lý do từ chối nếu có). DTO không có tên người thao tác nên giao diện không tự tạo thông tin này. Tự GET mỗi 15 giây khi tab đang hiển thị và đơn còn xử lý, đọc lại khi trở về tab; dừng sau completed/cancelled/rejected hoặc unmount. Có nút cập nhật thủ công. Lỗi refresh mạng giữ dữ liệu gần nhất kèm thông báo và khóa hủy; lỗi 401/403/404 ẩn dữ liệu cũ.
 
-Chỉ pending có nút hủy. Dialog yêu cầu xác nhận, Escape giữ đơn và trả focus. PATCH hủy khóa gửi lặp, không cập nhật lạc quan; dùng response máy chủ. Nếu hủy lỗi/409, tự GET trạng thái mới và không tự PATCH lại. GET cũ đang chờ bị hủy/bỏ qua để không ghi đè kết quả hủy. Khi quán vừa xác nhận, UI giữ trạng thái confirmed do server trả và bỏ nút hủy. Đánh giá món sẽ bổ sung riêng, chưa có nút chưa hoạt động.
+Chỉ pending có nút hủy. Dialog yêu cầu xác nhận, Escape giữ đơn và trả focus. PATCH hủy khóa gửi lặp, không cập nhật lạc quan; dùng response máy chủ. Nếu hủy lỗi/409, tự GET trạng thái mới và không tự PATCH lại. GET cũ đang chờ bị hủy/bỏ qua để không ghi đè kết quả hủy. Khi quán vừa xác nhận, UI giữ trạng thái confirmed do server trả và bỏ nút hủy. Đánh giá món đã nối ở F.12.7 cho completed.
 
 Component chung: OrderStatusBadge, OrderTimeline, OrderError, CancelOrderDialog ở `components/order/`. `orders.css` đồng bộ font/màu và focus, card 24–28px, bố cục một/hai cột thích ứng. 271 kiểm thử frontend đạt (247 trước + 24 mới), gồm quyền/chủ đơn, ID sai/404, snapshot, phân trang, polling/tab ẩn/trạng thái cuối, thay tài khoản/ID, hủy xác nhận/lỗi/409/gửi lặp và GET không ghi đè PATCH. Hai Playwright orders mới và hai checkout đạt với Edge/API kiểm soát; đã xem ảnh desktop/mobile, không tràn ngang 360/390/768/1280px. TypeScript/lint/format/build đạt; chưa chạy UI đơn với backend/PostgreSQL thật.
+
+## Đánh giá món đã mua — F.12.7
+
+Trong `/orders/:id`, customer chỉ thấy phần đánh giá khi API trả trạng thái `completed`. Mỗi OrderItem có một `components/order/ReviewForm.tsx` độc lập, dùng tên snapshot của lần mua, chọn 1–5 sao và nhận xét tùy chọn tối đa 2000 ký tự. Không có form ở pending/confirmed/preparing/delivering/cancelled/rejected; backend vẫn kiểm tra quyền người mua, trạng thái và món thuộc đúng đơn.
+
+Form dùng radio native với nhãn tiếng Việt, điều khiển được bằng Tab/Space/phím mũi tên, vùng chạm tối thiểu 48px và focus rõ. `reviewValidation.ts` kiểm tra mức sao nguyên/giới hạn nhận xét; nhận xét được trim trước POST `/orders/{id}/review`. Có counter, lỗi theo trường, loading/disabled và ref khóa gửi lặp. Lỗi gửi giữ sao/nhận xét; lỗi 422 ánh xạ rating/comment. Lỗi quyền/món/đơn chưa completed khóa gửi tiếp và yêu cầu tải lại trang. Không lưu nội dung nhận xét trong storage hoặc tracking.
+
+Chỉ hiện đã lưu sau response ReviewOut hợp lệ đúng order/menu item, dùng điểm/nhận xét/thời gian trả về và khóa gửi tiếp trong lần mở trang. Khi nhận `REVIEW_ALREADY_EXISTS` (kể cả thử lại sau mất phản hồi), UI chỉ thông báo món đã được đánh giá, không giả định lần gửi này thành công hoặc tự hiển thị điểm cũ. UNIQUE backend giữ một đánh giá/món/đơn.
+
+**Giới hạn đọc lại:** backend chưa có GET danh sách/chi tiết review, cũng chưa sửa/xóa review. Sau reload không biết sẵn món nào đã đánh giá nên form có thể hiện lại; POST trùng sẽ được chặn và chuyển thông báo. Không hiển thị sao/nhận xét cũ khi chưa có dữ liệu từ API. Review này là cảm nhận sau mua, tách khỏi feedback phù hợp của gợi ý.
+
+297 kiểm thử frontend đạt (271 trước + 26 mới); hai Playwright reviews mới và hai orders đạt với Edge/API kiểm soát. Bao phủ chỉ completed, đúng payload/món, validation/focus, độc lập nhiều form, khóa gửi lặp, lỗi giữ nội dung/422/409, response không hợp lệ và bỏ phản hồi sau unmount. Đã xem ảnh desktop/mobile, không tràn ngang 360/390/768/1280px, chọn sao bằng bàn phím. TypeScript/lint/format/build đạt; chưa chạy UI review với backend/PostgreSQL thật.
 
 ## Auth đã triển khai
 
@@ -322,7 +334,7 @@ Xem [hướng dẫn cài đặt](../../docs/HUONG_DAN_CAI_DAT.md) và [tiến đ
 
 ### Cấu trúc auth hiện có
 
-Đường dẫn theo F.8 và bước 11–12 của [thiết kế cấu trúc chung](../../docs/THIET_KE_CAU_TRUC.md). Đã có khẩu vị, tìm kiếm, trang quán/món, giỏ hàng và checkout COD; cache truy vấn, bản đồ, đánh giá và dashboard chưa triển khai.
+Đường dẫn theo F.8 và bước 11–12 của [thiết kế cấu trúc chung](../../docs/THIET_KE_CAU_TRUC.md). Đã có khẩu vị, tìm kiếm, trang quán/món, giỏ hàng và checkout COD; cache truy vấn, bản đồ và dashboard chưa triển khai.
 
 ```text
 src/frontend/

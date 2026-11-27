@@ -1,0 +1,200 @@
+.order-reviews {
+  margin-top: 40px;
+  border-top: 1px solid #c9d1c5;
+  padding-top: 30px;
+}
+.order-reviews > p {
+  font-size: 13px;
+  color: #5c695e;
+  line-height: 1.8;
+}
+.review-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+.review-card {
+  background: #fffcf7;
+  padding: 30px;
+  border: 1px solid #c9d1c5;
+  border-radius: 24px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.review-card h3 {
+  font-size: 22px;
+  letter-spacing: -0.5px;
+  line-height: 1.5;
+  margin: 16px 0 24px;
+}
+.review-rating legend {
+  font-size: 13px;
+  font-weight: 600;
+}
+.review-stars {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0 12px;
+}
+.review-star {
+  position: relative;
+  margin: 0;
+  width: 48px;
+  min-height: 64px;
+  padding: 5px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #c9d1c5;
+  border-radius: 12px;
+  cursor: pointer;
+  background: #fff;
+  color: #5c695e;
+  transition:
+    background 180ms,
+    border-color 180ms;
+}
+.review-star > input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  min-height: 1px;
+  padding: 0;
+  margin: 0;
+  opacity: 0;
+}
+.review-star > span {
+  font-family: "Segoe UI Symbol", system-ui, sans-serif;
+  font-size: 28px;
+  line-height: 1.2;
+}
+.review-star > small {
+  font-size: 10px;
+  margin-top: 3px;
+}
+.review-star.chosen {
+  background: #e5eedf;
+  border-color: #315f47;
+  color: #315f47;
+}
+.review-star:hover {
+  border-color: #315f47;
+  background: #edf3e8;
+}
+.review-star:has(input:focus-visible) {
+  outline: 3px solid #315f47;
+  outline-offset: 4px;
+}
+.review-star:has(input:disabled) {
+  cursor: default;
+  opacity: 0.6;
+}
+.review-card textarea {
+  font: inherit;
+  width: 100%;
+  min-height: 130px;
+  resize: vertical;
+  background: #fff;
+  border: 1px solid #c9d1c5;
+  border-radius: 12px;
+  color: #243127;
+  padding: 14px;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.review-card textarea[aria-invalid="true"] {
+  border-color: #a82225;
+}
+.review-card label:not(.review-star) {
+  margin-top: 22px;
+}
+.review-comment-hint {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 8px;
+  color: #5c695e;
+  font-size: 11px;
+  line-height: 1.8;
+}
+.review-comment-hint > span:last-child {
+  white-space: nowrap;
+}
+.review-card .button {
+  margin-top: 24px;
+}
+.review-error {
+  font-size: 12px;
+  line-height: 1.8;
+  color: #a82225;
+  margin-top: 12px;
+}
+.review-note {
+  font-size: 12px;
+  color: #5c695e;
+  line-height: 1.8;
+}
+.review-saved {
+  font-size: 13px;
+  color: #254e30;
+  font-weight: 600;
+}
+.review-score {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.review-score > span {
+  font-family: "Segoe UI Symbol", system-ui, sans-serif;
+  color: #315f47;
+  font-size: 26px;
+}
+.review-score > strong {
+  font-size: 13px;
+  color: #315f47;
+}
+.review-comment {
+  font-size: 14px;
+  line-height: 1.9;
+  white-space: pre-wrap;
+}
+.review-receipt time {
+  font-size: 11px;
+  color: #5c695e;
+}
+.review-existing {
+  padding: 18px;
+  border-radius: 16px;
+  background: #edf3e8;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.review-existing p {
+  margin-bottom: 0;
+  color: #5c695e;
+}
+@media (max-width: 900px) {
+  .review-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 500px) {
+  .review-card {
+    padding: 24px 20px;
+  }
+  .review-card .button {
+    width: 100%;
+  }
+  .review-comment-hint {
+    font-size: 10px;
+    gap: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .review-star {
+    transition: none;
+  }
+}

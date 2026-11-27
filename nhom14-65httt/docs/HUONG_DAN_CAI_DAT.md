@@ -76,6 +76,10 @@ Docker chưa được kiểm chứng trong phiên phát triển này vì máy kh
 
 ## Kiểm tra
 
+Mốc F.12.7: **297 kiểm thử frontend đạt** (271 trước + 26 ca review mới), TypeScript/lint/format/build đạt. Hai Playwright reviews mới và hai orders đạt trên Edge/API kiểm soát: chọn sao bằng bàn phím, validation, lỗi giữ nội dung, 409 không giả điểm cũ, gửi thành công và các form độc lập. Đã xem ảnh desktop/mobile, không tràn ngang 360/390/768/1280px. Chưa chạy UI review với backend/PostgreSQL thật.
+
+Thử thủ công: dùng customer sở hữu đơn, cho vendor chuyển đơn đến completed qua API, mở `/orders/{id}` và chọn sao/nhận xét cho từng món ở cuối trang. Chỉ sau response POST mới hiện đã lưu. Thử gửi lại cùng đơn/món (ví dụ sau reload) để thấy thông báo đã đánh giá và không cho gửi tiếp. Backend chưa có GET review nên UI không tự đọc lại sao/nhận xét cũ; không có sửa/xóa review. Các trạng thái đơn khác không có form. Chạy riêng `npx playwright test e2e/reviews.spec.ts` với frontend dev server và E2E_BASE_URL/E2E_BROWSER_CHANNEL như các mốc trước; test chặn response API, không tạo đánh giá thật.
+
 Mốc F.12.6: **271 kiểm thử frontend đạt** (247 trước + 24 ca đơn hàng mới), TypeScript/lint/format/build đạt. Hai Playwright orders mới và hai checkout đạt với Edge/API kiểm soát: danh sách/chi tiết/hủy, xác nhận và Escape/focus, lỗi 409 đọc trạng thái quán mới, snapshot/lý do từ chối, reload và responsive 360/390/768/1280px. Đã xem ảnh desktop/mobile. Chưa chạy UI đơn với backend/PostgreSQL thật.
 
 Thử thủ công với backend: đăng nhập customer, mở **Đơn hàng** trên Navbar hoặc từ tài khoản. Chọn một đơn để xem snapshot/lịch sử. Vendor xử lý đơn qua API Swagger; chi tiết customer sẽ GET lại mỗi 15 giây khi tab hiện, dừng khi đơn kết thúc; có nút cập nhật thủ công. Chỉ pending cho hủy, cần xác nhận; nếu quán vừa nhận đơn, API trả lỗi và UI đọc trạng thái mới. Đơn ngoài quyền và ID không tồn tại cùng hiện không tìm thấy; không hiển thị dữ liệu cũ khi bị 401/403/404. Chạy riêng `npx playwright test e2e/orders.spec.ts` với frontend dev server và E2E_BASE_URL/E2E_BROWSER_CHANNEL như trước; response được chặn trong test, không hủy đơn thật.

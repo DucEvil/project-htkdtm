@@ -4,7 +4,7 @@ Tài liệu hiện mô tả auth F.8 và các API quán, thực đơn, tìm ki�
 
 Frontend đã có types và tám hàm gọi GET công khai cho quán, thực đơn, danh mục, tìm kiếm ở F.11.1; xem [bảng hàm API frontend](../src/frontend/README.md#api-công-khai-đã-chuẩn-bị--f111). Chúng dùng chung API client auth nhưng đặt `authenticated: false`; màn hình nghiệp vụ sẽ được nối ở F.12.
 
-F.11.2 bổ sung bảy hàm API frontend khẩu vị, đơn COD và đánh giá theo các endpoint backend bên dưới; xem [API khách hàng frontend](../src/frontend/README.md#api-nghiệp-vụ-khách-hàng-đã-chuẩn-bị--f112). Chúng yêu cầu phiên đăng nhập; payload/key của đơn giữ nguyên khi thử lại. Giao diện nghiệp vụ chưa tích hợp.
+F.11.2 bổ sung bảy hàm API frontend khẩu vị, đơn COD và đánh giá theo các endpoint backend bên dưới; xem [API khách hàng frontend](../src/frontend/README.md#api-nghiệp-vụ-khách-hàng-đã-chuẩn-bị--f112). Chúng yêu cầu phiên đăng nhập; payload/key của đơn giữ nguyên khi thử lại. Khẩu vị, checkout, đơn và đánh giá đã nối giao diện ở F.12.1/F.12.5–F.12.7.
 
 F.11.3 bổ sung 15 hàm API frontend cho hồ sơ quán, thực đơn và xử lý đơn vendor; xem [API chủ quán frontend](../src/frontend/README.md#api-chủ-quán-đã-chuẩn-bị--f113). Quán được backend xác định từ membership; DELETE món chỉ ngừng bán và trả 204. Chưa có giao diện vendor.
 
@@ -463,7 +463,7 @@ Schema vẫn revision 001. API review được mô tả ở F.10.6; frontend F.1
 
 Chỉ người mua đúng đơn ở trạng thái completed mới gửi được; món phải là OrderItem của **đơn đó**. Đơn ngoài quyền hoặc không tồn tại trả cùng 404, món không thuộc đơn trả 404; đơn chưa completed trả 409 `ORDER_NOT_COMPLETED`. Mỗi cặp order_id/menu_item_id được đánh giá tối đa một lần, gửi lại trả 409 `REVIEW_ALREADY_EXISTS` kể cả khi thay nội dung. Món có thể được đánh giá lại sau một đơn mua khác. API ghi cờ mô phỏng false; không liên quan feedback phù hợp của gợi ý.
 
-Response gồm `id`, `order_id`, `menu_item_id`, `snapshot_name`, `snapshot_price`, `rating`, `comment`, `created_at`. Tên/giá lấy từ OrderItem lúc mua, không bị đổi khi quán sửa thực đơn/ngừng bán. Không trả actor/user_id hoặc cờ mô phỏng. Review được lưu cùng transaction, rollback khi lỗi; UNIQUE ghép và FK ghép ở revision 001 bảo vệ chống trùng/món chưa mua ở tầng DB. Kiểm thử dùng SQLite tạm; chưa kiểm chứng PostgreSQL cạnh tranh thực tế. Chưa có API liệt kê/sửa/xóa đánh giá hoặc frontend ReviewForm; sẽ làm riêng nếu cần theo giao diện F.12.
+Response gồm `id`, `order_id`, `menu_item_id`, `snapshot_name`, `snapshot_price`, `rating`, `comment`, `created_at`. Tên/giá lấy từ OrderItem lúc mua, không bị đổi khi quán sửa thực đơn/ngừng bán. Không trả actor/user_id hoặc cờ mô phỏng. Review được lưu cùng transaction, rollback khi lỗi; UNIQUE ghép và FK ghép ở revision 001 bảo vệ chống trùng/món chưa mua ở tầng DB. Kiểm thử dùng SQLite tạm; chưa kiểm chứng PostgreSQL cạnh tranh thực tế. Frontend F.12.7 đã có ReviewForm trong chi tiết đơn completed: POST theo từng món, chỉ hiện thành công từ response hợp lệ, trùng trả thông báo trung lập và khóa gửi. Chưa có API liệt kê/đọc lại/sửa/xóa review; sau reload UI không biết sẵn review cũ và không tự hiển thị điểm/nhận xét chưa đọc được.
 
 ## Hồ sơ khẩu vị — F.10.7
 

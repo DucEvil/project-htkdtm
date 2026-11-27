@@ -9,6 +9,7 @@ import OrderError from "../../components/order/OrderError";
 import OrderStatusBadge from "../../components/order/OrderStatusBadge";
 import OrderTimeline from "../../components/order/OrderTimeline";
 import CancelOrderDialog from "../../components/order/CancelOrderDialog";
+import ReviewForm from "../../components/order/ReviewForm";
 import "./orders.css";
 
 export default function OrderDetailPage() {
@@ -142,6 +143,29 @@ function OrderDetail({ id }: { id: number }) {
             void state.cancel();
           }}
         />
+      )}
+      {order.status === "completed" && (
+        <section
+          className="order-reviews"
+          aria-labelledby="order-reviews-heading"
+        >
+          <span className="eyebrow">SAU MỖI BỮA NGON</span>
+          <h2 id="order-reviews-heading">Đánh giá món đã mua</h2>
+          <p>
+            Chia sẻ cảm nhận về từng món trong đơn đã hoàn tất. Nhận xét của bạn
+            giúp quán hiểu trải nghiệm bữa ăn hơn.
+          </p>
+          <div className="review-grid">
+            {order.items.map((item) => (
+              <ReviewForm
+                key={`${order.id}-${item.menu_item_id}`}
+                orderId={order.id}
+                item={item}
+                disabled={state.refreshing || Boolean(state.error)}
+              />
+            ))}
+          </div>
+        </section>
       )}
     </>
   );
