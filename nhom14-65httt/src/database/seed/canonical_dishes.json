@@ -1,0 +1,2495 @@
+{
+  "canonical_dishes": [
+    {
+      "id": "CANON_001",
+      "name": "Phở bò tái",
+      "region": "north",
+      "spiciness_level": 0,
+      "meal_times": [
+        "breakfast",
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pho_noodle",
+        "ing_beef",
+        "ing_onion",
+        "ing_black_pepper"
+      ],
+      "allergens": [
+        "beef"
+      ],
+      "vifoodrec_id": "VFR_PHO_01",
+      "description": "Phở bò tái Hà Nội truyền thống với nước dùng thanh ngọt từ xương bò."
+    },
+    {
+      "id": "CANON_002",
+      "name": "Phở bò chín",
+      "region": "north",
+      "spiciness_level": 0,
+      "meal_times": [
+        "breakfast",
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pho_noodle",
+        "ing_beef",
+        "ing_onion",
+        "ing_black_pepper"
+      ],
+      "allergens": [
+        "beef"
+      ],
+      "vifoodrec_id": "VFR_PHO_02",
+      "description": "Phở bò chín mềm đậm đà, nước dùng ninh kỹ."
+    },
+    {
+      "id": "CANON_003",
+      "name": "Phở bò tái lăn",
+      "region": "north",
+      "spiciness_level": 1,
+      "meal_times": [
+        "breakfast",
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pho_noodle",
+        "ing_beef",
+        "ing_garlic",
+        "ing_onion",
+        "ing_black_pepper"
+      ],
+      "allergens": [
+        "beef"
+      ],
+      "vifoodrec_id": "VFR_PHO_03",
+      "description": "Thịt bò xào lăn tỏi thơm lừng ngập trong bát phở nóng."
+    },
+    {
+      "id": "CANON_004",
+      "name": "Phở gà ta",
+      "region": "north",
+      "spiciness_level": 0,
+      "meal_times": [
+        "breakfast",
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pho_noodle",
+        "ing_chicken",
+        "ing_onion",
+        "ing_black_pepper",
+        "ing_herbs"
+      ],
+      "allergens": [],
+      "vifoodrec_id": "VFR_PHO_04",
+      "description": "Phở gà ta lá chanh thơm mát, nước dùng trong vắt."
+    },
+    {
+      "id": "CANON_005",
+      "name": "Bún chả Hà Nội",
+      "region": "north",
+      "spiciness_level": 1,
+      "meal_times": [
+        "lunch"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bun_noodle",
+        "ing_pork",
+        "ing_fish_sauce",
+        "ing_garlic",
+        "ing_chili",
+        "ing_black_pepper",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "pork",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BUN_01",
+      "description": "Chả viên và chả miếng nướng than hoa ăn cùng bún tươi và nước chấm đu đủ cà rốt."
+    },
+    {
+      "id": "CANON_006",
+      "name": "Bún đậu mắm tôm",
+      "region": "north",
+      "spiciness_level": 2,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bun_noodle",
+        "ing_tofu",
+        "ing_pork",
+        "ing_shrimp_paste",
+        "ing_chili",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "pork",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BUN_02",
+      "description": "Bún lá cắt miếng, đậu phụ rán giòn, thịt chân giò luộc và chả cốm chấm mắm tôm đánh sủi bọt."
+    },
+    {
+      "id": "CANON_007",
+      "name": "Bún thang Hà Nội",
+      "region": "north",
+      "spiciness_level": 0,
+      "meal_times": [
+        "breakfast",
+        "lunch"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bun_noodle",
+        "ing_chicken",
+        "ing_egg",
+        "ing_pork",
+        "ing_shrimp",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "egg",
+        "pork",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BUN_03",
+      "description": "Món bún cầu kỳ bậc nhất Hà thành với trứng tráng mỏng, thịt gà xé và giò lụa thái chỉ."
+    },
+    {
+      "id": "CANON_008",
+      "name": "Bún ốc chuối đậu",
+      "region": "north",
+      "spiciness_level": 1,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bun_noodle",
+        "ing_tofu",
+        "ing_pork",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "pork",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BUN_04",
+      "description": "Bún ốc thanh ngọt chua dịu vị dấm bỗng, đậu rán và chuối xanh bùi bùi."
+    },
+    {
+      "id": "CANON_009",
+      "name": "Bún riêu cua đồng",
+      "region": "north",
+      "spiciness_level": 1,
+      "meal_times": [
+        "breakfast",
+        "lunch"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bun_noodle",
+        "ing_tofu",
+        "ing_fish_sauce",
+        "ing_onion",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BUN_05",
+      "description": "Bún riêu thơm mùi giấm bỗng, riêu cua béo ngậy kèm cà chua và rau sống."
+    },
+    {
+      "id": "CANON_010",
+      "name": "Chả cá Lã Vọng",
+      "region": "north",
+      "spiciness_level": 1,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bun_noodle",
+        "ing_fish",
+        "ing_shrimp_paste",
+        "ing_peanut",
+        "ing_onion",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "seafood",
+        "peanut"
+      ],
+      "vifoodrec_id": "VFR_CHA_01",
+      "description": "Cá lăng tẩm ướp xào lăn cùng thì là, hành hoa trên chảo mỡ nóng, ăn kèm bún và lạc rang."
+    },
+    {
+      "id": "CANON_011",
+      "name": "Bánh cuốn Thanh Trì",
+      "region": "north",
+      "spiciness_level": 0,
+      "meal_times": [
+        "breakfast",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pork",
+        "ing_fish_sauce",
+        "ing_onion"
+      ],
+      "allergens": [
+        "pork",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BANH_01",
+      "description": "Bánh cuốn tráng mỏng như cánh dán, thoa hành phi thơm, chấm nước mắm pha ấm."
+    },
+    {
+      "id": "CANON_012",
+      "name": "Bánh cuốn nhân thịt mộc nhĩ",
+      "region": "north",
+      "spiciness_level": 0,
+      "meal_times": [
+        "breakfast",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pork",
+        "ing_fish_sauce",
+        "ing_onion",
+        "ing_black_pepper"
+      ],
+      "allergens": [
+        "pork",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BANH_02",
+      "description": "Bánh cuốn nóng cuốn thịt nạc băm và mộc nhĩ giòn sần sật kèm chả quế."
+    },
+    {
+      "id": "CANON_013",
+      "name": "Xôi xéo Hà Nội",
+      "region": "north",
+      "spiciness_level": 0,
+      "meal_times": [
+        "breakfast"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_onion"
+      ],
+      "allergens": [],
+      "vifoodrec_id": "VFR_XOI_01",
+      "description": "Xôi nếp dẻo thơm màu vàng nghệ, phủ đỗ xanh thái mỏng và hành phi giòn."
+    },
+    {
+      "id": "CANON_014",
+      "name": "Xôi khúc truyền thống",
+      "region": "north",
+      "spiciness_level": 0,
+      "meal_times": [
+        "breakfast",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_pork",
+        "ing_black_pepper"
+      ],
+      "allergens": [
+        "pork"
+      ],
+      "vifoodrec_id": "VFR_XOI_02",
+      "description": "Bánh khúc đậm đà hương lá khúc bọc nhân đậu xanh và thịt ba chỉ béo ngậy tiêu."
+    },
+    {
+      "id": "CANON_015",
+      "name": "Xôi gà nấm",
+      "region": "north",
+      "spiciness_level": 0,
+      "meal_times": [
+        "breakfast",
+        "lunch"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_chicken",
+        "ing_onion",
+        "ing_black_pepper"
+      ],
+      "allergens": [],
+      "vifoodrec_id": "VFR_XOI_03",
+      "description": "Xôi dẻo ăn kèm gà ta xào nấm hương thơm nức."
+    },
+    {
+      "id": "CANON_016",
+      "name": "Cơm tấm sườn bì chả Hải Phòng",
+      "region": "north",
+      "spiciness_level": 1,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_pork",
+        "ing_egg",
+        "ing_fish_sauce"
+      ],
+      "allergens": [
+        "pork",
+        "egg",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_COM_01",
+      "description": "Phiên bản cơm tấm biến tấu miền Bắc với thịt nướng tẩm ướp đậm đà."
+    },
+    {
+      "id": "CANON_017",
+      "name": "Bánh đa cua Hải Phòng",
+      "region": "north",
+      "spiciness_level": 1,
+      "meal_times": [
+        "breakfast",
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pork",
+        "ing_herbs",
+        "ing_onion"
+      ],
+      "allergens": [
+        "pork",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BANH_03",
+      "description": "Sợi bánh đa đỏ dai mềm, nước dùng cua đồng béo ngậy kèm chả lá lốt thơm lừng."
+    },
+    {
+      "id": "CANON_018",
+      "name": "Nem rán Hà Nội (Chả giò)",
+      "region": "north",
+      "spiciness_level": 0,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pork",
+        "ing_egg",
+        "ing_shrimp",
+        "ing_onion",
+        "ing_black_pepper"
+      ],
+      "allergens": [
+        "pork",
+        "egg",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_NEM_01",
+      "description": "Nem rán vỏ giòn rụm, nhân thịt nạc, tôm, miến, mộc nhĩ và rau củ."
+    },
+    {
+      "id": "CANON_019",
+      "name": "Nem nướng Bắc Ninh",
+      "region": "north",
+      "spiciness_level": 1,
+      "meal_times": [
+        "snack",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pork",
+        "ing_garlic",
+        "ing_chili",
+        "ing_black_pepper"
+      ],
+      "allergens": [
+        "pork"
+      ],
+      "vifoodrec_id": "VFR_NEM_02",
+      "description": "Nem chua nướng lá chuối thơm phức, vị chua cay bùi bùi chấm tương ớt."
+    },
+    {
+      "id": "CANON_020",
+      "name": "Bún mọc sườn chua",
+      "region": "north",
+      "spiciness_level": 1,
+      "meal_times": [
+        "breakfast",
+        "lunch"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bun_noodle",
+        "ing_pork",
+        "ing_onion",
+        "ing_black_pepper"
+      ],
+      "allergens": [
+        "pork"
+      ],
+      "vifoodrec_id": "VFR_BUN_06",
+      "description": "Nước dùng sườn chua thanh vị dọc mùng và me/sấu, mọc giòn thịt nạc."
+    },
+    {
+      "id": "CANON_021",
+      "name": "Miến lươn xào giòn",
+      "region": "north",
+      "spiciness_level": 1,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_herbs",
+        "ing_onion",
+        "ing_black_pepper"
+      ],
+      "allergens": [
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_MIEN_01",
+      "description": "Miến dong xào tơi mềm kết hợp lươn chiên giòn rụm và rau răm."
+    },
+    {
+      "id": "CANON_022",
+      "name": "Miến gà ta truyền thống",
+      "region": "north",
+      "spiciness_level": 0,
+      "meal_times": [
+        "breakfast",
+        "lunch"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_chicken",
+        "ing_onion",
+        "ing_herbs",
+        "ing_black_pepper"
+      ],
+      "allergens": [],
+      "vifoodrec_id": "VFR_MIEN_02",
+      "description": "Miến dong mềm dai trong nước dùng luộc gà ngọt thanh."
+    },
+    {
+      "id": "CANON_023",
+      "name": "Thịt kho tàu nước dừa miền Bắc",
+      "region": "north",
+      "spiciness_level": 0,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_pork",
+        "ing_egg",
+        "ing_fish_sauce",
+        "ing_black_pepper"
+      ],
+      "allergens": [
+        "pork",
+        "egg",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_KHO_01",
+      "description": "Thịt ba chỉ kho trứng cút màu cánh gián đậm đà ăn cùng cơm nóng."
+    },
+    {
+      "id": "CANON_024",
+      "name": "Cá kho làng Vũ Đại",
+      "region": "north",
+      "spiciness_level": 1,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_fish",
+        "ing_pork",
+        "ing_ginger",
+        "ing_black_pepper",
+        "ing_fish_sauce"
+      ],
+      "allergens": [
+        "seafood",
+        "pork"
+      ],
+      "vifoodrec_id": "VFR_KHO_02",
+      "description": "Cá trắm đen kho niêu đất 14 tiếng ngấm trọn riềng gừng, xương nhừ thịt chắc."
+    },
+    {
+      "id": "CANON_025",
+      "name": "Canh cua mồng tơi rau đay",
+      "region": "north",
+      "spiciness_level": 0,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_fish_sauce"
+      ],
+      "allergens": [
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_CANH_01",
+      "description": "Canh riêu cua đồng nấu mồng tơi rau đay ăn kèm cà pháo giòn tan."
+    },
+    {
+      "id": "CANON_026",
+      "name": "Canh chua cá lóc miền Bắc",
+      "region": "north",
+      "spiciness_level": 1,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_fish",
+        "ing_onion",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_CANH_02",
+      "description": "Canh cá nấu dứa, cà chua và sấu hoặc dọc mùng thanh dịu."
+    },
+    {
+      "id": "CANON_027",
+      "name": "Nộm hoa chuối tai heo",
+      "region": "north",
+      "spiciness_level": 1,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pork",
+        "ing_peanut",
+        "ing_herbs",
+        "ing_garlic",
+        "ing_chili"
+      ],
+      "allergens": [
+        "pork",
+        "peanut"
+      ],
+      "vifoodrec_id": "VFR_NOM_01",
+      "description": "Hoa chuối giòn ngọt quyện tai heo sần sật và lạc rang thơm bùi."
+    },
+    {
+      "id": "CANON_028",
+      "name": "Bánh tôm Hồ Tây",
+      "region": "north",
+      "spiciness_level": 0,
+      "meal_times": [
+        "snack",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_shrimp",
+        "ing_fish_sauce"
+      ],
+      "allergens": [
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BANH_04",
+      "description": "Tôm đất ngọt thịt trên đế khoai lang chiên vàng ruộm giòn tan."
+    },
+    {
+      "id": "CANON_029",
+      "name": "Bánh giò nóng thịt mộc nhĩ",
+      "region": "north",
+      "spiciness_level": 0,
+      "meal_times": [
+        "breakfast",
+        "snack"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pork",
+        "ing_onion",
+        "ing_black_pepper"
+      ],
+      "allergens": [
+        "pork"
+      ],
+      "vifoodrec_id": "VFR_BANH_05",
+      "description": "Bánh giò bột gạo mềm mịn gói lá chuối, nhân thịt băm mộc nhĩ ăn kèm giò chả."
+    },
+    {
+      "id": "CANON_030",
+      "name": "Lẩu riêu cua bắp bò",
+      "region": "north",
+      "spiciness_level": 1,
+      "meal_times": [
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bun_noodle",
+        "ing_beef",
+        "ing_tofu",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "beef",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_LAU_01",
+      "description": "Nồi lẩu riêu cua vàng óng vị chua thanh nhúng bắp bò tươi và đậu mơ."
+    },
+    {
+      "id": "CANON_031",
+      "name": "Lẩu ếch măng cay",
+      "region": "north",
+      "spiciness_level": 2,
+      "meal_times": [
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bun_noodle",
+        "ing_garlic",
+        "ing_chili",
+        "ing_herbs"
+      ],
+      "allergens": [],
+      "vifoodrec_id": "VFR_LAU_02",
+      "description": "Thịt ếch xào săn tẩm ướp đậm vị nhúng trong nước lẩu măng chua cay xé lưỡi."
+    },
+    {
+      "id": "CANON_032",
+      "name": "Cơm rang dưa bò",
+      "region": "north",
+      "spiciness_level": 1,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_beef",
+        "ing_garlic",
+        "ing_black_pepper"
+      ],
+      "allergens": [
+        "beef"
+      ],
+      "vifoodrec_id": "VFR_COM_02",
+      "description": "Cơm rang hạt săn vàng óng ăn cùng thịt bò xào dưa chua thơm ngậy mùi tỏi."
+    },
+    {
+      "id": "CANON_033",
+      "name": "Cháo sườn sụn Hà Nội",
+      "region": "north",
+      "spiciness_level": 0,
+      "meal_times": [
+        "breakfast",
+        "snack",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_pork",
+        "ing_black_pepper"
+      ],
+      "allergens": [
+        "pork"
+      ],
+      "vifoodrec_id": "VFR_CHAO_01",
+      "description": "Cháo bột gạo xay mịn như kem ăn kèm sườn sụn ninh mềm giòn sần sật và quẩy nóng."
+    },
+    {
+      "id": "CANON_034",
+      "name": "Bánh đúc nóng thịt băm",
+      "region": "north",
+      "spiciness_level": 1,
+      "meal_times": [
+        "snack",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pork",
+        "ing_onion",
+        "ing_fish_sauce",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "pork",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BANH_06",
+      "description": "Bột bánh đúc dẻo quánh chan nước mắm ngọt ấm, rắc thịt xào mộc nhĩ và hành phi."
+    },
+    {
+      "id": "CANON_035",
+      "name": "Đậu phụ tẩm hành rán giòn",
+      "region": "north",
+      "spiciness_level": 0,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "vegetarian"
+      ],
+      "ingredients": [
+        "ing_tofu",
+        "ing_onion",
+        "ing_fish_sauce"
+      ],
+      "allergens": [],
+      "vifoodrec_id": "VFR_CHAY_01",
+      "description": "Đậu phụ rán vàng ruộm nhúng ngay vào bát mắm hành hoa thơm phức."
+    },
+    {
+      "id": "CANON_036",
+      "name": "Bún bò Huế đặc biệt",
+      "region": "central",
+      "spiciness_level": 3,
+      "meal_times": [
+        "breakfast",
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bun_noodle",
+        "ing_beef",
+        "ing_pork",
+        "ing_chili",
+        "ing_onion",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "beef",
+        "pork",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BBH_01",
+      "description": "Sợi bún to, nước dùng sả ruốc cay nồng thơm lừng kèm nạm bò và chả cua."
+    },
+    {
+      "id": "CANON_037",
+      "name": "Bún bò gân Huế",
+      "region": "central",
+      "spiciness_level": 3,
+      "meal_times": [
+        "breakfast",
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bun_noodle",
+        "ing_beef",
+        "ing_chili",
+        "ing_onion",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "beef",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BBH_02",
+      "description": "Bún bò gân Huế giòn sần sật ngấm trọn vị sa tế cay nồng."
+    },
+    {
+      "id": "CANON_038",
+      "name": "Mì Quảng tôm thịt",
+      "region": "central",
+      "spiciness_level": 2,
+      "meal_times": [
+        "breakfast",
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pork",
+        "ing_shrimp",
+        "ing_peanut",
+        "ing_egg",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "pork",
+        "seafood",
+        "peanut",
+        "egg"
+      ],
+      "vifoodrec_id": "VFR_MIQ_01",
+      "description": "Mì sợi gạo vàng óng, nước nhưỡng đậm đà xâm xấp kèm bánh đa nướng giòn và lạc rang."
+    },
+    {
+      "id": "CANON_039",
+      "name": "Mì Quảng gà ta",
+      "region": "central",
+      "spiciness_level": 2,
+      "meal_times": [
+        "breakfast",
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_chicken",
+        "ing_peanut",
+        "ing_herbs",
+        "ing_chili"
+      ],
+      "allergens": [
+        "peanut"
+      ],
+      "vifoodrec_id": "VFR_MIQ_02",
+      "description": "Mì Quảng nấu cùng gà ta rim nghệ vàng thơm lừng đậm đà vị miền Trung."
+    },
+    {
+      "id": "CANON_040",
+      "name": "Bún thịt nướng kim tiền Huế",
+      "region": "central",
+      "spiciness_level": 2,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bun_noodle",
+        "ing_pork",
+        "ing_peanut",
+        "ing_herbs",
+        "ing_garlic",
+        "ing_chili"
+      ],
+      "allergens": [
+        "pork",
+        "peanut",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BTN_01",
+      "description": "Bún tươi ăn kèm thịt nướng tẩm ướp đậm vị và nước lèo gan đậu phộng béo bùi."
+    },
+    {
+      "id": "CANON_041",
+      "name": "Bánh bèo chén xứ Huế",
+      "region": "central",
+      "spiciness_level": 1,
+      "meal_times": [
+        "snack",
+        "breakfast"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_shrimp",
+        "ing_pork",
+        "ing_fish_sauce",
+        "ing_chili"
+      ],
+      "allergens": [
+        "seafood",
+        "pork"
+      ],
+      "vifoodrec_id": "VFR_BBE_01",
+      "description": "Bánh bèo dẻo mịn trong từng chén nhỏ, rắc tôm chấy, tóp mỡ giòn và chan mắm ớt."
+    },
+    {
+      "id": "CANON_042",
+      "name": "Bánh nậm lá dong",
+      "region": "central",
+      "spiciness_level": 1,
+      "meal_times": [
+        "snack",
+        "breakfast"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pork",
+        "ing_shrimp",
+        "ing_fish_sauce"
+      ],
+      "allergens": [
+        "pork",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BNA_01",
+      "description": "Bánh nậm mềm mại bọc tôm thịt băm nhuyễn, thơm lừng mùi lá dong."
+    },
+    {
+      "id": "CANON_043",
+      "name": "Bánh bột lọc nhân tôm thịt",
+      "region": "central",
+      "spiciness_level": 2,
+      "meal_times": [
+        "snack",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_shrimp",
+        "ing_pork",
+        "ing_fish_sauce",
+        "ing_chili"
+      ],
+      "allergens": [
+        "seafood",
+        "pork"
+      ],
+      "vifoodrec_id": "VFR_BLO_01",
+      "description": "Bánh lọc trong vắt thấy rõ con tôm đỏ au và thịt ba chỉ rim, dai ngon sần sật."
+    },
+    {
+      "id": "CANON_044",
+      "name": "Bánh xèo miền Trung giòn rụm",
+      "region": "central",
+      "spiciness_level": 1,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pork",
+        "ing_shrimp",
+        "ing_peanut",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "pork",
+        "seafood",
+        "peanut"
+      ],
+      "vifoodrec_id": "VFR_BXE_01",
+      "description": "Bánh xèo cỡ nhỏ vỏ giòn tan, cuốn bánh tráng rau sống và chấm nước lèo bùi ngậy."
+    },
+    {
+      "id": "CANON_045",
+      "name": "Cơm hến sông Hương",
+      "region": "central",
+      "spiciness_level": 3,
+      "meal_times": [
+        "breakfast",
+        "lunch"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_peanut",
+        "ing_pork",
+        "ing_chili",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "seafood",
+        "peanut",
+        "pork"
+      ],
+      "vifoodrec_id": "VFR_CHE_01",
+      "description": "Cơm nguội trộn hến xào cay xé lưỡi, da heo chiên giòn, bắp chuối và mắm ruốc."
+    },
+    {
+      "id": "CANON_046",
+      "name": "Bún hến Huế cay nồng",
+      "region": "central",
+      "spiciness_level": 3,
+      "meal_times": [
+        "breakfast",
+        "lunch"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bun_noodle",
+        "ing_peanut",
+        "ing_pork",
+        "ing_chili",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "seafood",
+        "peanut",
+        "pork"
+      ],
+      "vifoodrec_id": "VFR_BHE_01",
+      "description": "Bún trộn hến xào đậm đà chan nước luộc hến ngọt ấm ngập vị ớt cay."
+    },
+    {
+      "id": "CANON_047",
+      "name": "Bánh canh cá lóc Quảng Trị",
+      "region": "central",
+      "spiciness_level": 2,
+      "meal_times": [
+        "breakfast",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_fish",
+        "ing_chili",
+        "ing_onion",
+        "ing_black_pepper"
+      ],
+      "allergens": [
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BCA_01",
+      "description": "Sợi bánh canh bột gạo/bột lọc dai dai cùng cá lóc rim cay nồng vị tiêu ớt."
+    },
+    {
+      "id": "CANON_048",
+      "name": "Bún cá dầm Nha Trang",
+      "region": "central",
+      "spiciness_level": 1,
+      "meal_times": [
+        "breakfast",
+        "lunch"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bun_noodle",
+        "ing_fish",
+        "ing_onion",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BCA_02",
+      "description": "Nước dùng trong vắt nấu từ cá biển tươi ngọt lịm kết hợp chả cá chiên giòn."
+    },
+    {
+      "id": "CANON_049",
+      "name": "Bún chả cá Quy Nhơn",
+      "region": "central",
+      "spiciness_level": 2,
+      "meal_times": [
+        "breakfast",
+        "lunch"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bun_noodle",
+        "ing_fish",
+        "ing_chili",
+        "ing_onion"
+      ],
+      "allergens": [
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BCA_03",
+      "description": "Chả cá biển quết dai đậm vị ăn cùng nước dùng nấu từ đầu cá và thơm cà."
+    },
+    {
+      "id": "CANON_050",
+      "name": "Cơm gà Tam Kỳ",
+      "region": "central",
+      "spiciness_level": 1,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_chicken",
+        "ing_onion",
+        "ing_herbs",
+        "ing_chili"
+      ],
+      "allergens": [],
+      "vifoodrec_id": "VFR_CGA_01",
+      "description": "Cơm nấu nước luộc gà vàng ươm ăn cùng thịt gà ta xé phay bóp rau răm chua ngọt."
+    },
+    {
+      "id": "CANON_051",
+      "name": "Cơm gà Hội An",
+      "region": "central",
+      "spiciness_level": 1,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_chicken",
+        "ing_onion",
+        "ing_herbs",
+        "ing_black_pepper"
+      ],
+      "allergens": [],
+      "vifoodrec_id": "VFR_CGA_02",
+      "description": "Hạt cơm óng ả tơi xốp, gà xé thơm giòn kèm gỏi hành tây chua ngọt và tương ớt Hội An."
+    },
+    {
+      "id": "CANON_052",
+      "name": "Cao lầu Hội An",
+      "region": "central",
+      "spiciness_level": 1,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pork",
+        "ing_herbs",
+        "ing_garlic"
+      ],
+      "allergens": [
+        "pork",
+        "gluten"
+      ],
+      "vifoodrec_id": "VFR_CAL_01",
+      "description": "Sợi cao lầu màu tro ngâm nước giếng Bá Lễ ăn cùng xá xíu đậm vị và da heo chiên giòn."
+    },
+    {
+      "id": "CANON_053",
+      "name": "Nem lụi nướng sả Huế",
+      "region": "central",
+      "spiciness_level": 1,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pork",
+        "ing_peanut",
+        "ing_herbs",
+        "ing_garlic"
+      ],
+      "allergens": [
+        "pork",
+        "peanut"
+      ],
+      "vifoodrec_id": "VFR_NLU_01",
+      "description": "Thịt lợn quết dẻo cuốn củ sả nướng than hoa thơm lừng, chấm nước lèo mè đậu phộng."
+    },
+    {
+      "id": "CANON_054",
+      "name": "Bánh tráng cuốn thịt heo Đà Nẵng",
+      "region": "central",
+      "spiciness_level": 2,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pork",
+        "ing_herbs",
+        "ing_garlic",
+        "ing_chili",
+        "ing_fish_sauce"
+      ],
+      "allergens": [
+        "pork",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BTC_01",
+      "description": "Thịt heo hai đầu da luộc chín tới cuốn bánh tráng đại lộc, chấm mắm nêm đậm đà."
+    },
+    {
+      "id": "CANON_055",
+      "name": "Bún mắm nêm thịt quay Đà Nẵng",
+      "region": "central",
+      "spiciness_level": 3,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bun_noodle",
+        "ing_pork",
+        "ing_peanut",
+        "ing_chili",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "pork",
+        "seafood",
+        "peanut"
+      ],
+      "vifoodrec_id": "VFR_BMN_01",
+      "description": "Bún tươi trộn heo quay da giòn rụm chan mắm nêm cá cơm ớt tỏi cay xé."
+    },
+    {
+      "id": "CANON_056",
+      "name": "Bánh ram ít xứ Huế",
+      "region": "central",
+      "spiciness_level": 1,
+      "meal_times": [
+        "snack",
+        "breakfast"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pork",
+        "ing_shrimp",
+        "ing_fish_sauce"
+      ],
+      "allergens": [
+        "pork",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BRI_01",
+      "description": "Phần đế bánh ram chiên giòn rụm nâng đỡ viên bánh ít dẻo mềm nhân tôm thịt."
+    },
+    {
+      "id": "CANON_057",
+      "name": "Bánh hỏi lòng heo Quy Nhơn",
+      "region": "central",
+      "spiciness_level": 1,
+      "meal_times": [
+        "breakfast"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pork",
+        "ing_onion",
+        "ing_fish_sauce",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "pork",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BHO_01",
+      "description": "Sợi bánh hỏi thoa mỡ hẹ ăn kèm đĩa lòng heo luộc tươi rói và chén cháo lòng nóng."
+    },
+    {
+      "id": "CANON_058",
+      "name": "Bún sứa Nha Trang",
+      "region": "central",
+      "spiciness_level": 1,
+      "meal_times": [
+        "breakfast",
+        "lunch"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bun_noodle",
+        "ing_fish",
+        "ing_onion",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BSU_01",
+      "description": "Thịt sứa giòn sần sật mát lạnh trong nước dùng cá ngọt thanh."
+    },
+    {
+      "id": "CANON_059",
+      "name": "Bánh căn mực Phan Thiết",
+      "region": "central",
+      "spiciness_level": 2,
+      "meal_times": [
+        "dinner",
+        "breakfast"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_squid",
+        "ing_egg",
+        "ing_onion",
+        "ing_fish_sauce"
+      ],
+      "allergens": [
+        "seafood",
+        "egg"
+      ],
+      "vifoodrec_id": "VFR_BCA_04",
+      "description": "Bánh căn nướng khuôn đất giòn đáy, nhân mực cơm tươi rói chấm mắm cá nục kho."
+    },
+    {
+      "id": "CANON_060",
+      "name": "Mực cơm rim mặn ngọt Quy Nhơn",
+      "region": "central",
+      "spiciness_level": 2,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_squid",
+        "ing_garlic",
+        "ing_chili",
+        "ing_fish_sauce"
+      ],
+      "allergens": [
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_MUC_01",
+      "description": "Mực cơm tươi rim óng ánh vị tỏi ớt đường mắm, ăn hao cơm cực kỳ."
+    },
+    {
+      "id": "CANON_061",
+      "name": "Cá nục kho sốt cà chua miền Trung",
+      "region": "central",
+      "spiciness_level": 2,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_fish",
+        "ing_chili",
+        "ing_black_pepper",
+        "ing_fish_sauce"
+      ],
+      "allergens": [
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_CAN_01",
+      "description": "Cá nục biển tươi kho mềm rục xương cùng cà chua và ớt chỉ thiên cay nồng."
+    },
+    {
+      "id": "CANON_062",
+      "name": "Gà kho sả ớt kiểu Huế",
+      "region": "central",
+      "spiciness_level": 3,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_chicken",
+        "ing_chili",
+        "ing_black_pepper",
+        "ing_fish_sauce"
+      ],
+      "allergens": [
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_GAK_01",
+      "description": "Thịt gà ta kho săn đậm vị thơm nức mùi sả băm và ớt tươi cay bỏng."
+    },
+    {
+      "id": "CANON_063",
+      "name": "Canh chua cá bớp miền Trung",
+      "region": "central",
+      "spiciness_level": 2,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_fish",
+        "ing_chili",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_CAC_01",
+      "description": "Cá bớp béo ngậy nấu măng chua cay nồng ấm bụng."
+    },
+    {
+      "id": "CANON_064",
+      "name": "Chả bò Đà Nẵng tiêu hạt",
+      "region": "central",
+      "spiciness_level": 1,
+      "meal_times": [
+        "snack",
+        "breakfast"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_beef",
+        "ing_garlic",
+        "ing_black_pepper"
+      ],
+      "allergens": [
+        "beef"
+      ],
+      "vifoodrec_id": "VFR_CBO_01",
+      "description": "Chả bò nguyên chất màu hồng tự nhiên, thơm mùi thì là và hạt tiêu cay dịu."
+    },
+    {
+      "id": "CANON_065",
+      "name": "Mít non trộn tôm thịt",
+      "region": "central",
+      "spiciness_level": 2,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pork",
+        "ing_shrimp",
+        "ing_peanut",
+        "ing_herbs",
+        "ing_chili"
+      ],
+      "allergens": [
+        "pork",
+        "seafood",
+        "peanut"
+      ],
+      "vifoodrec_id": "VFR_MIT_01",
+      "description": "Mít non luộc xé tơi bùi bùi bóp tôm thịt, xúc bánh tráng nướng mè giòn rụm."
+    },
+    {
+      "id": "CANON_066",
+      "name": "Cơm tấm sườn nướng mỡ hành",
+      "region": "south",
+      "spiciness_level": 0,
+      "meal_times": [
+        "breakfast",
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_pork",
+        "ing_onion",
+        "ing_fish_sauce"
+      ],
+      "allergens": [
+        "pork",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_CTA_01",
+      "description": "Hạt gạo tấm thơm ăn kèm sườn cốt lết nướng mật ong than hoa và mỡ hành béo ngậy."
+    },
+    {
+      "id": "CANON_067",
+      "name": "Cơm tấm sườn bì chả trứng",
+      "region": "south",
+      "spiciness_level": 0,
+      "meal_times": [
+        "breakfast",
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_pork",
+        "ing_egg",
+        "ing_onion",
+        "ing_fish_sauce"
+      ],
+      "allergens": [
+        "pork",
+        "egg",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_CTA_02",
+      "description": "Đĩa cơm tấm Sài Gòn đầy đủ sườn nướng, bì heo thính thơm, chả trứng hấp và trứng ốp la."
+    },
+    {
+      "id": "CANON_068",
+      "name": "Bánh mì thịt chả Sài Gòn",
+      "region": "south",
+      "spiciness_level": 1,
+      "meal_times": [
+        "breakfast",
+        "snack"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bread",
+        "ing_pork",
+        "ing_black_pepper",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "gluten",
+        "pork"
+      ],
+      "vifoodrec_id": "VFR_BMI_01",
+      "description": "Ổ bánh mì giòn tan ngập pate gan béo ngậy, bơ vàng, thịt nguội, chả lụa và đồ chua."
+    },
+    {
+      "id": "CANON_069",
+      "name": "Bánh mì xíu mại trứng muối",
+      "region": "south",
+      "spiciness_level": 1,
+      "meal_times": [
+        "breakfast",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bread",
+        "ing_pork",
+        "ing_egg",
+        "ing_black_pepper"
+      ],
+      "allergens": [
+        "gluten",
+        "pork",
+        "egg"
+      ],
+      "vifoodrec_id": "VFR_BMI_02",
+      "description": "Viên xíu mại thịt nạc bọc trứng muối thơm bùi ngập trong sốt cà chua sánh mịn."
+    },
+    {
+      "id": "CANON_070",
+      "name": "Hủ tiếu Nam Vang thập cẩm",
+      "region": "south",
+      "spiciness_level": 1,
+      "meal_times": [
+        "breakfast",
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pork",
+        "ing_shrimp",
+        "ing_egg",
+        "ing_garlic",
+        "ing_onion"
+      ],
+      "allergens": [
+        "pork",
+        "seafood",
+        "egg"
+      ],
+      "vifoodrec_id": "VFR_HTI_01",
+      "description": "Hủ tiếu sợi dai nước dùng xương ngọt lịm với thịt băm, tôm tươi, trứng cút và tỏi phi."
+    },
+    {
+      "id": "CANON_071",
+      "name": "Hủ tiếu Nam Vang khô",
+      "region": "south",
+      "spiciness_level": 1,
+      "meal_times": [
+        "breakfast",
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pork",
+        "ing_shrimp",
+        "ing_egg",
+        "ing_garlic",
+        "ing_onion"
+      ],
+      "allergens": [
+        "pork",
+        "seafood",
+        "egg"
+      ],
+      "vifoodrec_id": "VFR_HTI_02",
+      "description": "Hủ tiếu trộn sốt tương đen đậm vị kèm chén nước dùng súp nóng hổi."
+    },
+    {
+      "id": "CANON_072",
+      "name": "Hủ tiếu Sa Đéc sợi dai",
+      "region": "south",
+      "spiciness_level": 0,
+      "meal_times": [
+        "breakfast",
+        "lunch"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pork",
+        "ing_shrimp",
+        "ing_garlic",
+        "ing_onion"
+      ],
+      "allergens": [
+        "pork",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_HTI_03",
+      "description": "Sợi hủ tiếu bột gạo Sa Đéc trứ danh dai mềm tự nhiên trong nước súp đậm đà."
+    },
+    {
+      "id": "CANON_073",
+      "name": "Hủ tiếu bò kho Sài Gòn",
+      "region": "south",
+      "spiciness_level": 1,
+      "meal_times": [
+        "breakfast",
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_beef",
+        "ing_black_pepper",
+        "ing_onion",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "beef"
+      ],
+      "vifoodrec_id": "VFR_HTI_04",
+      "description": "Nạm gầu bò ninh mềm thơm ngát mùi hoa hồi quế thảo, ăn kèm hủ tiếu dai và rau húng."
+    },
+    {
+      "id": "CANON_074",
+      "name": "Bánh xèo miền Tây khổng lồ",
+      "region": "south",
+      "spiciness_level": 0,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pork",
+        "ing_shrimp",
+        "ing_coconut_milk",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "pork",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BXE_02",
+      "description": "Bánh xèo lòng chảo mỏng giòn thơm nước cốt dừa, ngập nhân tôm thịt giá đỗ cuốn rau rừng."
+    },
+    {
+      "id": "CANON_075",
+      "name": "Bánh khọt tôm tít Vũng Tàu",
+      "region": "south",
+      "spiciness_level": 0,
+      "meal_times": [
+        "snack",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_shrimp",
+        "ing_coconut_milk",
+        "ing_onion",
+        "ing_fish_sauce"
+      ],
+      "allergens": [
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BKH_01",
+      "description": "Vỏ bánh chiên vàng rộm giòn tan rưới mỡ hành nước cốt dừa, nhân tôm tươi ngọt chấm mắm chua ngọt."
+    },
+    {
+      "id": "CANON_076",
+      "name": "Gỏi cuốn tôm thịt chấm tương đen",
+      "region": "south",
+      "spiciness_level": 0,
+      "meal_times": [
+        "snack",
+        "lunch"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bun_noodle",
+        "ing_shrimp",
+        "ing_pork",
+        "ing_peanut",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "seafood",
+        "pork",
+        "peanut"
+      ],
+      "vifoodrec_id": "VFR_GCU_01",
+      "description": "Bánh tráng cuốn tôm luộc đỏ au, thịt ba chỉ, bún tươi và hẹ chấm tương đậu phộng béo bùi."
+    },
+    {
+      "id": "CANON_077",
+      "name": "Bì cuốn chấm nước mắm chua ngọt",
+      "region": "south",
+      "spiciness_level": 0,
+      "meal_times": [
+        "snack",
+        "lunch"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pork",
+        "ing_herbs",
+        "ing_garlic",
+        "ing_fish_sauce"
+      ],
+      "allergens": [
+        "pork",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BCU_01",
+      "description": "Bì heo trộn thính thơm cuốn cùng rau thơm tươi mát chấm nước mắm tỏi ớt."
+    },
+    {
+      "id": "CANON_078",
+      "name": "Bún mắm miền Tây đặc sản",
+      "region": "south",
+      "spiciness_level": 2,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bun_noodle",
+        "ing_pork",
+        "ing_shrimp",
+        "ing_squid",
+        "ing_fish",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "pork",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BMA_01",
+      "description": "Nước dùng nấu từ mắm cá linh, cá sặc nồng nàn ăn kèm heo quay, tôm mực và rau đắng, bông súng."
+    },
+    {
+      "id": "CANON_079",
+      "name": "Lẩu mắm cá linh bông điên điển",
+      "region": "south",
+      "spiciness_level": 2,
+      "meal_times": [
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bun_noodle",
+        "ing_fish",
+        "ing_shrimp",
+        "ing_squid",
+        "ing_pork",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "seafood",
+        "pork"
+      ],
+      "vifoodrec_id": "VFR_LMA_01",
+      "description": "Hương vị sông nước miền Tây mùa nước nổi với đủ loại cá tôm nhúng bông điên điển."
+    },
+    {
+      "id": "CANON_080",
+      "name": "Bún nước lèo Sóc Trăng",
+      "region": "south",
+      "spiciness_level": 1,
+      "meal_times": [
+        "breakfast",
+        "lunch"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bun_noodle",
+        "ing_fish",
+        "ing_pork",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "seafood",
+        "pork"
+      ],
+      "vifoodrec_id": "VFR_BNL_01",
+      "description": "Nước lèo nấu từ mắm bò hóc và ngải bún thanh tao, không tanh, ngọt đậm đà tự nhiên."
+    },
+    {
+      "id": "CANON_081",
+      "name": "Canh chua cá hú bắp chuối",
+      "region": "south",
+      "spiciness_level": 1,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_fish",
+        "ing_onion",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_CCH_01",
+      "description": "Canh chua cá hú béo ngậy nấu cùng me, dọc mùng, đậu bắp và ngò ôm thơm ngát."
+    },
+    {
+      "id": "CANON_082",
+      "name": "Cá lóc kho tộ Nam Bộ",
+      "region": "south",
+      "spiciness_level": 2,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_fish",
+        "ing_pork",
+        "ing_black_pepper",
+        "ing_chili",
+        "ing_fish_sauce"
+      ],
+      "allergens": [
+        "seafood",
+        "pork"
+      ],
+      "vifoodrec_id": "VFR_CKH_01",
+      "description": "Cá lóc đồng kho trong tộ đất kẹo sánh màu cánh gián, cay nồng tiêu sọ ăn với cơm nóng."
+    },
+    {
+      "id": "CANON_083",
+      "name": "Thịt kho hột vịt nước dừa xiêm",
+      "region": "south",
+      "spiciness_level": 0,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_pork",
+        "ing_egg",
+        "ing_fish_sauce",
+        "ing_black_pepper"
+      ],
+      "allergens": [
+        "pork",
+        "egg",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_TKH_01",
+      "description": "Thịt ba rọi thái vuông kho mềm rục cùng trứng vịt trong nước dừa xiêm trong veo ngọt mát."
+    },
+    {
+      "id": "CANON_084",
+      "name": "Lẩu cá kèo lá giang",
+      "region": "south",
+      "spiciness_level": 1,
+      "meal_times": [
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bun_noodle",
+        "ing_fish",
+        "ing_herbs",
+        "ing_chili"
+      ],
+      "allergens": [
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_LCK_01",
+      "description": "Cá kèo tươi roi rói thả vào nồi nước lẩu lá giang chua thanh dịu mát."
+    },
+    {
+      "id": "CANON_085",
+      "name": "Bún thịt nướng chả giò miền Nam",
+      "region": "south",
+      "spiciness_level": 0,
+      "meal_times": [
+        "breakfast",
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bun_noodle",
+        "ing_pork",
+        "ing_peanut",
+        "ing_onion",
+        "ing_fish_sauce",
+        "ing_herbs"
+      ],
+      "allergens": [
+        "pork",
+        "peanut",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BTN_02",
+      "description": "Tô bún đầy ắp thịt nướng sả, chả giò giòn tan, mỡ hành lạc rang và chan nước mắm ngọt."
+    },
+    {
+      "id": "CANON_086",
+      "name": "Cơm chiên cá mặn Sài Gòn",
+      "region": "south",
+      "spiciness_level": 0,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_fish",
+        "ing_chicken",
+        "ing_egg",
+        "ing_garlic"
+      ],
+      "allergens": [
+        "seafood",
+        "egg"
+      ],
+      "vifoodrec_id": "VFR_CCA_01",
+      "description": "Cơm hạt tơi giòn rang cùng ức gà xé và cá mặn thơm nức mũi."
+    },
+    {
+      "id": "CANON_087",
+      "name": "Bánh tằm bì nước cốt dừa",
+      "region": "south",
+      "spiciness_level": 0,
+      "meal_times": [
+        "snack",
+        "breakfast"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pork",
+        "ing_coconut_milk",
+        "ing_herbs",
+        "ing_fish_sauce"
+      ],
+      "allergens": [
+        "pork",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BTA_01",
+      "description": "Sợi bánh tằm se tròn mềm dai ăn cùng bì thính, rau thơm, chan nước cốt dừa béo và mắm ngọt."
+    },
+    {
+      "id": "CANON_088",
+      "name": "Bánh canh cua giò heo",
+      "region": "south",
+      "spiciness_level": 1,
+      "meal_times": [
+        "breakfast",
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_pork",
+        "ing_onion",
+        "ing_black_pepper"
+      ],
+      "allergens": [
+        "pork",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BCU_02",
+      "description": "Sợi bánh canh trong dai, nước súp cua sánh đỏ gạch ăn cùng thịt cua ngọt và khoanh giò."
+    },
+    {
+      "id": "CANON_089",
+      "name": "Cơm cháy kho quẹt Nam Bộ",
+      "region": "south",
+      "spiciness_level": 1,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_pork",
+        "ing_shrimp",
+        "ing_black_pepper",
+        "ing_fish_sauce"
+      ],
+      "allergens": [
+        "pork",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_CCH_02",
+      "description": "Cơm cháy giòn rụm chấm nồi kho quẹt tôm khô tóp mỡ kẹo quánh và rau luộc ngũ sắc."
+    },
+    {
+      "id": "CANON_090",
+      "name": "Cà ri gà nước cốt dừa",
+      "region": "south",
+      "spiciness_level": 1,
+      "meal_times": [
+        "breakfast",
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_chicken",
+        "ing_coconut_milk",
+        "ing_bread",
+        "ing_onion"
+      ],
+      "allergens": [
+        "gluten"
+      ],
+      "vifoodrec_id": "VFR_CRI_01",
+      "description": "Thịt gà và khoai lang hầm mềm trong nước súp cà ri béo ngậy cốt dừa, chấm bánh mì."
+    },
+    {
+      "id": "CANON_091",
+      "name": "Lẩu gà lá é đất phương Nam",
+      "region": "south",
+      "spiciness_level": 2,
+      "meal_times": [
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_bun_noodle",
+        "ing_chicken",
+        "ing_chili",
+        "ing_herbs"
+      ],
+      "allergens": [],
+      "vifoodrec_id": "VFR_LGA_01",
+      "description": "Nồi lẩu gà nước dùng trong the mát vị lá é và ớt hiểm cay nồng."
+    },
+    {
+      "id": "CANON_092",
+      "name": "Ốc hương xào bơ tỏi",
+      "region": "south",
+      "spiciness_level": 1,
+      "meal_times": [
+        "dinner",
+        "snack"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_garlic",
+        "ing_chili",
+        "ing_bread"
+      ],
+      "allergens": [
+        "seafood",
+        "dairy",
+        "gluten"
+      ],
+      "vifoodrec_id": "VFR_OCH_01",
+      "description": "Ốc hương giòn sần sật đẫm sốt bơ tỏi vàng óng thơm ngậy, chấm bánh mì nóng giòn."
+    },
+    {
+      "id": "CANON_093",
+      "name": "Càng ghẹ rang muối ớt",
+      "region": "south",
+      "spiciness_level": 3,
+      "meal_times": [
+        "dinner",
+        "snack"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_chili",
+        "ing_garlic"
+      ],
+      "allergens": [
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_CGH_01",
+      "description": "Càng ghẹ chắc nịch phủ lớp muối ớt sấy khô đỏ au cay xé lưỡi."
+    },
+    {
+      "id": "CANON_094",
+      "name": "Bánh tráng nướng Đà Lạt Sài Gòn",
+      "region": "south",
+      "spiciness_level": 1,
+      "meal_times": [
+        "snack"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_egg",
+        "ing_pork",
+        "ing_onion",
+        "ing_chili"
+      ],
+      "allergens": [
+        "egg",
+        "pork"
+      ],
+      "vifoodrec_id": "VFR_BTN_03",
+      "description": "Bánh tráng nướng giòn trên than hồng phủ trứng cút, tép khô, hành lá và phô mai thơm ngậy."
+    },
+    {
+      "id": "CANON_095",
+      "name": "Bánh tráng trộn bò khô tắc ớt",
+      "region": "south",
+      "spiciness_level": 2,
+      "meal_times": [
+        "snack"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_beef",
+        "ing_egg",
+        "ing_peanut",
+        "ing_herbs",
+        "ing_chili"
+      ],
+      "allergens": [
+        "beef",
+        "egg",
+        "peanut",
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_BTT_01",
+      "description": "Bánh tráng mềm dai thấm vị sốt tắc me chua ngọt, khô bò đen và trứng cút béo ngậy."
+    },
+    {
+      "id": "CANON_096",
+      "name": "Cháo cá lóc rau đắng",
+      "region": "south",
+      "spiciness_level": 0,
+      "meal_times": [
+        "breakfast",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_rice",
+        "ing_fish",
+        "ing_onion",
+        "ing_herbs",
+        "ing_black_pepper"
+      ],
+      "allergens": [
+        "seafood"
+      ],
+      "vifoodrec_id": "VFR_CCA_02",
+      "description": "Cháo hoa bung nở ngọt thơm vị thịt cá lóc đồng thả rau đắng thanh nhiệt."
+    },
+    {
+      "id": "CANON_097",
+      "name": "Bột chiên giòn trứng mỡ hành",
+      "region": "south",
+      "spiciness_level": 0,
+      "meal_times": [
+        "snack",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_egg",
+        "ing_onion"
+      ],
+      "allergens": [
+        "egg",
+        "gluten"
+      ],
+      "vifoodrec_id": "VFR_BCH_01",
+      "description": "Từng miếng bột gạo chiên xém cạnh vàng giòn đập cùng trứng gà, chấm nước tương ngọt và đu đủ bào."
+    },
+    {
+      "id": "CANON_098",
+      "name": "Chè bà ba nước cốt dừa",
+      "region": "south",
+      "spiciness_level": 0,
+      "meal_times": [
+        "snack"
+      ],
+      "dietary": [
+        "vegetarian"
+      ],
+      "ingredients": [
+        "ing_coconut_milk",
+        "ing_peanut"
+      ],
+      "allergens": [
+        "peanut"
+      ],
+      "vifoodrec_id": "VFR_CHE_02",
+      "description": "Món chè trứ danh Nam Bộ béo ngậy cốt dừa nấu từ khoai lang, khoai mì, đậu xanh và phổ tai."
+    },
+    {
+      "id": "CANON_099",
+      "name": "Chè bưởi An Giang",
+      "region": "south",
+      "spiciness_level": 0,
+      "meal_times": [
+        "snack"
+      ],
+      "dietary": [
+        "vegetarian"
+      ],
+      "ingredients": [
+        "ing_coconut_milk"
+      ],
+      "allergens": [],
+      "vifoodrec_id": "VFR_CHE_03",
+      "description": "Cùi bưởi giòn sần sật không chút vị đắng kết hợp đỗ xanh ninh mềm và nước cốt dừa sánh mịn."
+    },
+    {
+      "id": "CANON_100",
+      "name": "Gỏi củ hủ dừa tôm thịt",
+      "region": "south",
+      "spiciness_level": 1,
+      "meal_times": [
+        "lunch",
+        "dinner"
+      ],
+      "dietary": [
+        "all"
+      ],
+      "ingredients": [
+        "ing_shrimp",
+        "ing_pork",
+        "ing_peanut",
+        "ing_herbs",
+        "ing_fish_sauce"
+      ],
+      "allergens": [
+        "seafood",
+        "pork",
+        "peanut"
+      ],
+      "vifoodrec_id": "VFR_GCH_01",
+      "description": "Củ hủ dừa non trắng muốt giòn ngọt bóp cùng tôm sú luộc, thịt ba chỉ và nước mắm chua cay."
+    }
+  ]
+}
