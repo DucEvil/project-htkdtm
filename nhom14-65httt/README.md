@@ -16,6 +16,8 @@ Customer có thể lưu năm câu trả lời khẩu vị qua API F.10.7; bỏ q
 
 Frontend F.11.1 đã có types và tám hàm gọi API đọc quán, món, danh mục, tìm kiếm, chuẩn bị cho các trang khách hàng F.12. Xem [README frontend](src/frontend/README.md#api-công-khai-đã-chuẩn-bị--f111); chưa có giao diện tìm kiếm/thực đơn.
 
+F.11.2 bổ sung types và bảy hàm gọi API khách hàng: khẩu vị, đơn COD và đánh giá món đã mua. Dùng phiên đăng nhập hiện có, giữ key khi gửi lại đơn; các màn hình nghiệp vụ sẽ tích hợp ở F.12.
+
 ## Vấn đề và mục tiêu
 
 Hỗ trợ khách lựa chọn món Việt phù hợp khẩu vị và điều kiện phục vụ, thực hiện đặt món trong cùng website; kết nối dữ liệu tương tác với đơn hàng để chủ quán hiểu nhu cầu và chất lượng phục vụ. Các giả thuyết về khó khăn lựa chọn sẽ được kiểm chứng bằng khảo sát.

@@ -4,6 +4,8 @@ Tài liệu hiện mô tả auth F.8 và các API quán, thực đơn, tìm ki�
 
 Frontend đã có types và tám hàm gọi GET công khai cho quán, thực đơn, danh mục, tìm kiếm ở F.11.1; xem [bảng hàm API frontend](../src/frontend/README.md#api-công-khai-đã-chuẩn-bị--f111). Chúng dùng chung API client auth nhưng đặt `authenticated: false`; màn hình nghiệp vụ sẽ được nối ở F.12.
 
+F.11.2 bổ sung bảy hàm API frontend khẩu vị, đơn COD và đánh giá theo các endpoint backend bên dưới; xem [API khách hàng frontend](../src/frontend/README.md#api-nghiệp-vụ-khách-hàng-đã-chuẩn-bị--f112). Chúng yêu cầu phiên đăng nhập; payload/key của đơn giữ nguyên khi thử lại. Giao diện nghiệp vụ chưa tích hợp.
+
 ## Quy ước chung
 
 Nghiệp vụ đơn hàng dùng state machine E.2 và API COD ở F.10.5 bên dưới. Xem [README backend](../src/backend/README.md#chuyển-trạng-thái-và-lịch-sử-đơn) về quyền sở hữu và transaction.

@@ -28,6 +28,7 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | F.10.7 | Hồ sơ khẩu vị năm câu hỏi | Có GET/PUT customer, 36 kiểm thử mới; chưa có PreferencePage |
 | F.10.8 | Tiếp nhận sự kiện tương tác | Có POST batch customer, 31 kiểm thử mới; chưa có API sinh gợi ý/UI |
 | F.11.1 | Kiểu dữ liệu và API client công khai frontend | Có tám hàm đọc quán/món/danh mục/tìm kiếm và 15 kiểm thử mới; chưa có màn hình F.12 |
+| F.11.2 | API client nghiệp vụ khách hàng | Có bảy hàm khẩu vị/đơn COD/đánh giá và 21 kiểm thử mới; chưa có màn hình F.12 |
 | F.10 còn lại | Các nghiệp vụ khác | Tiếp tục tách từng module để commit |
 | Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Đã có backend hồ sơ/duyệt quán, thực đơn/catalog và tìm kiếm; đã có API đơn COD; chưa có màn hình nghiệp vụ |
 | Phase 3 | AI, tracking và dữ liệu | Đã có model/API nhận tracking; AI, ETL và KPI chưa triển khai |
@@ -250,6 +251,13 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Thêm tám hàm GET ở `api/restaurants.ts`, `menu.ts`, `search.ts`, dùng API client chung. Query mã hóa an toàn, giữ tọa độ/offset 0; hỗ trợ AbortSignal và giữ lỗi API. Endpoint công khai không gửi token và không yêu cầu phiên.
 - Thực đơn trả mảng, tìm kiếm/danh mục trả Page; không thêm endpoint chưa có. Các client nghiệp vụ riêng như đơn hàng, vendor/admin sẽ tiếp tục ở từng phần của bước 11; màn hình khách hàng thuộc bước 12.
 - Toàn bộ 69 kiểm thử frontend đạt (54 trước + 15 mới); TypeScript, ESLint, Prettier, production build và diff check đạt. Không thay backend; chưa stage/commit/push.
+
+## API nghiệp vụ khách hàng frontend F.11.2
+
+- Sau khi phần API công khai được commit, tiếp tục bước 11 với types/schema và bảy hàm API khẩu vị, tạo/đọc/hủy đơn COD và đánh giá món đã mua. Giữ đúng phương thức/đường dẫn và response backend, gồm danh sách đơn dạng mảng, snapshot và reason nullable trong lịch sử.
+- Request dùng token/refresh của ApiClient chung. Payload đặt đơn do caller cung cấp, giữ nguyên key/session/giá kỳ vọng khi gửi lại; không tự tính tổng hoặc tạo key mới. Các hàm đọc hỗ trợ AbortSignal. Lỗi backend được giữ nguyên để màn hình xử lý.
+- 21 ca mới kiểm tra đủ bảy request, thiếu phiên, retry sau refresh, cùng payload/key khi gửi lại, lỗi nghiệp vụ và hủy request. Toàn bộ 90 kiểm thử frontend đạt (69 trước + 21 mới); TypeScript, lint, format, production build và diff check đạt.
+- Chưa có giao diện PreferencePage/checkout/đơn/ReviewForm; tiếp tục types/API vendor-admin ở phần riêng của bước 11. Không đổi backend/dependencies; chưa stage/commit/push.
 
 ## Dọn bản nháp cục bộ
 

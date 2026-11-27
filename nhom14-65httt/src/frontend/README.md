@@ -27,6 +27,26 @@ Nội dung dưới đây là đặc tả định hướng, bám theo [đề cư�
 
 Phụ trách dự kiến xem tại [danhsachnhom.md](../../danhsachnhom.md).
 
+## API nghiệp vụ khách hàng đã chuẩn bị — F.11.2
+
+`src/types/preference.ts`, `order.ts`, `review.ts` mô tả payload/response theo backend F.10.5–F.10.7. Các hàm ở `src/api/preferences.ts`, `orders.ts`, `reviews.ts` dùng phiên đăng nhập và cơ chế refresh của API client chung. Chưa nối vào màn hình khai báo khẩu vị, checkout, đơn hàng hoặc đánh giá ở F.12.
+
+| Hàm | Endpoint dưới `/api/v1` | Kết quả |
+| :--- | :--- | :--- |
+| `getPreference` | GET `/preferences/` | `Preference` |
+| `savePreference` | PUT `/preferences/` | `Preference` |
+| `createOrder` | POST `/orders/` | `OrderDetail` |
+| `listOrders` | GET `/orders/` | `OrderDetail[]` |
+| `getOrder` | GET `/orders/{id}` | `OrderDetail` |
+| `cancelOrder` | PATCH `/orders/{id}/cancel` | `OrderDetail` |
+| `createReview` | POST `/orders/{id}/review` | `ReviewOut` |
+
+Khẩu vị PUT yêu cầu đủ năm câu, GET chưa khai báo giữ lỗi 404 cho màn hình quyết định onboarding; không tự tạo hồ sơ. `listOrders` nhận phân trang `{ offset?, limit? }`, trả mảng. Các hàm GET nhận `{ signal }` cuối cùng để hủy tải khi rời trang. Giá và tổng nguyên VNĐ; thời điểm response là chuỗi ISO có múi giờ; lịch sử có reason nullable.
+
+Checkout sau này phải tạo UUID v4 cho session/key, giữ cùng `idempotency_key` và payload khi thử lại cùng ý định đặt đơn. `createOrder` chỉ gửi payload nhận vào, nhận OrderDetail cả khi tạo mới 201 hoặc gửi lại 200; không tự sinh key, tổng hoặc snapshot. Khi refresh sau 401, API client gửi lại nguyên JSON. Lỗi đổi giá/xung đột key/chuyển trạng thái/đánh giá trùng được giữ nguyên với details để UI xử lý. Đánh giá gắn món với đúng đơn; kiểm tra người mua, trạng thái completed và chống trùng nằm ở backend.
+
+21 ca mới trong `tests/customerApi.test.ts` kiểm tra bảy endpoint/method/body/token, chặn request thiếu phiên, retry sau refresh, cùng key cho lần gửi lại, lỗi nghiệp vụ và hủy tải. Toàn bộ 90 kiểm thử frontend đạt (69 trước + 21 mới); TypeScript, ESLint, Prettier và production build đạt. Kiểm thử mới dùng API client thật với fetch thay thế; chưa xác nhận luồng checkout trên trình duyệt.
+
 ## Auth đã triển khai
 
 | Route | Nội dung hiện có |
