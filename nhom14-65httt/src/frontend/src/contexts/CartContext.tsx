@@ -32,6 +32,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setQuantity: (id, quantity) =>
           dispatch({ type: "quantity", id, quantity }),
         remove: (id) => dispatch({ type: "remove", id }),
+        updatePrice: (id, price) => dispatch({ type: "price", id, price }),
         clear: () => dispatch({ type: "clear" }),
         confirm: () => dispatch({ type: "confirm" }),
         cancel: () => dispatch({ type: "cancel" }),

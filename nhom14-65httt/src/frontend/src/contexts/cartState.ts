@@ -7,6 +7,7 @@ export interface CartContextValue extends CartState {
   add: (product: CartProduct, quantity: number) => void;
   setQuantity: (id: number, quantity: number) => void;
   remove: (id: number) => void;
+  updatePrice: (id: number, price: number) => void;
   clear: () => void;
   confirm: () => void;
   cancel: () => void;

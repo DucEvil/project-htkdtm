@@ -29,7 +29,7 @@ Phụ trách dự kiến xem tại [danhsachnhom.md](../../danhsachnhom.md).
 
 ## API nghiệp vụ khách hàng đã chuẩn bị — F.11.2
 
-`src/types/preference.ts`, `order.ts`, `review.ts` mô tả payload/response theo backend F.10.5–F.10.7. Các hàm ở `src/api/preferences.ts`, `orders.ts`, `reviews.ts` dùng phiên đăng nhập và cơ chế refresh của API client chung. Khẩu vị đã nối vào F.12.1; checkout, đơn hàng và đánh giá chưa có màn hình.
+`src/types/preference.ts`, `order.ts`, `review.ts` mô tả payload/response theo backend F.10.5–F.10.7. Các hàm ở `src/api/preferences.ts`, `orders.ts`, `reviews.ts` dùng phiên đăng nhập và cơ chế refresh của API client chung. Khẩu vị đã nối vào F.12.1, checkout COD ở F.12.5; trang lịch sử/chi tiết đơn và đánh giá chưa có.
 
 | Hàm | Endpoint dưới `/api/v1` | Kết quả |
 | :--- | :--- | :--- |
@@ -113,7 +113,7 @@ Toàn bộ 165 kiểm thử frontend đạt (152 trước + 13 mới). Hai kịc
 
 ## Chọn vị trí và tìm kiếm đã triển khai — F.12.2
 
-Route công khai `/search`, mở từ **Tìm món, quán** trên thanh điều hướng. `SearchPage` dùng hai API search hiện có, chuyển Món ăn/Quán ăn, tìm theo từ khóa (tối đa 180 ký tự), bán kính 1/3/5/10/20/50 km, phân trang 12 mục. Để trống từ khóa để khám phá gần vị trí đã chọn. Thay bộ lọc/chế độ hoặc vị trí quay về trang đầu; đang gõ chưa gọi API cho đến khi gửi form. Kết quả có khoảng cách đường thẳng, giá VNĐ, trạng thái mở/nhận đơn, địa chỉ/giờ quán hoặc nguyên liệu món. Tên món/quán liên kết tới hai trang công khai ở F.12.3; thêm vào giỏ từ chi tiết món ở F.12.4, checkout chưa có.
+Route công khai `/search`, mở từ **Tìm món, quán** trên thanh điều hướng. `SearchPage` dùng hai API search hiện có, chuyển Món ăn/Quán ăn, tìm theo từ khóa (tối đa 180 ký tự), bán kính 1/3/5/10/20/50 km, phân trang 12 mục. Để trống từ khóa để khám phá gần vị trí đã chọn. Thay bộ lọc/chế độ hoặc vị trí quay về trang đầu; đang gõ chưa gọi API cho đến khi gửi form. Kết quả có khoảng cách đường thẳng, giá VNĐ, trạng thái mở/nhận đơn, địa chỉ/giờ quán hoặc nguyên liệu món. Tên món/quán liên kết tới hai trang công khai ở F.12.3; thêm vào giỏ từ chi tiết món ở F.12.4, checkout COD đã có ở F.12.5.
 
 `LocationProvider` trong AppShell giữ tọa độ/tên địa điểm trong bộ nhớ, chia sẻ qua `useLocation`. `components/map/LocationPicker.tsx` không tự xin quyền; người dùng bấm định vị mới gọi Geolocation API, chờ tối đa 10 giây. Khi bị từ chối/không hỗ trợ/quá hạn có lỗi tiếng Việt và vẫn nhập tay được. Nhập vĩ độ -90..90, kinh độ -180..180, chấp nhận 0; tên địa điểm tùy chọn chỉ là nhãn. Nút xóa xóa vị trí và ô nhập, ẩn kết quả. Không ghi tọa độ/nhãn vào storage hoặc tracking; chỉ gửi tọa độ đến API tìm kiếm. Định vị trả muộn không ghi đè lựa chọn nhập tay mới hơn.
 
@@ -129,7 +129,7 @@ Hai route công khai `/restaurants/:id`, `/menu-items/:id` nối từ tên món/
 
 `RestaurantPage` tải hồ sơ trước rồi tải thực đơn. Thực đơn 12 món/trang, gọi API với limit=13 và offset tăng 12 để dò còn trang sau vì response không có total. Món thứ 13 được giữ làm dấu, không hiện trong trang trước; trang sau đọc lại từ đúng offset. Rỗng ở trang đầu có thông báo quán chưa có món đang bán; rỗng ở trang sau cho quay lại trang trước. Lỗi thực đơn có retry và giữ hồ sơ quán đã tải.
 
-`DishDetailPage` tải món rồi quán tương ứng để hiển thị trạng thái hiện tại. Tách **Nguyên liệu từ quán** và **Đặc trưng món chuẩn** (vùng, cách chế biến, mức cay, nguyên liệu tham khảo/nhãn). Không dùng nguyên liệu món chuẩn thay cho nguyên liệu thực tế còn thiếu, không coi cờ xác nhận là bảo đảm dị ứng. Giá nguyên VNĐ lấy từ API. Có liên kết về thực đơn quán và thêm món vào giỏ F.12.4; checkout chưa tích hợp.
+`DishDetailPage` tải món rồi quán tương ứng để hiển thị trạng thái hiện tại. Tách **Nguyên liệu từ quán** và **Đặc trưng món chuẩn** (vùng, cách chế biến, mức cay, nguyên liệu tham khảo/nhãn). Không dùng nguyên liệu món chuẩn thay cho nguyên liệu thực tế còn thiếu, không coi cờ xác nhận là bảo đảm dị ứng. Giá nguyên VNĐ lấy từ API. Có liên kết về thực đơn quán và thêm món vào giỏ F.12.4; checkout COD đã tích hợp ở F.12.5.
 
 Component dùng chung ở `components/menu/`: DishCard, IngredientInfo, RestaurantInfo; `components/common/PublicResourceState` cho lỗi 404/mạng. Hook `usePublicData` hủy và bỏ phản hồi cũ khi đổi trang, hỗ trợ retry; route kiểm tra ID nguyên dương trong giới hạn backend trước khi gọi API. Lỗi 404 dùng thông báo không tồn tại/chưa công khai, không lộ trạng thái quản lý. CSS `catalog.css` đồng bộ font/màu, card 24–28px, bố cục thích ứng và focus rõ.
 
@@ -143,9 +143,21 @@ Giỏ chỉ giữ trong bộ nhớ, không ghi storage hoặc API. Tải lại/�
 
 `AddToCart` lấy dữ liệu món/quán đang hiển thị, khóa thêm khi món/quán chưa nhận đơn. `QuantityControl` dùng nút +/- (1–99, vùng chạm 48px). Thêm cùng món gộp số lượng, tối đa 99 phần/món và 100 món khác nhau. Giá VNĐ nguyên lưu theo lúc thêm; nếu thêm lại món có giá khác, báo lỗi và yêu cầu xóa dòng cũ trước khi dùng giá mới, không tự đổi giá cả giỏ. Các điều kiện phục vụ/giá thật phải được kiểm tra lại khi đặt đơn.
 
-Thêm quán khác mở dialog xác nhận: giữ giỏ hiện tại hoặc thay toàn bộ bằng món mới. Native dialog giữ focus, Escape hủy và trả focus về nút thêm. `CartPage` có sửa số lượng, xóa từng món, tạm tính, link chi tiết món/quay lại thực đơn, trạng thái rỗng. Chưa có CartDrawer, checkout hoặc gửi POST tạo đơn; không thêm nút thanh toán chưa hoạt động.
+Thêm quán khác mở dialog xác nhận: giữ giỏ hiện tại hoặc thay toàn bộ bằng món mới. Native dialog giữ focus, Escape hủy và trả focus về nút thêm. `CartPage` có sửa số lượng, xóa từng món, tạm tính, link chi tiết món/quay lại thực đơn và đi tới checkout F.12.5; CartDrawer chưa có.
 
 229 kiểm thử frontend đạt (206 trước + 23 mới), gồm reducer và UI/provider: gộp/tổng tiền, giới hạn số lượng/100 món, giá đổi, đổi quán xác nhận/hủy, giới hạn vai trò, vòng đời guest/login/restore/logout. Hai kịch bản Playwright cart mới và hai catalog đạt với Edge/API đọc kiểm soát; không tạo đơn. Đã xem ảnh desktop/mobile, không tràn ngang ở 360/390/768/1280px; kiểm tra Escape/focus, xóa/sửa/đổi quán và tải lại mất giỏ. TypeScript/lint/format/build đạt.
+
+## Checkout COD — F.12.5
+
+Customer mở `/checkout` từ giỏ; guest đi qua login rồi quay về checkout, vendor/admin bị RoleGuard chặn. `CheckoutForm` nhận địa chỉ 5–500 ký tự, tọa độ từ LocationPicker và xác nhận hai thông tin cùng điểm giao/COD. Tọa độ thay đổi hoặc sửa địa chỉ yêu cầu xác nhận lại. Chưa có geocoding nên client không tự kiểm tra địa chỉ dạng chữ khớp tọa độ.
+
+`CheckoutPage` gọi POST `/orders/` qua API client thật, gửi expected_price của từng dòng, không gửi total/snapshot/trạng thái. Khóa gửi lặp bằng ref và nút disabled. Chỉ hiện ghi nhận đơn sau response 201/200 của server, dùng mã đơn/trạng thái/snapshot/tổng tiền trả về. Chỉ xóa giỏ nếu vẫn trùng nội dung đã gửi; giỏ chỉnh sửa sau đó được giữ. Trang lịch sử/theo dõi đơn đầy đủ sẽ làm ở phần riêng.
+
+`useIdempotency` giữ một yêu cầu chờ cho mỗi customer trong tab: payload gồm địa chỉ/tọa độ, session UUID v4 và key UUID v4. Lưu payload trong sessionStorage `viviet.checkout.pending.v1.{userId}`, session trong `viviet.session.v1`; localStorage chỉ giữ key dưới `viviet.checkout.key.v1.{userId}.{sessionId}`, không lưu địa chỉ/tọa độ. Cache bộ nhớ giữ cùng yêu cầu qua điều hướng; reload khôi phục từ sessionStorage ngay cả khi giỏ trong bộ nhớ đã mất. Xóa dữ liệu yêu cầu chờ khi thành công, lỗi nghiệp vụ chắc chắn không tạo đơn hoặc khi người dùng chủ động bỏ sau kiểm tra. Yêu cầu chờ chưa rõ kết quả được giữ theo tài khoản qua logout/login để tránh phát sinh key mới. Nếu storage bị chặn, có thông báo giữ trang mở; không bảo đảm khôi phục sau reload/đóng tab trong trường hợp đó.
+
+Lỗi mạng/5xx/401/403 không biết chắc kết quả giữ nguyên payload/key, khóa sửa nội dung và có **Thử lại cùng đơn**. Backend 400/404/422 hoặc 409 nghiệp vụ không tạo đơn mở lại form, giữ địa chỉ/câu trả lời. ORDER_PRICE_CHANGED hiển thị giá cũ/mới, lấy lại giá từ API món và yêu cầu đồng ý cập nhật; cập nhật chưa gửi đơn, phải bấm đặt lại. IDEMPOTENCY_CONFLICT/EXPIRED không tự sinh key; có nút tải 20 đơn gần nhất với mã/thời gian/trạng thái/địa chỉ/món/tổng. Danh sách không tự suy đơn nào khớp key và không thay thế lịch sử đầy đủ. Chỉ sau khi tải danh sách và xác nhận cảnh báo, người dùng mới có thể bỏ yêu cầu cũ để lập lại; thao tác này có thể tạo thêm đơn nếu lần trước đã thành công.
+
+247 kiểm thử frontend đạt (229 trước + 18 mới). Hai Playwright checkout mới và hai cart đạt trên Edge/API kiểm soát, kiểm tra mất phản hồi → reload → retry cùng payload/key và đồng ý giá mới trước gửi lại. Đã xem ảnh desktop/mobile, không tràn ngang ở 360/390/768/1280px; TypeScript/lint/format/build đạt. Chưa kiểm tra UI checkout với backend/PostgreSQL thật; backend orders đã có bộ kiểm thử riêng của F.10.5.
 
 ## Auth đã triển khai
 
@@ -159,7 +171,8 @@ Thêm quán khác mở dialog xác nhận: giữ giỏ hiện tại hoặc thay 
 | `/search` | Công khai: chọn vị trí, tìm món/quán theo từ khóa và khoảng cách, phân trang |
 | `/restaurants/:id` | Công khai: hồ sơ quán, giờ phục vụ, thực đơn phân trang và liên kết chi tiết món |
 | `/menu-items/:id` | Công khai: giá/đặc trưng món, nguyên liệu thực tế/tham khảo và thông tin quán |
-| `/cart` | Giỏ hàng một quán: đổi số lượng, xóa món, tạm tính; chưa có checkout |
+| `/cart` | Giỏ hàng một quán: đổi số lượng, xóa món, tạm tính và chuyển checkout |
+| `/checkout` | Customer: địa chỉ/tọa độ, gửi đơn COD, retry chống trùng và ghi nhận kết quả máy chủ |
 | `/vendor`, `/admin` | Thông tin tài khoản có guard vai trò tương ứng; chưa có dashboard nghiệp vụ |
 | `/forbidden`, route không tồn tại | Thông báo không đủ quyền/trang 404 |
 
@@ -296,7 +309,7 @@ Xem [hướng dẫn cài đặt](../../docs/HUONG_DAN_CAI_DAT.md) và [tiến đ
 
 ### Cấu trúc auth hiện có
 
-Đường dẫn theo F.8 và bước 11–12 của [thiết kế cấu trúc chung](../../docs/THIET_KE_CAU_TRUC.md). Đã có khẩu vị, tìm kiếm, trang quán/món và giỏ hàng trong bộ nhớ; cache truy vấn, bản đồ, checkout/đơn hàng và dashboard chưa triển khai.
+Đường dẫn theo F.8 và bước 11–12 của [thiết kế cấu trúc chung](../../docs/THIET_KE_CAU_TRUC.md). Đã có khẩu vị, tìm kiếm, trang quán/món, giỏ hàng và checkout COD; cache truy vấn, bản đồ, trang lịch sử/theo dõi đơn và dashboard chưa triển khai.
 
 ```text
 src/frontend/

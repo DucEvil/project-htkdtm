@@ -10,6 +10,7 @@ import SearchPage from "./pages/customer/SearchPage";
 import RestaurantPage from "./pages/customer/RestaurantPage";
 import DishDetailPage from "./pages/customer/DishDetailPage";
 import CartPage from "./pages/customer/CartPage";
+import CheckoutPage from "./pages/customer/CheckoutPage";
 import { CartProvider } from "./contexts/CartContext";
 
 export default function AppRouter() {
@@ -31,6 +32,7 @@ export default function AppRouter() {
             <Route path="vendor" element={<AccountPage />} />
           </Route>
           <Route element={<RoleGuard roles={["customer"]} />}>
+            <Route path="checkout" element={<CheckoutPage />} />
             <Route path="onboarding/taste" element={<PreferencePage />} />
           </Route>
           <Route element={<RoleGuard roles={["admin"]} />}>

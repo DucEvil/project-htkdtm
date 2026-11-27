@@ -14,7 +14,7 @@ Phần đơn hàng đã có API COD, snapshot giá, chống gửi lặp và chuy
 
 Customer có thể lưu năm câu trả lời khẩu vị qua API F.10.7 và màn hình `/onboarding/taste` ở F.12.1; mở từ tài khoản, bỏ qua không tạo hồ sơ. API F.10.8 tiếp nhận batch sự kiện tương tác và ghi nhận hiển thị thực tế; luồng sinh gợi ý và giao diện tracking sẽ tích hợp sau.
 
-Frontend F.11.1 đã có types và tám hàm gọi API đọc quán, món, danh mục, tìm kiếm. F.12.2 có `/search`; F.12.3 có trang quán/thực đơn `/restaurants/:id` và chi tiết món `/menu-items/:id`. F.12.4 thêm `/cart`, giỏ một quán trong bộ nhớ với sửa/xóa/tạm tính và xác nhận đổi quán. Bản đồ/geocoding và checkout chưa tích hợp. Xem [README frontend](src/frontend/README.md#giỏ-hàng-một-quán--f124).
+Frontend F.11.1 đã có types và tám hàm gọi API đọc quán, món, danh mục, tìm kiếm. F.12.2 có `/search`; F.12.3 có trang quán/thực đơn `/restaurants/:id` và chi tiết món `/menu-items/:id`. F.12.4 có giỏ một quán `/cart`; F.12.5 có `/checkout` customer tạo đơn COD, xác nhận giá/địa chỉ/tọa độ và retry cùng key khi mất phản hồi. Bản đồ/geocoding và lịch sử/theo dõi đơn đầy đủ chưa tích hợp. Xem [README frontend](src/frontend/README.md#checkout-cod--f125).
 
 F.11.2 bổ sung types và bảy hàm gọi API khách hàng: khẩu vị, đơn COD và đánh giá món đã mua. Dùng phiên đăng nhập hiện có, giữ key khi gửi lại đơn; các màn hình nghiệp vụ sẽ tích hợp ở F.12.
 

@@ -4,6 +4,7 @@ export type CartAction =
   | { type: "add"; product: CartProduct; quantity: number }
   | { type: "quantity"; id: number; quantity: number }
   | { type: "remove"; id: number }
+  | { type: "price"; id: number; price: number }
   | { type: "confirm" | "cancel" | "clear" };
 export const emptyCart: CartState = {
   items: [],
@@ -18,6 +19,23 @@ const validId = (value: number) =>
 
 export function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
+    case "price":
+      if (
+        !Number.isInteger(action.price) ||
+        action.price <= 0 ||
+        action.price > 10000000
+      )
+        return state;
+      return {
+        ...state,
+        items: state.items.map((item) =>
+          item.menu_item_id === action.id
+            ? { ...item, price: action.price }
+            : item,
+        ),
+        notice: "Đã cập nhật giá bạn xác nhận.",
+        error: "",
+      };
     case "clear":
       return emptyCart;
     case "cancel":

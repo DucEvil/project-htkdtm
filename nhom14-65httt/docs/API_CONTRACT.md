@@ -449,7 +449,7 @@ PATCH reject nhận `{"reason":"Hết nguyên liệu"}`, trim 1–500; các PATC
 | 409 | INVALID_STATE_TRANSITION / ORDER_STATE_CHANGED | Sai thứ tự hoặc trạng thái thay đổi cạnh tranh |
 | 422 | VALIDATION_ERROR | Body/query/path sai giới hạn/kiểu hoặc thiếu/thừa trường |
 
-Schema vẫn revision 001. API review được mô tả ở F.10.6; frontend F.12.4 đã có giỏ hàng một quán trong bộ nhớ, dùng giá quan sát lúc thêm để tạm tính. Chưa có UI checkout/xử lý đơn hoặc thu phí trực tuyến; giỏ chưa gọi POST tạo đơn. Backend vẫn là nơi kiểm tra expected_price/khả dụng và tạo snapshot khi đặt đơn. Không cam kết xử lý tải lớn hoặc khóa hàng PostgreSQL trước khi kiểm chứng môi trường thật.
+Schema vẫn revision 001. API review được mô tả ở F.10.6; frontend F.12.4 có giỏ một quán, F.12.5 có `/checkout` customer gọi POST với expected_price, session/key UUID v4 và xác nhận địa chỉ/tọa độ. Retry lỗi chưa rõ kết quả giữ nguyên payload/key; 201/200 dùng OrderDetail từ server. Khi giá đổi yêu cầu khách đồng ý giá mới rồi gửi lại, không tự đặt; key conflict/expired có bước xem đơn gần đây và xác nhận trước khi bỏ yêu cầu cũ. Payload chờ lưu trong sessionStorage theo customer, localStorage chỉ giữ key. Chưa có giao diện xử lý đơn, lịch sử/theo dõi đầy đủ hoặc thu phí trực tuyến. Backend vẫn kiểm tra khả dụng và tạo snapshot; chưa cam kết khóa hàng PostgreSQL trước khi kiểm chứng môi trường thật.
 
 ## Đánh giá món đã mua — F.10.6
 

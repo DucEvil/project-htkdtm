@@ -90,10 +90,9 @@ export default function CartPage() {
                 Giá trong giỏ là giá lúc bạn thêm món. Giá và khả năng phục vụ
                 cần được kiểm tra lại khi đặt đơn.
               </p>
-              <p className="cart-muted">
-                Phiên bản hiện tại hỗ trợ chuẩn bị giỏ hàng. Bước xác nhận địa
-                chỉ và tạo đơn sẽ được bổ sung tiếp.
-              </p>
+              <Link className="button" to="/checkout">
+                Tiếp tục đặt hàng
+              </Link>
             </aside>
           </div>
         </>

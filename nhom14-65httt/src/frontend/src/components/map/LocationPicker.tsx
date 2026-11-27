@@ -2,7 +2,11 @@ import { useRef, useState, type FormEvent } from "react";
 import { useLocation } from "../../hooks/useLocation";
 import { parseCoordinates } from "../../utils/locationValidation";
 
-export default function LocationPicker() {
+export default function LocationPicker({
+  purpose = "search",
+}: {
+  purpose?: "search" | "delivery";
+}) {
   const { location, locating, error, locate, choose, clear } = useLocation();
   const [latitude, setLatitude] = useState(
     location ? String(location.latitude) : "",
@@ -30,11 +34,14 @@ export default function LocationPicker() {
   return (
     <section className="search-location" aria-labelledby="location-heading">
       <span className="eyebrow">BẮT ĐẦU TỪ GẦN BẠN</span>
-      <h2 id="location-heading">Bạn đang ở đâu?</h2>
+      <h2 id="location-heading">
+        {purpose === "delivery" ? "Bạn muốn giao đến đâu?" : "Bạn đang ở đâu?"}
+      </h2>
       <p>Chọn vị trí để tìm trong phạm vi quán có thể phục vụ.</p>
       <p className="location-privacy">
-        Chỉ xin quyền khi bạn bấm định vị. Vị trí dùng cho tìm kiếm và chỉ được
-        giữ trong bộ nhớ của trang.
+        {purpose === "delivery"
+          ? "Chỉ xin quyền khi bạn bấm định vị. Khi gửi đơn, địa chỉ và tọa độ được lưu tạm trong tab để thử lại cùng yêu cầu nếu mất kết nối."
+          : "Chỉ xin quyền khi bạn bấm định vị. Vị trí dùng cho tìm kiếm và chỉ được giữ trong bộ nhớ của trang."}
       </p>
       <button
         type="button"
