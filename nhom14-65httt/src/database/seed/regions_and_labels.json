@@ -1,0 +1,89 @@
+{
+  "regions": [
+    {
+      "code": "north",
+      "name": "Miền Bắc",
+      "description": "Hương vị thanh đạm, vừa phải, ít ngọt, ít cay, tôn vinh vị tươi tự nhiên của nguyên liệu"
+    },
+    {
+      "code": "central",
+      "name": "Miền Trung",
+      "description": "Hương vị đậm đà, nồng nàn, thiên về vị cay nồng và mặn mà đặc trưng"
+    },
+    {
+      "code": "south",
+      "name": "Miền Nam",
+      "description": "Hương vị phong phú, thiên về vị ngọt, béo từ nước cốt dừa và kết hợp nhiều loại rau sống"
+    }
+  ],
+  "spiciness_levels": [
+    {
+      "level": 0,
+      "code": "non_spicy",
+      "name": "Không cay",
+      "description": "Món ăn hoàn toàn không dùng ớt hay tiêu cay nồng"
+    },
+    {
+      "level": 1,
+      "code": "mild",
+      "name": "Ít cay",
+      "description": "Vị cay nhẹ thoang thoảng từ tiêu hoặc một ít ớt"
+    },
+    {
+      "level": 2,
+      "code": "medium",
+      "name": "Cay vừa",
+      "description": "Vị cay rõ rệt, kích thích vị giác"
+    },
+    {
+      "level": 3,
+      "code": "hot",
+      "name": "Rất cay",
+      "description": "Vị cay nồng đặc trưng kiểu miền Trung/Huế"
+    }
+  ],
+  "dietary_preferences": [
+    {
+      "code": "all",
+      "name": "Ăn tự do (Không kiêng)",
+      "description": "Phù hợp mọi nguyên liệu thông thường"
+    },
+    {
+      "code": "vegetarian",
+      "name": "Ăn chay",
+      "description": "Không dùng thịt cá, có thể dùng trứng hoặc sữa tùy trường phái"
+    },
+    {
+      "code": "vegan",
+      "name": "Thuần chay",
+      "description": "Hoàn toàn có nguồn gốc thực vật, không dùng sản phẩm từ động vật"
+    },
+    {
+      "code": "gluten_free",
+      "name": "Không gluten",
+      "description": "Tránh các sản phẩm từ bột mì, lúa mạch"
+    }
+  ],
+  "meal_times": [
+    {
+      "code": "breakfast",
+      "name": "Bữa sáng",
+      "typical_dishes": ["Phở", "Bún", "Bánh mì", "Xôi"]
+    },
+    {
+      "code": "lunch",
+      "name": "Bữa trưa",
+      "typical_dishes": ["Cơm văn phòng", "Bún chả", "Cơm tấm", "Phở"]
+    },
+    {
+      "code": "dinner",
+      "name": "Bữa tối",
+      "typical_dishes": ["Cơm gia đình", "Lẩu", "Bún", "Món nhậu nhẹ"]
+    },
+    {
+      "code": "snack",
+      "name": "Ăn vặt / Xế chiều",
+      "typical_dishes": ["Bánh tráng nướng", "Chè", "Gỏi cuốn"]
+    }
+  ]
+}
