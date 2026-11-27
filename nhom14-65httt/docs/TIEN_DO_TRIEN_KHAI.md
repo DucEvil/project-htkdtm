@@ -29,6 +29,7 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | F.10.8 | Tiếp nhận sự kiện tương tác | Có POST batch customer, 31 kiểm thử mới; chưa có API sinh gợi ý/UI |
 | F.11.1 | Kiểu dữ liệu và API client công khai frontend | Có tám hàm đọc quán/món/danh mục/tìm kiếm và 15 kiểm thử mới; chưa có màn hình F.12 |
 | F.11.2 | API client nghiệp vụ khách hàng | Có bảy hàm khẩu vị/đơn COD/đánh giá và 21 kiểm thử mới; chưa có màn hình F.12 |
+| F.11.3 | API client chủ quán | Có 15 hàm hồ sơ/thực đơn/xử lý đơn và 34 kiểm thử mới; chưa có màn hình F.12 |
 | F.10 còn lại | Các nghiệp vụ khác | Tiếp tục tách từng module để commit |
 | Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Đã có backend hồ sơ/duyệt quán, thực đơn/catalog và tìm kiếm; đã có API đơn COD; chưa có màn hình nghiệp vụ |
 | Phase 3 | AI, tracking và dữ liệu | Đã có model/API nhận tracking; AI, ETL và KPI chưa triển khai |
@@ -258,6 +259,13 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Request dùng token/refresh của ApiClient chung. Payload đặt đơn do caller cung cấp, giữ nguyên key/session/giá kỳ vọng khi gửi lại; không tự tính tổng hoặc tạo key mới. Các hàm đọc hỗ trợ AbortSignal. Lỗi backend được giữ nguyên để màn hình xử lý.
 - 21 ca mới kiểm tra đủ bảy request, thiếu phiên, retry sau refresh, cùng payload/key khi gửi lại, lỗi nghiệp vụ và hủy request. Toàn bộ 90 kiểm thử frontend đạt (69 trước + 21 mới); TypeScript, lint, format, production build và diff check đạt.
 - Chưa có giao diện PreferencePage/checkout/đơn/ReviewForm; tiếp tục types/API vendor-admin ở phần riêng của bước 11. Không đổi backend/dependencies; chưa stage/commit/push.
+
+## API chủ quán frontend F.11.3
+
+- Sau commit API khách hàng, tiếp tục bước 11 với `api/vendor.ts`: 15 hàm đọc/tạo/sửa hồ sơ, quản lý thực đơn và xử lý đơn theo backend đã có. Bổ sung types quản lý quán/món, tách POST có mặc định với PUT yêu cầu đủ trường; dùng lại OrderDetail.
+- API dùng phiên/token/refresh chung; backend lấy quán từ membership. Danh sách món trả Page, danh sách đơn trả mảng. Hàm đọc nhận AbortSignal; lỗi backend được giữ nguyên. DELETE món ngừng bán, giữ dữ liệu lịch sử và trả void với 204; từ chối đơn gửi reason.
+- Toàn bộ 124 kiểm thử frontend đạt (90 trước + 34 mới); TypeScript, lint, format, production build và diff check đạt. Kiểm thử mới bao phủ 15 request, thiếu phiên, lỗi scope/vai trò/trạng thái, 204 và hủy tải với fetch thay thế.
+- Chưa có giao diện vendor hoặc API client admin; sẽ tiếp tục từng phần để commit riêng. Không đổi backend/dependencies; chưa stage/commit/push.
 
 ## Dọn bản nháp cục bộ
 

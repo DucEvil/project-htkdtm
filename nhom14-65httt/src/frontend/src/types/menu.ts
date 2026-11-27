@@ -26,3 +26,23 @@ export interface MenuItemPublic {
   canonical_dish: CanonicalDishPublic;
   ingredients: IngredientPublic[];
 }
+
+export interface MenuItemDetail extends MenuItemPublic {
+  is_simulated: boolean;
+}
+
+export interface MenuItemCreate {
+  canonical_dish_id: number;
+  name: string;
+  price: number;
+  is_available?: boolean;
+  ingredients_verified?: boolean;
+  ingredient_ids?: number[];
+}
+
+/** PUT yêu cầu khai báo đủ trạng thái bán và nguyên liệu thực tế. */
+export interface MenuItemUpdate extends MenuItemCreate {
+  is_available: boolean;
+  ingredients_verified: boolean;
+  ingredient_ids: number[];
+}

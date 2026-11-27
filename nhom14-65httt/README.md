@@ -18,6 +18,8 @@ Frontend F.11.1 đã có types và tám hàm gọi API đọc quán, món, danh 
 
 F.11.2 bổ sung types và bảy hàm gọi API khách hàng: khẩu vị, đơn COD và đánh giá món đã mua. Dùng phiên đăng nhập hiện có, giữ key khi gửi lại đơn; các màn hình nghiệp vụ sẽ tích hợp ở F.12.
 
+F.11.3 bổ sung types quản lý và 15 hàm API chủ quán cho hồ sơ, thực đơn và xử lý đơn. Xem [API vendor frontend](src/frontend/README.md#api-chủ-quán-đã-chuẩn-bị--f113); màn hình vendor chưa tích hợp.
+
 ## Vấn đề và mục tiêu
 
 Hỗ trợ khách lựa chọn món Việt phù hợp khẩu vị và điều kiện phục vụ, thực hiện đặt món trong cùng website; kết nối dữ liệu tương tác với đơn hàng để chủ quán hiểu nhu cầu và chất lượng phục vụ. Các giả thuyết về khó khăn lựa chọn sẽ được kiểm chứng bằng khảo sát.

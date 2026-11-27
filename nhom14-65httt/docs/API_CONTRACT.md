@@ -6,6 +6,8 @@ Frontend đã có types và tám hàm gọi GET công khai cho quán, thực đ�
 
 F.11.2 bổ sung bảy hàm API frontend khẩu vị, đơn COD và đánh giá theo các endpoint backend bên dưới; xem [API khách hàng frontend](../src/frontend/README.md#api-nghiệp-vụ-khách-hàng-đã-chuẩn-bị--f112). Chúng yêu cầu phiên đăng nhập; payload/key của đơn giữ nguyên khi thử lại. Giao diện nghiệp vụ chưa tích hợp.
 
+F.11.3 bổ sung 15 hàm API frontend cho hồ sơ quán, thực đơn và xử lý đơn vendor; xem [API chủ quán frontend](../src/frontend/README.md#api-chủ-quán-đã-chuẩn-bị--f113). Quán được backend xác định từ membership; DELETE món chỉ ngừng bán và trả 204. Chưa có giao diện vendor.
+
 ## Quy ước chung
 
 Nghiệp vụ đơn hàng dùng state machine E.2 và API COD ở F.10.5 bên dưới. Xem [README backend](../src/backend/README.md#chuyển-trạng-thái-và-lịch-sử-đơn) về quyền sở hữu và transaction.

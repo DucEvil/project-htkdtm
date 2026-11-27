@@ -47,6 +47,34 @@ Checkout sau này phải tạo UUID v4 cho session/key, giữ cùng `idempotency
 
 21 ca mới trong `tests/customerApi.test.ts` kiểm tra bảy endpoint/method/body/token, chặn request thiếu phiên, retry sau refresh, cùng key cho lần gửi lại, lỗi nghiệp vụ và hủy tải. Toàn bộ 90 kiểm thử frontend đạt (69 trước + 21 mới); TypeScript, ESLint, Prettier và production build đạt. Kiểm thử mới dùng API client thật với fetch thay thế; chưa xác nhận luồng checkout trên trình duyệt.
 
+## API chủ quán đã chuẩn bị — F.11.3
+
+`src/api/vendor.ts` có 15 hàm gọi API hiện có của vendor, tái sử dụng token/refresh/lỗi của ApiClient. Types quản lý nằm trong `types/restaurant.ts`, `types/menu.ts` và dùng chung `OrderDetail` ở `types/order.ts`. Chưa có trang quản lý hồ sơ, thực đơn hoặc xử lý đơn.
+
+| Hàm | Method và đường dẫn dưới `/api/v1/vendor` | Kết quả |
+| :--- | :--- | :--- |
+| `getVendorRestaurant` | GET `/restaurant` | `RestaurantDetail` |
+| `createVendorRestaurant` | POST `/restaurant` | `RestaurantDetail` |
+| `updateVendorRestaurant` | PUT `/restaurant` | `RestaurantDetail` |
+| `listVendorMenuItems` | GET `/menu-items` | `Page<MenuItemDetail>` |
+| `getVendorMenuItem` | GET `/menu-items/{id}` | `MenuItemDetail` |
+| `createVendorMenuItem` | POST `/menu-items` | `MenuItemDetail` |
+| `updateVendorMenuItem` | PUT `/menu-items/{id}` | `MenuItemDetail` |
+| `stopSellingVendorMenuItem` | DELETE `/menu-items/{id}` | `void` (204) |
+| `listVendorOrders` | GET `/orders` | `OrderDetail[]` |
+| `getVendorOrder` | GET `/orders/{id}` | `OrderDetail` |
+| `confirmVendorOrder` | PATCH `/orders/{id}/confirm` | `OrderDetail` |
+| `rejectVendorOrder` | PATCH `/orders/{id}/reject` | `OrderDetail` |
+| `prepareVendorOrder` | PATCH `/orders/{id}/preparing` | `OrderDetail` |
+| `deliverVendorOrder` | PATCH `/orders/{id}/delivering` | `OrderDetail` |
+| `completeVendorOrder` | PATCH `/orders/{id}/complete` | `OrderDetail` |
+
+Các hàm danh sách nhận `{ offset?, limit? }`; hàm GET nhận `{ signal }` cuối cùng để hủy tải. PUT hồ sơ bắt buộc bán kính, giờ mở/đóng và cờ nhận đơn; PUT món bắt buộc cờ bán, xác nhận và danh sách nguyên liệu. POST giữ mặc định tại máy chủ khi bỏ trường tùy chọn. Backend suy ra quán từ membership của tài khoản, kiểm tra phạm vi món/đơn; không có tham số chọn quán cho các thao tác vendor.
+
+Ngừng bán dùng DELETE nhưng giữ món và dữ liệu lịch sử; 204 trả `undefined`, không yêu cầu JSON. Từ chối đơn gửi `{ reason }`; các chuyển trạng thái khác không có body. Client trả dữ liệu máy chủ, giữ lỗi 403/404/409 để màn hình xử lý và không tự quyết định quyền/trạng thái.
+
+34 ca mới trong `tests/vendorApi.test.ts` kiểm tra 15 request, token và thiếu phiên, response 204, phân trang, lỗi quyền/phạm vi/trạng thái và hủy tải. Toàn bộ 124 kiểm thử frontend đạt (90 trước + 34 mới); TypeScript, lint, format và production build đạt. Fetch được thay thế trong kiểm thử; luồng giao diện vendor sẽ được kiểm tra khi triển khai ở F.12.
+
 ## Auth đã triển khai
 
 | Route | Nội dung hiện có |

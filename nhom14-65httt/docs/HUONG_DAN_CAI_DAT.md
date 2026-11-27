@@ -76,6 +76,8 @@ Docker chưa được kiểm chứng trong phiên phát triển này vì máy kh
 
 ## Kiểm tra
 
+Mốc F.11.3: **124 kiểm thử frontend đạt**, gồm 34 ca API vendor mới và 90 ca trước. TypeScript, ESLint, Prettier và Vite production build đạt. Các ca mới dùng fetch thay thế để kiểm tra 15 endpoint, token/thiếu phiên, phân trang, lỗi 403/404/409, 204 và hủy tải. Chưa có UI vendor để chạy E2E. Vitest/Vite chạy trực tiếp bằng Node hiện có như các mốc F.11 trước; không đổi dependencies/lockfile.
+
 Mốc F.11.2: **90 kiểm thử frontend đạt**, gồm 21 ca API khách hàng mới và 69 ca trước. TypeScript, ESLint, Prettier và Vite production build đạt. Các ca mới kiểm tra token, bảy method/URL/body, giữ key khi gửi lại đơn và refresh, lỗi nghiệp vụ, hủy tải; fetch được thay thế trong kiểm thử. Chưa có UI nghiệp vụ để chạy E2E. Trong phiên này chạy Vitest/Vite trực tiếp bằng Node như mốc F.11.1; dependencies/lockfile giữ nguyên.
 
 Mốc F.11.1: **69 kiểm thử frontend đạt**, gồm 15 ca API công khai mới và 54 ca trước. TypeScript, ESLint, Prettier và Vite production build đạt. Các ca mới dùng fetch thay thế để kiểm tra URL/query, token, lỗi và hủy request; chưa có màn hình nghiệp vụ để chạy E2E. Chạy `npm test` và `npm run build` từ `src/frontend/`. Trong phiên này chạy Vitest/Vite trực tiếp bằng Node hiện có vì lệnh npm test gặp lỗi nạp native binding từ môi trường; không đổi dependencies hoặc lockfile.
