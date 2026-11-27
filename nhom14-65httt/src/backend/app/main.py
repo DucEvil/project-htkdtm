@@ -13,6 +13,7 @@ from app.preferences.router import router as preferences_router
 from app.restaurants.router import router as restaurants_router
 from app.reviews.router import router as reviews_router
 from app.search.router import router as search_router
+from app.tracking.router import router as tracking_router
 from app.vendor.router import router as vendor_router
 
 
@@ -39,6 +40,7 @@ app.include_router(search_router, prefix="/api/v1")
 app.include_router(orders_router, prefix="/api/v1")
 app.include_router(reviews_router, prefix="/api/v1")
 app.include_router(preferences_router, prefix="/api/v1")
+app.include_router(tracking_router, prefix="/api/v1")
 
 
 @app.get("/health", tags=["health"])

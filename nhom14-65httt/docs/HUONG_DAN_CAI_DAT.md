@@ -1,6 +1,6 @@
 # Cài đặt và tạo cơ sở dữ liệu Vị Việt
 
-Hướng dẫn khởi chạy backend có `/health`, OpenAPI, API auth/quán/thực đơn/danh mục/tìm kiếm/đơn COD/đánh giá/khẩu vị và frontend đăng ký/đăng nhập. Đã có migration `001` tạo 15 bảng OLTP; chưa có seed, dashboard hoặc frontend nghiệp vụ.
+Hướng dẫn khởi chạy backend có `/health`, OpenAPI, API auth/quán/thực đơn/danh mục/tìm kiếm/đơn COD/đánh giá/khẩu vị/tracking và frontend đăng ký/đăng nhập. Đã có migration `001` tạo 15 bảng OLTP; chưa có seed, dashboard hoặc frontend nghiệp vụ.
 
 ## Cấu hình khóa JWT
 
@@ -75,6 +75,10 @@ Nếu có Make, các lệnh tương ứng là `make migrate`, `make migrate-stat
 Docker chưa được kiểm chứng trong phiên phát triển này vì máy không có Docker CLI trong PATH. Cần thử lại trên máy có Docker Desktop trước khi đánh dấu nghiệm thu.
 
 ## Kiểm tra
+
+Mốc F.10.8: **1133 kiểm thử backend đạt**, gồm 31 ca API tracking mới và 1102 ca trước. Ruff/format đạt. Kiểm thử dùng SQLite tạm để kiểm tra quyền, ngữ cảnh sự kiện, idempotency, hiển thị trước tương tác, cửa sổ thời gian và rollback batch. PostgreSQL thực tế chưa kiểm chứng.
+
+POST `/api/v1/tracking/events` nhận batch 1–100 sự kiện từ customer theo [API contract F.10.8](API_CONTRACT.md#ghi-nhận-sự-kiện-tương-tác--f108). Để thử `impression`/`click`/`feedback`, cần có RecommendationRequest và RecommendationImpression đúng tài khoản/phiên/món từ luồng tạo gợi ý; luồng đó chưa có API nên hiện kiểm thử tự tạo dữ liệu trong SQLite tạm. Sự kiện phiên và `add_to_cart` không có request không cần dữ liệu gợi ý. Không dùng UUID request mẫu trong tài liệu như dữ liệu tồn tại sẵn.
 
 Mốc F.10.7: **1102 kiểm thử backend đạt**, gồm 36 ca API khẩu vị mới và 1066 ca trước. Ruff/format đạt. Kiểm thử API dùng SQLite tạm do migration tạo: quyền riêng tư, đủ năm câu, chuẩn hóa, ghi đè, rollback và mô phỏng tranh chấp tạo lần đầu. PostgreSQL thực tế chưa kiểm chứng.
 

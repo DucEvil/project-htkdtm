@@ -12,7 +12,7 @@ Thông tin thành viên được ghi tại [danhsachnhom.md](danhsachnhom.md). C
 
 Phần đơn hàng đã có API COD, snapshot giá, chống gửi lặp và chuyển trạng thái/lịch sử cùng transaction (F.10.4–F.10.5). Customer có thể gửi đánh giá món trong đơn completed qua API F.10.6; chưa có giao diện đơn hàng/đánh giá. Xem [README backend](src/backend/README.md#api-đơn-cod-và-idempotency).
 
-Customer có thể lưu năm câu trả lời khẩu vị qua API F.10.7; bỏ qua không tạo hồ sơ. Giao diện khai báo khẩu vị sẽ tích hợp ở phần frontend.
+Customer có thể lưu năm câu trả lời khẩu vị qua API F.10.7; bỏ qua không tạo hồ sơ. API F.10.8 tiếp nhận batch sự kiện tương tác và ghi nhận hiển thị thực tế; luồng sinh gợi ý và giao diện khai báo khẩu vị/tracking sẽ tích hợp sau.
 
 ## Vấn đề và mục tiêu
 
@@ -42,7 +42,7 @@ ViFoodRec là nguồn chính cho đặc trưng món ăn. Dữ liệu quán, th�
 | Thành phần | Công nghệ dự kiến | Tình trạng |
 | :--- | :--- | :--- |
 | Giao diện web | React/Vite/TypeScript | Có đăng ký/đăng nhập, quản lý phiên, refresh, thông tin tài khoản và guard vai trò; chưa có trang giao dịch |
-| API nghiệp vụ và dịch vụ gợi ý | FastAPI/Python | Có auth, hồ sơ/duyệt quán, thực đơn vendor, catalog admin, tìm món/quán theo chữ và khoảng cách; có API đơn COD; chưa có gợi ý |
+| API nghiệp vụ và dịch vụ gợi ý | FastAPI/Python | Có auth, hồ sơ/duyệt quán, thực đơn vendor, catalog admin, tìm món/quán theo chữ và khoảng cách, đơn COD, khẩu vị và nhận sự kiện tracking; chưa có API sinh gợi ý |
 | Cơ sở dữ liệu | PostgreSQL | Có migration 001 tạo 15 bảng OLTP; đã thử SQLite và sinh SQL PostgreSQL, chưa chạy PostgreSQL thực tế |
 | Xử lý đặc trưng và gợi ý | scikit-learn | Chưa triển khai |
 | Báo cáo phân tích | Power BI | Chưa triển khai |
@@ -60,7 +60,7 @@ Yêu cầu Python >=3.11; Node.js 20.19+, 22.12+ hoặc 24+ theo `engines` front
 | [docs/CHECKLIST_NOP_BAI.md](docs/CHECKLIST_NOP_BAI.md) | Các mục cần kiểm tra trước nộp |
 | [docs/ERD.md](docs/ERD.md) | Sơ đồ 15 bảng OLTP, quan hệ và quy tắc xóa |
 | [docs/TU_DIEN_DU_LIEU.md](docs/TU_DIEN_DU_LIEU.md) | Từng cột, kiểu, mặc định, ràng buộc và giới hạn kiểm tra |
-| [docs/API_CONTRACT.md](docs/API_CONTRACT.md) | API auth hiện có, JWT, mã lỗi và giới hạn refresh |
+| [docs/API_CONTRACT.md](docs/API_CONTRACT.md) | Hợp đồng API auth và nghiệp vụ, gồm tracking; JWT, mã lỗi và giới hạn refresh |
 | [src/backend/README.md](src/backend/README.md) | Phạm vi backend dự kiến |
 | [src/frontend/README.md](src/frontend/README.md) | Phạm vi frontend dự kiến |
 | [src/database/README.md](src/database/README.md) | Phạm vi dữ liệu giao dịch và BI dự kiến |

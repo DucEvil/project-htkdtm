@@ -1,6 +1,6 @@
 # Backend Vị Việt
 
-Đã có nền tảng FastAPI: `/health`, tài liệu OpenAPI tại `/docs`, cấu hình môi trường, SQLAlchemy, Alembic, middleware request ID/CORS/logging và định dạng lỗi thống nhất. Đã có models F.5, migration `001`, auth F.8, API hồ sơ/duyệt quán F.10.1, thực đơn/món chuẩn/nguyên liệu F.10.2 và tìm kiếm F.10.3. API đơn COD đã có ở F.10.5; API gợi ý chưa triển khai.
+Đã có nền tảng FastAPI: `/health`, tài liệu OpenAPI tại `/docs`, cấu hình môi trường, SQLAlchemy, Alembic, middleware request ID/CORS/logging và định dạng lỗi thống nhất. Đã có models F.5, migration `001`, auth F.8, API hồ sơ/duyệt quán F.10.1, thực đơn/món chuẩn/nguyên liệu F.10.2 và tìm kiếm F.10.3. API đơn COD đã có ở F.10.5; API tiếp nhận sự kiện tracking F.10.8 đã có, còn API sinh gợi ý chưa triển khai.
 
 ## Auth backend
 
@@ -82,6 +82,10 @@ Năm câu hỏi được đối chiếu với [đặc tả frontend](../frontend
 | Sẵn sàng thử món mới đến đâu? | `exploration_level` | Số nguyên 0–2: món quen, cân bằng, ưu tiên khám phá; mặc định 1 |
 
 Gán danh sách qua ORM sẽ bỏ khoảng trắng đầu/cuối và loại trùng không phân biệt hoa/thường; tên nguyên liệu được chuyển chữ thường. Các danh sách dùng MutableList để lưu được thay đổi tại chỗ như `append`/`remove`. Mức cay và mức khám phá có CHECK constraint ở DB. Việc kiểm tra API, mã hóa vector và áp dụng nguyên liệu cần tránh khi gợi ý sẽ được triển khai ở các phần sau; chưa có trong model này.
+
+## API ghi nhận tương tác
+
+`app/tracking/` có schema, service và POST `/api/v1/tracking/events` cho customer. Batch 1–100 sự kiện được ghi cùng transaction; `event_id` UUID v4 cho phép gửi lại cùng nội dung mà không tạo dòng trùng. Server đối chiếu chủ request, phiên và món trong danh sách gợi ý; chỉ ghi `displayed_at` khi nhận sự kiện `impression`. Xem [API contract F.10.8](../../docs/API_CONTRACT.md#ghi-nhận-sự-kiện-tương-tác--f108). API sinh gợi ý và giao diện phát sự kiện chưa có.
 
 ## Models quán và liên kết quản lý đã bổ sung
 
@@ -177,7 +181,7 @@ UNIQUE trên `(order_id, menu_item_id)` ngăn đánh giá trùng một món tron
 
 ## Models yêu cầu gợi ý, hiển thị và tương tác đã bổ sung
 
-Theo mục C.5, D.6/7/20/21, E.5 và F.5 của [thiết kế](../../docs/THIET_KE_CAU_TRUC.md), `app/tracking/models.py` định nghĩa ba model. Chúng lưu nguồn dữ liệu; chưa có API tiếp nhận sự kiện hoặc ETL/KPI.
+Theo mục C.5, D.6/7/20/21, E.5 và F.5 của [thiết kế](../../docs/THIET_KE_CAU_TRUC.md), `app/tracking/models.py` định nghĩa ba model. API F.10.8 đã tiếp nhận sự kiện; ETL/KPI chưa triển khai.
 
 | Model | Dữ liệu/ràng buộc |
 | :--- | :--- |
@@ -191,7 +195,7 @@ FK ghép đảm bảo sự kiện có request phải khớp tài khoản/session
 
 Việc tạo dòng RecommendationImpression khi trả danh sách chưa chứng minh món đã hiện trên màn hình. Chỉ khi service nhận sự kiện hiển thị hợp lệ mới ghi `displayed_at`; KPI sau này phải loại các dòng chưa có giá trị này. Nhiều click khác `event_id` vẫn được lưu riêng; CTR sẽ đếm impression có click, không lấy số dòng click làm mẫu số hoặc số lần hiển thị.
 
-`occurred_at` là thời điểm phát sinh do client gửi kèm múi giờ; `received_at` do máy chủ/ORM cấp mặc định. Thời điểm gán qua ORM được chuẩn hóa UTC. Kiểm tra đồng hồ client, cửa sổ tiếp nhận, thứ tự hiển thị trước click, xác thực người gửi và xử lý HTTP khi gửi lại vẫn chờ service/auth. Model hiện chỉ bảo vệ cấu trúc dữ liệu; không tự đánh dấu hiển thị, kết thúc phiên hoặc quy thuộc đơn hàng.
+`occurred_at` là thời điểm phát sinh do client gửi kèm múi giờ; `received_at` do máy chủ/ORM cấp mặc định. Thời điểm gán qua ORM được chuẩn hóa UTC. Service F.10.8 kiểm tra cửa sổ tiếp nhận, thứ tự hiển thị trước click/feedback, người gửi và xử lý HTTP khi gửi lại. Model chỉ bảo vệ cấu trúc dữ liệu; chưa kiểm tra cặp bắt đầu/kết thúc phiên hoặc quy thuộc đơn hàng.
 
 ## Migration khởi tạo
 

@@ -13,7 +13,7 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | Phase 1.4 | `menu/models.py`: món chuẩn, món bán, nguyên liệu | Có bốn model/migration; API thực đơn và catalog ở F.10.2 |
 | Phase 1.5 | `orders/models.py`: đơn, món đặt và lịch sử | Có model/migration, service và API đơn COD F.10.5 |
 | Phase 1.6 | `reviews/models.py`: đánh giá món | Có model/migration và POST đánh giá món đã mua F.10.6 |
-| Phase 1.7 | `tracking/models.py`: yêu cầu gợi ý, hiển thị, sự kiện | Có ba model, kiểm thử, migration 001; chưa có service/API |
+| Phase 1.7 | `tracking/models.py`: yêu cầu gợi ý, hiển thị, sự kiện | Có ba model, kiểm thử, migration 001; API nhận sự kiện ở F.10.8 |
 | F.6 | Migration khởi tạo | Đã có revision 001 tạo 15 bảng; kiểm thử SQLite và SQL PostgreSQL offline |
 | F.7 | ERD và từ điển dữ liệu | Đã mô tả 15 bảng, từng cột, ràng buộc và 24 FK theo revision 001 |
 | F.8 — backend | Đăng ký, đăng nhập, JWT, refresh và guard | Đã có API, 84 kiểm thử auth và tích hợp giao diện |
@@ -26,9 +26,10 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | F.10.5 | Tạo đơn COD, idempotency và API đơn hàng | Có 11 thao tác API customer/vendor; chưa có UI |
 | F.10.6 | Đánh giá món đã mua sau đơn hoàn tất | Có POST customer, 30 kiểm thử mới; chưa có ReviewForm |
 | F.10.7 | Hồ sơ khẩu vị năm câu hỏi | Có GET/PUT customer, 36 kiểm thử mới; chưa có PreferencePage |
+| F.10.8 | Tiếp nhận sự kiện tương tác | Có POST batch customer, 31 kiểm thử mới; chưa có API sinh gợi ý/UI |
 | F.10 còn lại | Các nghiệp vụ khác | Tiếp tục tách từng module để commit |
 | Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Đã có backend hồ sơ/duyệt quán, thực đơn/catalog và tìm kiếm; đã có API đơn COD; chưa có màn hình nghiệp vụ |
-| Phase 3 | AI, tracking và dữ liệu | Chưa đưa vào mã nguồn hiện tại |
+| Phase 3 | AI, tracking và dữ liệu | Đã có model/API nhận tracking; AI, ETL và KPI chưa triển khai |
 | Phase 4 | ETL, BI, Power BI và đánh giá | Chưa đưa vào mã nguồn hiện tại |
 | Phase 5 | Tích hợp, kiểm thử và bàn giao | Chưa thực hiện |
 
@@ -235,11 +236,18 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - 36 ca kiểm thử API mới đạt: quyền vai trò, cô lập tài khoản, tạo/ghi đè, validation đủ năm câu, chuẩn hóa, lỗi DB/rollback, tranh chấp PK và OpenAPI. Chưa stage/commit/push; chưa kiểm chứng PostgreSQL thực tế.
 - Toàn bộ 1102 kiểm thử backend đạt (1066 trước + 36 mới); Ruff/format và diff check đạt. Frontend không thay đổi trong phần này.
 
+## Ghi nhận sự kiện tương tác F.10.8
+
+- Sau commit hồ sơ khẩu vị `b8aa5ff`, bổ sung `tracking/schemas.py`, `service.py`, `router.py` và mount POST `/api/v1/tracking/events` theo E.1/C.5; phần này để nhóm commit riêng.
+- Customer gửi batch 1–100 sự kiện với `event_id` UUID v4. Server gắn người dùng từ token, kiểm tra request thuộc đúng người/phiên và món thuộc danh sách gợi ý. `impression` đầu tiên mới ghi `displayed_at`; click/feedback yêu cầu hiển thị trước. Sự kiện mới chỉ nhận trong khoảng 24 giờ trước đến 5 phút sau; gửi lại cùng ID/nội dung được tính trùng, ID khác nội dung trả 409.
+- Ghi cả batch trong một transaction, rollback sự kiện và `displayed_at` khi lỗi. Có 31 ca kiểm thử API mới bao phủ quyền, ngữ cảnh sáu mã, thứ tự, idempotency, cửa sổ thời gian, rollback và OpenAPI. Không đổi schema/migration hoặc giao diện; API sinh gợi ý vẫn chờ phần AI, nên chưa có luồng người dùng tạo request thực tế.
+- Toàn bộ 1133 kiểm thử backend đạt trên SQLite tạm; Ruff/format và diff check đạt. Chưa kiểm chứng PostgreSQL thực tế; chưa stage/commit/push.
+
 ## Dọn bản nháp cục bộ
 
 - Theo yêu cầu người dùng, chỉ dọn bản nháp khi bản chính tương ứng đã được tích hợp, kiểm thử, commit và không có thay đổi chưa commit.
 - Đã xóa bảy bản `models.py` cũ trong `.runtime/pending-implementation/src/backend/app/users/`, `preferences/`, `restaurants/`, `menu/`, `orders/`, `reviews/`, `tracking/`. Bản chính của chúng vẫn nằm trong `src/` và lịch sử Git.
-- Trước khi dọn tracking đã bảo toàn nguyên lớp BlindEvaluation chưa tích hợp sang bản nháp `src/backend/app/ai/evaluation_models.py` trong `.runtime/pending-implementation/`. Các schema/service/router chưa tích hợp và công cụ Python/uv đang dùng để kiểm tra vẫn được giữ lại.
+- Trước khi dọn tracking đã bảo toàn nguyên lớp BlindEvaluation chưa tích hợp sang bản nháp `src/backend/app/ai/evaluation_models.py` trong `.runtime/pending-implementation/`. Các bản nháp schema/service/router chưa tích hợp và công cụ Python/uv đang dùng để kiểm tra vẫn được giữ lại; API tracking chính đã nằm trong `src/backend/app/tracking/`.
 - DB rỗng dùng để sinh migration ở `.runtime/migration-generation/` đã được dọn sau khi sinh xong. Các bản nháp migration cũ chưa được dùng hoặc chép đè vào migration hiện tại.
 - Không xóa toàn bộ `.runtime/` trong lúc công cụ ở đó vẫn phục vụ kiểm thử; không thêm bản nháp vào commit.
 - Đã dọn sáu file backend auth nháp sau khi bản chính được commit tại `dd97505` và không còn thay đổi chưa commit. Frontend auth mới tích hợp chưa commit nên bản nháp frontend tiếp tục được giữ; mã chạy chính không phụ thuộc chúng.

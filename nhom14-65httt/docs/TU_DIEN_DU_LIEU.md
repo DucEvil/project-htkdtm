@@ -265,7 +265,7 @@ Model: [`RecommendationImpression`](../src/backend/app/tracking/models.py).
 
 UNIQUE: `uq_rec_impressions_request_item` trên `(request_id, menu_item_id)`; `uq_rec_impressions_request_rank` trên `(request_id, rank)`. CHECK: `ck_rec_impressions_rank` trong 1–5. Index: `ix_recommendation_impressions_request_id` trên `(request_id)`, `ix_recommendation_impressions_menu_item_id` trên `(menu_item_id)`.
 
-ORM kiểm tra UUID v4 của request và thứ hạng nguyên. Giới hạn thứ hạng cùng UNIQUE cho phép tối đa năm dòng/request, chưa buộc đủ năm hoặc thứ hạng liên tiếp. Có dòng không đồng nghĩa đã hiển thị; chưa có service cập nhật `displayed_at`. KPI sau này phải phân biệt các dòng chưa hiển thị.
+ORM kiểm tra UUID v4 của request và thứ hạng nguyên. Giới hạn thứ hạng cùng UNIQUE cho phép tối đa năm dòng/request, chưa buộc đủ năm hoặc thứ hạng liên tiếp. Có dòng không đồng nghĩa đã hiển thị; API F.10.8 chỉ cập nhật `displayed_at` khi nhận sự kiện `impression` đầu tiên. KPI sau này phải phân biệt các dòng chưa hiển thị.
 
 ## 15. `interaction_events` — Sự kiện tương tác
 
@@ -299,7 +299,7 @@ CHECK: `ck_interaction_events_type` giới hạn sáu mã; `ck_interaction_event
 
 Index: `ix_interaction_events_user_id` trên `(user_id)`, `ix_interaction_events_session_id` trên `(session_id)`, `ix_interaction_events_request_id` trên `(request_id)`, `ix_interaction_events_menu_item_id` trên `(menu_item_id)`.
 
-ORM kiểm tra UUID v4 và giá trị feedback nguyên, chuẩn hóa timestamp UTC. PK ngăn chèn hai dòng cùng event ID, chưa thay thế chính sách HTTP gửi lại. Chưa kiểm tra đồng hồ client, thời gian tiếp nhận, thứ tự hiển thị trước click, quyền người gửi hoặc một cặp start/end cho phiên. Các click có ID khác nhau vẫn là các dòng riêng; tính CTR phải đếm impression có click thay vì cộng mọi dòng click.
+ORM kiểm tra UUID v4 và giá trị feedback nguyên, chuẩn hóa timestamp UTC. API F.10.8 chỉ cho customer ghi sự kiện của mình, kiểm tra request/phiên/món, cửa sổ thời gian 24 giờ trước đến 5 phút sau, hiển thị trước click/feedback và gửi lại cùng event ID/nội dung. PK chặn ghi trùng ở DB; API nhận lại an toàn hoặc báo xung đột nếu nội dung khác. Chưa kiểm tra một cặp start/end cho phiên. Các click có ID khác nhau vẫn là các dòng riêng; tính CTR phải đếm impression có click thay vì cộng mọi dòng click.
 
 ## Đối chiếu và thay đổi schema
 

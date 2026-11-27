@@ -1,6 +1,6 @@
 # Hợp đồng API Vị Việt
 
-Tài liệu hiện mô tả auth F.8 và các API quán, thực đơn, tìm kiếm, đơn COD, đánh giá, khẩu vị trong F.10. API tracking chưa triển khai. OpenAPI tại `http://localhost:8000/docs` phản ánh request/response đang chạy.
+Tài liệu hiện mô tả auth F.8 và các API quán, thực đơn, tìm kiếm, đơn COD, đánh giá, khẩu vị, tracking trong F.10. OpenAPI tại `http://localhost:8000/docs` phản ánh request/response đang chạy.
 
 ## Quy ước chung
 
@@ -323,7 +323,7 @@ Mọi danh sách nhận `offset=0` trong 0–2147483647, `limit=20` trong 1–10
 | 409 | `CATALOG_IN_USE` | Danh mục còn được món bán tham chiếu |
 | 422 | `VALIDATION_ERROR` | Thiếu/thừa trường, sai kiểu/giới hạn, lặp ID hoặc xác nhận khi chưa có nguyên liệu |
 
-Không thay schema/revision `001`. Ghi món và liên kết nguyên liệu cùng transaction, rollback khi lỗi SQLAlchemy; khóa các hàng liên quan khi DB hỗ trợ. Kiểm thử chạy production app trên SQLite tạm được tạo bằng migration; chưa kiểm chứng PostgreSQL thực tế hoặc khóa hàng cạnh tranh. Tìm kiếm và đơn hàng được triển khai riêng ở F.10.3/F.10.5; reviews/tracking API chưa triển khai.
+Không thay schema/revision `001`. Ghi món và liên kết nguyên liệu cùng transaction, rollback khi lỗi SQLAlchemy; khóa các hàng liên quan khi DB hỗ trợ. Kiểm thử chạy production app trên SQLite tạm được tạo bằng migration; chưa kiểm chứng PostgreSQL thực tế hoặc khóa hàng cạnh tranh. Tìm kiếm, đơn hàng, đánh giá và tracking được mô tả ở các mục F.10.3/F.10.5/F.10.6/F.10.8 riêng.
 
 ## Tìm kiếm món và quán — F.10.3
 
@@ -472,3 +472,43 @@ GET và PUT `/api/v1/preferences/` yêu cầu access token vai trò `customer`. 
 PUT yêu cầu đủ năm trường. Hai mức là số nguyên JSON: spice_level 0–3 (không/ít/vừa/rất cay), exploration_level 0–2 (món quen/cân bằng/khám phá); không nhận Boolean, thập phân hoặc chuỗi số. Ba danh sách cho phép rỗng, mỗi danh sách tối đa 100 chuỗi, mỗi chuỗi sau trim dài 1–100 ký tự. Loại trùng không phân biệt hoa/thường; vùng miền giữ cách viết đầu tiên, nguyên liệu chuyển chữ thường. Danh sách 101 phần tử bị từ chối dù trùng nhau. Trường thừa/thiếu, phần tử rỗng/sai kiểu và mức sai trả 422 `VALIDATION_ERROR`. GET/PUT chỉ trả đúng năm trường.
 
 Ghi năm câu trả lời cùng transaction, rollback khi lỗi; khóa hàng User và Preference khi DB hỗ trợ. PK user_id bảo đảm tối đa một hồ sơ; tranh chấp tạo lần đầu được xử lý sau rollback. Chưa kiểm tra danh sách thích/tránh giao nhau; lọc món cần tránh thuộc pipeline gợi ý riêng. API không lưu tọa độ hoặc lịch sử đồng ý điều khoản. Chưa có màn hình PreferencePage.
+
+## Ghi nhận sự kiện tương tác — F.10.8
+
+POST `/api/v1/tracking/events` yêu cầu Bearer access token vai trò `customer`. Body gồm `events`, mảng 1–100 sự kiện. Mỗi sự kiện cần `event_id` và `session_id` là UUID v4, `event_type` thuộc sáu mã bên dưới, `occurred_at` là thời điểm có múi giờ. `request_id`, `menu_item_id`, `value` chỉ dùng theo ngữ cảnh. ID người dùng, thời điểm tiếp nhận và cờ mô phỏng lấy từ máy chủ; body không nhận trường thừa.
+
+```json
+{
+  "events": [
+    {
+      "event_id": "9e54e6a0-66c6-45ba-b532-d257bf87e004",
+      "session_id": "45d20d74-fb7c-45d9-840d-3a29e3b24451",
+      "event_type": "impression",
+      "request_id": "b5ee0e38-b818-4fa8-9871-5e56fa42d685",
+      "menu_item_id": 1,
+      "occurred_at": "2026-11-27T10:00:00+07:00"
+    }
+  ]
+}
+```
+
+| `event_type` | `request_id` | `menu_item_id` | `value` |
+| :--- | :--- | :--- | :--- |
+| `impression`, `click` | Bắt buộc | Bắt buộc | Không gửi |
+| `feedback` | Bắt buộc | Bắt buộc | 0 hoặc 1 |
+| `add_to_cart` | Tùy chọn | Bắt buộc | Không gửi |
+| `session_start`, `session_end` | Không gửi | Không gửi | Không gửi |
+
+Request gợi ý phải thuộc đúng tài khoản và phiên; món có `request_id` phải nằm trong danh sách gợi ý đó. `impression` đầu tiên ghi `displayed_at` theo `occurred_at`; tạo dòng gợi ý chưa được tính là hiển thị. `click` và `feedback` chỉ được nhận sau khi món đã hiển thị, kể cả khi hai sự kiện nằm cùng batch theo đúng thứ tự. `add_to_cart` không có request vẫn được nhận cho món tồn tại. Giá trị feedback 0 nghĩa là không phù hợp, 1 là phù hợp.
+
+Sự kiện mới chỉ được nhận nếu `occurred_at` nằm trong 24 giờ trước đến 5 phút sau thời điểm máy chủ tiếp nhận. Gửi lại cùng `event_id` và nội dung sau thời hạn vẫn được tính là bản trùng, không tạo thêm dòng. Cả batch là một transaction: lỗi ở một sự kiện sẽ rollback mọi sự kiện và mốc hiển thị trong batch đó. Thành công trả 200 với `{"accepted":1,"duplicates":0}`; `accepted` là số dòng mới, `duplicates` là số lần gửi lại cùng nội dung. Gửi cùng `event_id` với nội dung khác trả 409 `EVENT_ID_CONFLICT`.
+
+| HTTP | Mã lỗi | Khi nào |
+| :--- | :--- | :--- |
+| 401 / 403 | `UNAUTHENTICATED` / `FORBIDDEN` | Thiếu/sai token hoặc không phải customer |
+| 404 | `NOT_FOUND` | Request ngoài quyền/phiên, món không tồn tại hoặc không thuộc danh sách gợi ý |
+| 400 | `EVENT_TIME_INVALID` | Thời điểm sự kiện mới ngoài cửa sổ tiếp nhận |
+| 409 | `IMPRESSION_NOT_DISPLAYED` / `EVENT_ID_CONFLICT` | Chưa hiển thị trước click/feedback; dùng lại ID khác nội dung hoặc xung đột ghi |
+| 422 | `VALIDATION_ERROR` | Body, UUID, mã sự kiện, ngữ cảnh hoặc số lượng sai |
+
+API sinh request/danh sách gợi ý và giao diện gửi sự kiện sẽ tích hợp ở phần riêng; API này chỉ tiếp nhận request đã được tạo hợp lệ. Không đổi migration `001`. Kiểm thử hiện dùng SQLite tạm; chưa xác nhận hành vi cạnh tranh trên PostgreSQL thực tế.
