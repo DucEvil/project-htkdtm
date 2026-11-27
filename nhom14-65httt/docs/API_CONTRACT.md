@@ -449,7 +449,7 @@ PATCH reject nhận `{"reason":"Hết nguyên liệu"}`, trim 1–500; các PATC
 | 409 | INVALID_STATE_TRANSITION / ORDER_STATE_CHANGED | Sai thứ tự hoặc trạng thái thay đổi cạnh tranh |
 | 422 | VALIDATION_ERROR | Body/query/path sai giới hạn/kiểu hoặc thiếu/thừa trường |
 
-Schema vẫn revision 001. API review được mô tả ở F.10.6; chưa có giao diện giỏ hàng/checkout/xử lý đơn hoặc thu phí trực tuyến. Không cam kết xử lý tải lớn hoặc khóa hàng PostgreSQL trước khi kiểm chứng môi trường thật.
+Schema vẫn revision 001. API review được mô tả ở F.10.6; frontend F.12.4 đã có giỏ hàng một quán trong bộ nhớ, dùng giá quan sát lúc thêm để tạm tính. Chưa có UI checkout/xử lý đơn hoặc thu phí trực tuyến; giỏ chưa gọi POST tạo đơn. Backend vẫn là nơi kiểm tra expected_price/khả dụng và tạo snapshot khi đặt đơn. Không cam kết xử lý tải lớn hoặc khóa hàng PostgreSQL trước khi kiểm chứng môi trường thật.
 
 ## Đánh giá món đã mua — F.10.6
 

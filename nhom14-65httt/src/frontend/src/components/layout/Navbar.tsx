@@ -1,9 +1,11 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { roleHome, roleLabels } from "../../utils/auth";
+import { useCart } from "../../hooks/useCart";
 
 export default function Navbar() {
   const { user, signOut, status } = useAuth();
+  const { count } = useCart();
   const navigate = useNavigate();
   function logout() {
     signOut();
@@ -22,6 +24,7 @@ export default function Navbar() {
           Trang chủ
         </NavLink>
         <NavLink to="/search">Tìm món, quán</NavLink>
+        <NavLink to="/cart">Giỏ hàng{count > 0 ? ` (${count})` : ""}</NavLink>
         {user ? (
           <>
             <NavLink to={roleHome(user.role)}>{roleLabels[user.role]}</NavLink>

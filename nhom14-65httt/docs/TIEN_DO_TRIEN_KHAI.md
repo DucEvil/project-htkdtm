@@ -33,9 +33,10 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | F.11.4 | API client quản trị | Có 11 hàm duyệt/tạm ngừng quán, món chuẩn/nguyên liệu và 28 kiểm thử mới; chưa có màn hình F.12 |
 | F.12.1 | Màn hình khẩu vị customer | Có route /onboarding/taste, đọc/lưu, validation, bỏ qua; 13 ca unit/UI và hai kịch bản trình duyệt mới |
 | F.12.2 | Chọn vị trí và tìm món/quán | Có /search, LocationContext/useLocation/LocationPicker, định vị hoặc tọa độ thủ công; chưa có MapView/geocoding |
-| F.12.3 | Chi tiết quán/thực đơn/món | Có hai route công khai và liên kết từ tìm kiếm, phân trang thực đơn; chưa có giỏ hàng |
+| F.12.3 | Chi tiết quán/thực đơn/món | Có hai route công khai, liên kết từ tìm kiếm, phân trang; thêm món vào giỏ ở F.12.4 |
+| F.12.4 | Giỏ hàng một quán | Có /cart, CartContext/useCart, thêm/gộp/sửa/xóa và xác nhận đổi quán; chưa có checkout |
 | F.10 còn lại | Các nghiệp vụ khác | Tiếp tục tách từng module để commit |
-| Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Có backend nghiệp vụ, frontend API, màn hình khẩu vị/tìm kiếm/thực đơn/chi tiết món; giỏ hàng/đơn/vendor/admin chưa có |
+| Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Có backend nghiệp vụ, frontend API, khẩu vị/tìm kiếm/thực đơn/chi tiết món/giỏ hàng; checkout/đơn/vendor/admin chưa có |
 | Phase 3 | AI, tracking và dữ liệu | Đã có model/API nhận tracking; AI, ETL và KPI chưa triển khai |
 | Phase 4 | ETL, BI, Power BI và đánh giá | Chưa đưa vào mã nguồn hiện tại |
 | Phase 5 | Tích hợp, kiểm thử và bàn giao | Chưa thực hiện |
@@ -298,6 +299,13 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Component DishCard/RestaurantInfo/IngredientInfo và PublicResourceState dùng chung. Hiển thị giờ Việt Nam/cả ngày/qua đêm, trạng thái nhận đơn máy chủ, giá, đặc trưng món chuẩn và nguyên liệu thực tế riêng biệt. Không tự suy độ an toàn hoặc khả năng giao đến khách.
 - Thực đơn 12 món/trang với limit13 để dò còn trang sau, offset tăng12; không tạo tổng giả. Hồ sơ và thực đơn có lỗi/retry riêng; trạng thái 404/rỗng rõ ràng. ID sai không gọi API, đổi trang hủy và bỏ phản hồi cũ qua usePublicData.
 - 206 kiểm thử frontend đạt (188 trước + 18 mới). Hai kịch bản Playwright catalog mới và hai search đạt với Edge/API kiểm soát; đã xem ảnh desktop/mobile, không tràn ngang ở 360/390/768/1280px. TypeScript/lint/format/build/diff check đạt. Chưa kiểm tra luồng mới với backend/PostgreSQL thật trong trình duyệt; giỏ hàng/checkout thuộc phần sau, chưa stage/commit/push.
+
+## Giỏ hàng một quán F.12.4
+
+- Sau commit quán/món, thêm CartProvider/useCart bao quanh router, CartPage công khai tại /cart, link Navbar và AddToCart trong trang món. CartProduct/CartLine lưu giá quan sát khi thêm, không giả snapshot giao dịch từ backend.
+- Giỏ một quán, cùng món gộp số lượng, 1–99 phần/món, tối đa 100 món khác nhau; sửa/xóa/tạm tính và trạng thái rỗng. Giá mới khác dòng cũ yêu cầu xóa/thêm lại, không tự sửa giỏ. Chặn thêm khi món/quán chưa nhận đơn hoặc role vendor/admin.
+- Khác quán có dialog xác nhận thay toàn bộ hoặc hủy; Escape/focus hoạt động. Giỏ giữ trong bộ nhớ qua route auth, guest login giữ giỏ; logout/đổi tài khoản xóa, trạng thái khôi phục phiên tạm thời không xóa. Reload/đóng trang mất giỏ và có thông báo rõ; chưa có CartDrawer/checkout hoặc POST đơn hàng.
+- 229 kiểm thử frontend đạt (206 trước + 23 mới); hai Playwright cart mới và hai catalog đạt với Edge/API đọc kiểm soát. Đã xem ảnh mobile/desktop, không tràn ngang ở 360/390/768/1280px; TypeScript/lint/format/build/diff check đạt. Không đổi backend/dependencies, chưa stage/commit/push.
 
 ## Dọn bản nháp cục bộ
 

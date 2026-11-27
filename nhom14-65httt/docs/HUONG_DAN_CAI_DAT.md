@@ -76,6 +76,10 @@ Docker chưa được kiểm chứng trong phiên phát triển này vì máy kh
 
 ## Kiểm tra
 
+Mốc F.12.4: **229 kiểm thử frontend đạt** (206 trước + 23 ca giỏ mới), TypeScript/lint/format/build đạt. Hai kịch bản Playwright cart mới và hai catalog đạt với Edge/API đọc kiểm soát. Kiểm tra thêm/gộp/sửa/xóa, xác nhận đổi quán, Escape/focus, giữ giỏ qua route login, reload mất giỏ và không tràn ngang ở 360/390/768/1280px; đã xem ảnh desktop/mobile. Chưa gửi POST tạo đơn trong luồng này.
+
+Thử giỏ với dữ liệu backend thật: mở một món đang bán tại quán approved/mở cửa/nhận đơn, chọn số phần rồi thêm vào giỏ, bấm link Giỏ hàng trên thanh điều hướng. Thử tăng/giảm/xóa, chọn thêm món cùng quán và món quán khác để thấy xác nhận. Guest/customer được thêm, vendor/admin không thêm như khách. Giỏ trong bộ nhớ giữ qua điều hướng nhưng mất khi reload/đóng ứng dụng; logout/đổi tài khoản xóa giỏ. Chưa có checkout/tạo đơn trên giao diện. Chạy riêng test `npx playwright test e2e/cart.spec.ts` với frontend dev server, E2E_BASE_URL/E2E_BROWSER_CHANNEL như các mốc trước; test đọc dữ liệu API bằng route interception, không cần backend.
+
 Mốc F.12.3: **206 kiểm thử frontend đạt** (188 trước + 18 ca quán/món mới). TypeScript/lint/format/build đạt. Hai kịch bản Playwright catalog mới và hai search đạt với Edge/API kiểm soát trong test: điều hướng search → món → quán, lỗi/retry/404 và ảnh responsive hai trang ở 360/390/768/1280px. Đã xem ảnh desktop/mobile; chưa chạy UI quán/món với backend/PostgreSQL thật.
 
 Thử thủ công khi có backend và dữ liệu quán approved/món đang bán: vào `/search`, bấm tên món để xem `/menu-items/{id}` hoặc tên quán để mở `/restaurants/{id}`. Có thể mở thẳng hai URL này khi chưa đăng nhập và chưa chọn vị trí. Trang quán có thực đơn 12 món/trang; trang món phân biệt nguyên liệu quán với tham khảo món chuẩn. Thử ID không có hoặc món ngừng bán để thấy 404. Giỏ hàng/checkout chưa có. Chạy test trình duyệt riêng bằng `npx playwright test e2e/catalog.spec.ts`, cần frontend dev server và E2E_BASE_URL/E2E_BROWSER_CHANNEL như các mốc trước; response API được chặn trong test nên không cần backend cho bộ test này.

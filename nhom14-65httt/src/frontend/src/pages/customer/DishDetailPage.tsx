@@ -8,6 +8,7 @@ import { formatPrice, routeEntityId } from "../../utils/catalog";
 import IngredientInfo from "../../components/menu/IngredientInfo";
 import RestaurantInfo from "../../components/menu/RestaurantInfo";
 import PublicResourceState from "../../components/common/PublicResourceState";
+import AddToCart from "../../components/cart/AddToCart";
 import "./catalog.css";
 
 const spiceLabels = ["Không cay", "Ít cay", "Vừa cay", "Rất cay"];
@@ -100,6 +101,7 @@ function DishContent({ id }: { id: number }) {
           <Link className="button" to={`/restaurants/${restaurant.id}`}>
             Xem thực đơn quán
           </Link>
+          <AddToCart item={item} restaurant={restaurant} />
         </aside>
       </div>
     </>
