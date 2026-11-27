@@ -69,6 +69,8 @@ Alembic đã import model để nhận metadata và User nằm trong migration `
 
 `app/preferences/models.py` định nghĩa bảng `preferences`. `user_id` vừa là khóa chính vừa tham chiếu `users.id`, nên mỗi tài khoản có tối đa một hồ sơ. Xóa tài khoản sẽ xóa hồ sơ khẩu vị đi kèm. Người bỏ qua khai báo chưa có bản ghi Preference; không tự tạo hồ sơ rỗng khi tạo User.
 
+API GET/PUT `/api/v1/preferences/` dành cho customer đã đăng nhập. GET chưa khai báo trả 404; PUT yêu cầu đủ năm câu hỏi và thay toàn bộ hồ sơ, lấy user_id từ token. Danh sách trim/loại trùng, nguyên liệu chuyển chữ thường; mức cay/khám phá là số nguyên nghiêm ngặt. Ghi transaction, rollback lỗi DB và xử lý tranh chấp tạo lần đầu. Xem [API contract F.10.7](../../docs/API_CONTRACT.md#hồ-sơ-khẩu-vị--f107); chưa có giao diện PreferencePage.
+
 Năm câu hỏi được đối chiếu với [đặc tả frontend](../frontend/README.md), mục bản đồ route và luồng khách mới. Bản thiết kế cấu trúc yêu cầu năm câu hỏi nhưng chưa chốt từng cột; các quy ước chi tiết được ghi dưới đây để dùng thống nhất ở API và giao diện sau này.
 
 | Câu hỏi | Trường | Quy ước dữ liệu |
@@ -233,7 +235,7 @@ Khi revision đã được commit/áp dụng, thay đổi schema bằng revision
 
 Python >=3.11, FastAPI, SQLAlchemy, PostgreSQL và scikit-learn. Phụ thuộc được khai báo trong `requirements.txt` và `requirements-dev.txt`. Chạy từ thư mục này: `python -m uvicorn app.main:app --reload`; kiểm tra: `python -m pytest tests -q`. Xem [hướng dẫn cài đặt](../../docs/HUONG_DAN_CAI_DAT.md) để tạo môi trường trước khi chạy.
 
-Các phần F.5–F.9 và nghiệp vụ/API F.10.1–F.10.6 đã được bổ sung đến đánh giá món đã mua. Các phần backend tiếp theo thuộc yêu cầu gợi ý/tracking và quản trị; triển khai từng phần để commit riêng. Alembic trong backend là nguồn schema duy nhất; các model BI hoặc đánh giá mù của phần sau sẽ dùng revision bổ sung khi được triển khai.
+Các phần F.5–F.9 và nghiệp vụ/API F.10.1–F.10.7 đã được bổ sung đến hồ sơ khẩu vị. Các phần backend tiếp theo thuộc yêu cầu gợi ý/tracking và quản trị; triển khai từng phần để commit riêng. Alembic trong backend là nguồn schema duy nhất; các model BI hoặc đánh giá mù của phần sau sẽ dùng revision bổ sung khi được triển khai.
 
 Xem [README nhóm](../../README.md), [nguồn dữ liệu](../../docs/NGUON_DU_LIEU.md) và [kế hoạch](../../docs/KE_HOACH_THUC_HIEN.md).
 

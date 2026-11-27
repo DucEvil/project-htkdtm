@@ -1,6 +1,6 @@
 # Cài đặt và tạo cơ sở dữ liệu Vị Việt
 
-Hướng dẫn khởi chạy backend có `/health`, OpenAPI, API auth/quán/thực đơn/danh mục/tìm kiếm/đơn COD/đánh giá và frontend đăng ký/đăng nhập. Đã có migration `001` tạo 15 bảng OLTP; chưa có seed, dashboard hoặc frontend đơn hàng/đánh giá.
+Hướng dẫn khởi chạy backend có `/health`, OpenAPI, API auth/quán/thực đơn/danh mục/tìm kiếm/đơn COD/đánh giá/khẩu vị và frontend đăng ký/đăng nhập. Đã có migration `001` tạo 15 bảng OLTP; chưa có seed, dashboard hoặc frontend nghiệp vụ.
 
 ## Cấu hình khóa JWT
 
@@ -75,6 +75,10 @@ Nếu có Make, các lệnh tương ứng là `make migrate`, `make migrate-stat
 Docker chưa được kiểm chứng trong phiên phát triển này vì máy không có Docker CLI trong PATH. Cần thử lại trên máy có Docker Desktop trước khi đánh dấu nghiệm thu.
 
 ## Kiểm tra
+
+Mốc F.10.7: **1102 kiểm thử backend đạt**, gồm 36 ca API khẩu vị mới và 1066 ca trước. Ruff/format đạt. Kiểm thử API dùng SQLite tạm do migration tạo: quyền riêng tư, đủ năm câu, chuẩn hóa, ghi đè, rollback và mô phỏng tranh chấp tạo lần đầu. PostgreSQL thực tế chưa kiểm chứng.
+
+Thử hồ sơ khẩu vị bằng access token customer: GET `/api/v1/preferences/` trước khi khai báo trả 404; PUT cùng đường dẫn với đủ năm câu trong [API contract F.10.7](API_CONTRACT.md#hồ-sơ-khẩu-vị--f107) trả hồ sơ đã chuẩn hóa; GET lại thấy dữ liệu đó. Vendor/admin nhận 403. Bỏ qua onboarding không gọi PUT nên không tạo bản ghi. Chưa có màn hình PreferencePage.
 
 Mốc F.10.6: **1066 kiểm thử backend đạt**, gồm 30 ca đánh giá mới và 1036 ca đã có. Ruff/format đạt. Các ca mới kiểm tra quyền người mua, trạng thái completed, món thực sự có trong đơn, chống trùng, snapshot và rollback trên SQLite tạm. PostgreSQL thực tế/chạy đồng thời chưa kiểm chứng.
 

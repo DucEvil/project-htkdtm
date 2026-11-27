@@ -12,6 +12,8 @@ Thông tin thành viên được ghi tại [danhsachnhom.md](danhsachnhom.md). C
 
 Phần đơn hàng đã có API COD, snapshot giá, chống gửi lặp và chuyển trạng thái/lịch sử cùng transaction (F.10.4–F.10.5). Customer có thể gửi đánh giá món trong đơn completed qua API F.10.6; chưa có giao diện đơn hàng/đánh giá. Xem [README backend](src/backend/README.md#api-đơn-cod-và-idempotency).
 
+Customer có thể lưu năm câu trả lời khẩu vị qua API F.10.7; bỏ qua không tạo hồ sơ. Giao diện khai báo khẩu vị sẽ tích hợp ở phần frontend.
+
 ## Vấn đề và mục tiêu
 
 Hỗ trợ khách lựa chọn món Việt phù hợp khẩu vị và điều kiện phục vụ, thực hiện đặt món trong cùng website; kết nối dữ liệu tương tác với đơn hàng để chủ quán hiểu nhu cầu và chất lượng phục vụ. Các giả thuyết về khó khăn lựa chọn sẽ được kiểm chứng bằng khảo sát.

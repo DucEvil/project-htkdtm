@@ -47,6 +47,8 @@ CHECK: `ck_preferences_spice_level` trong 0–3; `ck_preferences_exploration_lev
 
 Mức cay: 0 không cay, 1 ít, 2 vừa, 3 rất cay. Mức khám phá: 0 món quen, 1 cân bằng, 2 ưu tiên khám phá. Khi gán danh sách qua ORM, phần tử phải là chuỗi không rỗng, được bỏ khoảng trắng và loại trùng không phân biệt hoa thường; nguyên liệu chuyển chữ thường. Chưa kiểm tra danh sách thích/tránh giao nhau hoặc áp dụng lọc gợi ý. Thao tác sửa danh sách tại chỗ được MutableList theo dõi nhưng không tự chạy lại toàn bộ validator khi gán thuộc tính.
 
+API F.10.7 cho customer GET/PUT toàn bộ năm câu trả lời của mình; bỏ qua không tạo bản ghi. Mỗi danh sách tối đa 100 chuỗi 1–100 ký tự sau trim; hai mức là số nguyên đúng khoảng. Không có cột đồng ý điều khoản hoặc lịch sử thay đổi hồ sơ; gợi ý chưa dùng hồ sơ này.
+
 ## 3. `restaurants` — Quán
 
 Model: [`Restaurant`](../src/backend/app/restaurants/models.py). Hồ sơ và điều kiện phục vụ của một quán.

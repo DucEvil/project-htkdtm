@@ -8,7 +8,7 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | :--- | :--- | :--- |
 | Phase 0 | Cấu hình môi trường, Docker, backend/frontend chạy tối thiểu | Đã chuẩn bị; xem hướng dẫn cài đặt và kết quả kiểm tra |
 | Phase 1.1 | `users/models.py`: tài khoản và vai trò | Có model, kiểm thử, migration 001 và API auth backend |
-| Phase 1.2 | `preferences/models.py`: khẩu vị | Có model, kiểm thử, migration 001; chưa có API |
+| Phase 1.2 | `preferences/models.py`: khẩu vị | Có model/migration và API GET/PUT F.10.7 |
 | Phase 1.3 | `restaurants/models.py`: quán và thành viên quản lý | Có model/migration và API hồ sơ, duyệt/tạm ngừng ở F.10.1 |
 | Phase 1.4 | `menu/models.py`: món chuẩn, món bán, nguyên liệu | Có bốn model/migration; API thực đơn và catalog ở F.10.2 |
 | Phase 1.5 | `orders/models.py`: đơn, món đặt và lịch sử | Có model/migration, service và API đơn COD F.10.5 |
@@ -25,6 +25,7 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | F.10.4 | Quy tắc chuyển trạng thái và lịch sử đơn | Có state machine/service và 167 kiểm thử, đã nối API F.10.5 |
 | F.10.5 | Tạo đơn COD, idempotency và API đơn hàng | Có 11 thao tác API customer/vendor; chưa có UI |
 | F.10.6 | Đánh giá món đã mua sau đơn hoàn tất | Có POST customer, 30 kiểm thử mới; chưa có ReviewForm |
+| F.10.7 | Hồ sơ khẩu vị năm câu hỏi | Có GET/PUT customer, 36 kiểm thử mới; chưa có PreferencePage |
 | F.10 còn lại | Các nghiệp vụ khác | Tiếp tục tách từng module để commit |
 | Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Đã có backend hồ sơ/duyệt quán, thực đơn/catalog và tìm kiếm; đã có API đơn COD; chưa có màn hình nghiệp vụ |
 | Phase 3 | AI, tracking và dữ liệu | Chưa đưa vào mã nguồn hiện tại |
@@ -225,6 +226,14 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Response dùng snapshot_name/snapshot_price của lần mua, giữ đúng dù thực đơn đã đổi; không trả user_id/is_simulated. Lỗi ghi rollback, tranh chấp trùng được chuyển thành 409. Chưa có frontend ReviewForm hoặc API đọc/sửa/xóa đánh giá.
 - 30 ca kiểm thử API mới đạt: quyền vai trò/chủ đơn, trạng thái, món đã mua, trùng, hai đơn cùng món, validation, snapshot, lỗi DB/rollback, tranh chấp UNIQUE và OpenAPI. Chưa kiểm chứng PostgreSQL thực tế; chưa stage/commit/push.
 - Toàn bộ 1066 kiểm thử backend đạt (1036 trước + 30 mới); Ruff/format và diff check đạt. Không chạy lại frontend vì không sửa giao diện.
+
+## Hồ sơ khẩu vị F.10.7
+
+- Phần đánh giá đã được người dùng commit tại `1ef5c6b`. Lượt này thêm `preferences/schemas.py`, `service.py`, `router.py`, mount GET/PUT `/api/v1/preferences/` theo E.1/C.5, tách riêng để commit.
+- Customer chỉ đọc/sửa hồ sơ của mình. Bỏ qua năm câu hỏi không tạo bản ghi; GET chưa có trả 404. PUT yêu cầu đủ năm câu, thay toàn bộ hồ sơ; danh sách trim/loại trùng, nguyên liệu chuyển chữ thường và hai mức dùng số nguyên nghiêm ngặt. Không nhận user_id/cờ mô phỏng từ client.
+- Lưu cùng transaction, rollback khi lỗi; khóa hàng khi DB hỗ trợ và xử lý tranh chấp lần tạo đầu. PK user_id bảo vệ một hồ sơ/tài khoản. Chưa có frontend PreferencePage, lọc gợi ý hoặc lịch sử đồng ý điều khoản; không đổi schema/migration.
+- 36 ca kiểm thử API mới đạt: quyền vai trò, cô lập tài khoản, tạo/ghi đè, validation đủ năm câu, chuẩn hóa, lỗi DB/rollback, tranh chấp PK và OpenAPI. Chưa stage/commit/push; chưa kiểm chứng PostgreSQL thực tế.
+- Toàn bộ 1102 kiểm thử backend đạt (1066 trước + 36 mới); Ruff/format và diff check đạt. Frontend không thay đổi trong phần này.
 
 ## Dọn bản nháp cục bộ
 

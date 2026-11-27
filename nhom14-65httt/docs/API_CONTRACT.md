@@ -1,6 +1,6 @@
 # Hợp đồng API Vị Việt
 
-Tài liệu hiện mô tả auth F.8, hồ sơ/duyệt quán F.10.1, thực đơn F.10.2, tìm kiếm F.10.3, đơn COD F.10.4–F.10.5 và đánh giá F.10.6. API khẩu vị và tracking chưa triển khai. OpenAPI tại `http://localhost:8000/docs` phản ánh request/response đang chạy.
+Tài liệu hiện mô tả auth F.8 và các API quán, thực đơn, tìm kiếm, đơn COD, đánh giá, khẩu vị trong F.10. API tracking chưa triển khai. OpenAPI tại `http://localhost:8000/docs` phản ánh request/response đang chạy.
 
 ## Quy ước chung
 
@@ -454,3 +454,21 @@ Schema vẫn revision 001. API review được mô tả ở F.10.6; chưa có gi
 Chỉ người mua đúng đơn ở trạng thái completed mới gửi được; món phải là OrderItem của **đơn đó**. Đơn ngoài quyền hoặc không tồn tại trả cùng 404, món không thuộc đơn trả 404; đơn chưa completed trả 409 `ORDER_NOT_COMPLETED`. Mỗi cặp order_id/menu_item_id được đánh giá tối đa một lần, gửi lại trả 409 `REVIEW_ALREADY_EXISTS` kể cả khi thay nội dung. Món có thể được đánh giá lại sau một đơn mua khác. API ghi cờ mô phỏng false; không liên quan feedback phù hợp của gợi ý.
 
 Response gồm `id`, `order_id`, `menu_item_id`, `snapshot_name`, `snapshot_price`, `rating`, `comment`, `created_at`. Tên/giá lấy từ OrderItem lúc mua, không bị đổi khi quán sửa thực đơn/ngừng bán. Không trả actor/user_id hoặc cờ mô phỏng. Review được lưu cùng transaction, rollback khi lỗi; UNIQUE ghép và FK ghép ở revision 001 bảo vệ chống trùng/món chưa mua ở tầng DB. Kiểm thử dùng SQLite tạm; chưa kiểm chứng PostgreSQL cạnh tranh thực tế. Chưa có API liệt kê/sửa/xóa đánh giá hoặc frontend ReviewForm; sẽ làm riêng nếu cần theo giao diện F.12.
+
+## Hồ sơ khẩu vị — F.10.7
+
+GET và PUT `/api/v1/preferences/` yêu cầu access token vai trò `customer`. Khách bỏ qua năm câu hỏi sẽ không có bản ghi; GET trả 404 `NOT_FOUND`. PUT tạo hồ sơ nếu chưa có hoặc thay toàn bộ năm câu trả lời nếu đã có, trả 200. ID người dùng lấy từ token; không nhận `user_id` hay cờ mô phỏng trong body. Vendor/admin nhận 403.
+
+```json
+{
+  "regions": ["Bắc", "Nam"],
+  "spice_level": 2,
+  "liked_ingredients": ["bò", "hành"],
+  "avoided_ingredients": ["đậu phộng"],
+  "exploration_level": 1
+}
+```
+
+PUT yêu cầu đủ năm trường. Hai mức là số nguyên JSON: spice_level 0–3 (không/ít/vừa/rất cay), exploration_level 0–2 (món quen/cân bằng/khám phá); không nhận Boolean, thập phân hoặc chuỗi số. Ba danh sách cho phép rỗng, mỗi danh sách tối đa 100 chuỗi, mỗi chuỗi sau trim dài 1–100 ký tự. Loại trùng không phân biệt hoa/thường; vùng miền giữ cách viết đầu tiên, nguyên liệu chuyển chữ thường. Danh sách 101 phần tử bị từ chối dù trùng nhau. Trường thừa/thiếu, phần tử rỗng/sai kiểu và mức sai trả 422 `VALIDATION_ERROR`. GET/PUT chỉ trả đúng năm trường.
+
+Ghi năm câu trả lời cùng transaction, rollback khi lỗi; khóa hàng User và Preference khi DB hỗ trợ. PK user_id bảo đảm tối đa một hồ sơ; tranh chấp tạo lần đầu được xử lý sau rollback. Chưa kiểm tra danh sách thích/tránh giao nhau; lọc món cần tránh thuộc pipeline gợi ý riêng. API không lưu tọa độ hoặc lịch sử đồng ý điều khoản. Chưa có màn hình PreferencePage.
