@@ -45,6 +45,9 @@ export default function AccountPage() {
           <Link className="button" to="/vendor/profile">
             Quản lý hồ sơ quán
           </Link>
+          <Link className="button secondary" to="/vendor/menu">
+            Quản lý thực đơn
+          </Link>
         </div>
       )}
     </section>

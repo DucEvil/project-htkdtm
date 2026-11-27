@@ -6,7 +6,7 @@ Frontend đã có types và tám hàm gọi GET công khai cho quán, thực đ�
 
 F.11.2 bổ sung bảy hàm API frontend khẩu vị, đơn COD và đánh giá theo các endpoint backend bên dưới; xem [API khách hàng frontend](../src/frontend/README.md#api-nghiệp-vụ-khách-hàng-đã-chuẩn-bị--f112). Chúng yêu cầu phiên đăng nhập; payload/key của đơn giữ nguyên khi thử lại. Khẩu vị, checkout, đơn và đánh giá đã nối giao diện ở F.12.1/F.12.5–F.12.7.
 
-F.11.3 bổ sung 15 hàm API frontend cho hồ sơ quán, thực đơn và xử lý đơn vendor; xem [API chủ quán frontend](../src/frontend/README.md#api-chủ-quán-đã-chuẩn-bị--f113). Quán được backend xác định từ membership; DELETE món chỉ ngừng bán và trả 204. F.12.8 đã có giao diện hồ sơ vendor; thực đơn và xử lý đơn vendor chưa có UI.
+F.11.3 bổ sung 15 hàm API frontend cho hồ sơ quán, thực đơn và xử lý đơn vendor; xem [API chủ quán frontend](../src/frontend/README.md#api-chủ-quán-đã-chuẩn-bị--f113). Quán được backend xác định từ membership; DELETE món chỉ ngừng bán và trả 204. F.12.8–F.12.9 có giao diện hồ sơ/thực đơn vendor; xử lý đơn vendor chưa có UI.
 
 F.11.4 bổ sung 11 hàm API frontend admin cho duyệt/tạm ngừng quán và CRUD món chuẩn/nguyên liệu; xem [API quản trị frontend](../src/frontend/README.md#api-quản-trị-đã-chuẩn-bị--f114). Các hàm yêu cầu phiên đăng nhập, backend kiểm tra role admin; danh sách quán hỗ trợ bộ lọc status. Chưa có giao diện quản trị.
 
@@ -243,7 +243,7 @@ Phần này không đổi schema/revision `001`. Ghi hồ sơ và trạng thái 
 
 ## Thực đơn, món chuẩn và nguyên liệu — F.10.2
 
-Prefix `/api/v1`. Đây là API backend, chưa có giao diện quản lý thực đơn. Bổ sung 17 thao tác API; danh mục nguyên liệu và các thao tác sửa/xóa món chuẩn cụ thể hóa yêu cầu CRUD của thiết kế, không thêm bảng mới.
+Prefix `/api/v1`. Bổ sung 17 thao tác API; danh mục nguyên liệu và các thao tác sửa/xóa món chuẩn cụ thể hóa yêu cầu CRUD của thiết kế, không thêm bảng mới. Frontend F.12.9 có danh sách/tạo/sửa/ngừng bán vendor tại `/vendor/menu`, chọn món chuẩn và nguyên liệu thực tế từ danh mục phân trang; gửi đủ sáu trường khi tạo/sửa. POST chưa có idempotency: UI khóa gửi tiếp khi chưa rõ kết quả và dẫn về danh sách đối chiếu, không tự POST lại. Giao diện quản lý catalog admin chưa có; schema/contract backend không đổi.
 
 Frontend F.12.3 đã nối phần đọc công khai: `/restaurants/:id` gọi chi tiết quán và thực đơn, `/menu-items/:id` gọi chi tiết món và quán tương ứng. Thực đơn client dùng offset tăng 12/limit 13 để dò còn trang sau (API trả mảng không có total). Đọc được khi chưa đăng nhập/vị trí; không suy ra khả năng giao hoặc đặt đơn từ response công khai. Giao diện quản lý vendor/admin vẫn chưa có.
 
