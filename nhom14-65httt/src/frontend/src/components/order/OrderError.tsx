@@ -4,9 +4,11 @@ import { ApiError, errorMessage } from "../../api/client";
 export default function OrderError({
   error,
   retry,
+  listPath = "/orders",
 }: {
   error: unknown;
   retry?: () => void;
+  listPath?: string;
 }) {
   const missing = error instanceof ApiError && error.status === 404;
   return (
@@ -23,7 +25,7 @@ export default function OrderError({
             Thử lại
           </button>
         )}
-        <Link to="/orders">Về danh sách đơn</Link>
+        <Link to={listPath}>Về danh sách đơn</Link>
       </div>
     </div>
   );

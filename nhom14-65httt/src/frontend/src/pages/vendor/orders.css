@@ -1,0 +1,19 @@
+.vendor-order-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 20px 0;
+}
+.order-cancel textarea {
+  width: 100%;
+  min-height: 120px;
+  resize: vertical;
+  padding: 14px;
+  border: 1px solid #69776a;
+  border-radius: 12px;
+  font: inherit;
+}
+.order-cancel textarea:focus-visible {
+  outline: 3px solid #315f47;
+  outline-offset: 3px;
+}
