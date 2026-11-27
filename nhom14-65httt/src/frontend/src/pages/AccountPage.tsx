@@ -40,6 +40,11 @@ export default function AccountPage() {
           </Link>
         </div>
       )}
+      {user.role === "admin" && (
+        <Link className="button" to="/admin/restaurants">
+          Danh sách quán
+        </Link>
+      )}
       {user.role === "vendor" && (
         <div className="button-row">
           <Link className="button" to="/vendor/profile">

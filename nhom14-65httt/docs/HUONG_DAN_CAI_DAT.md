@@ -76,6 +76,8 @@ Docker chưa được kiểm chứng trong phiên phát triển này vì máy kh
 
 ## Kiểm tra
 
+Mốc F.12.13: danh sách quán admin ở /admin/restaurants, mở từ tài khoản admin đã được cấp hợp lệ. Thử lọc chờ duyệt/đã duyệt/tạm ngừng, phân trang và mở thông tin quán. Chưa có nút duyệt/tạm ngừng trong mốc này. 366 kiểm thử frontend và một Playwright adminRestaurants đạt, TypeScript/lint/build đạt. Chạy `npx playwright test e2e/adminRestaurants.spec.ts` với frontend dev server và E2E_BASE_URL/E2E_BROWSER_CHANNEL như các mốc trước; test chặn API, chưa kiểm chứng backend/PostgreSQL thật.
+
 Mốc F.12.12: ba Playwright đơn vendor đạt với Edge/API kiểm soát. Chạy frontend dev server, đặt `E2E_BASE_URL` theo cổng đang chạy và `E2E_BROWSER_CHANNEL=msedge`, rồi chạy `npx playwright test e2e/vendorOrders.spec.ts` trong src/frontend. Các ca kiểm tra đủ bước nhận/chuẩn bị/giao/hoàn tất, lý do từ chối, mất phản hồi và tải lại lỗi. Test không tạo hay thay đổi đơn thật. Ảnh lưu trong .runtime/playwright-results, không commit. Đã xem ảnh desktop/mobile, kiểm tra không tràn ngang 360/390/768/1280px; TypeScript/lint/format đạt. Unit/UI có mốc 360 ca đạt ở F.12.11; không chạy lại trong lượt chỉ thêm E2E. Chưa kiểm chứng luồng với backend/PostgreSQL thật.
 
 Mốc F.12.9: **349 kiểm thử frontend đạt** (321 trước + 28 ca thực đơn vendor mới), TypeScript/lint/format/build đạt. Hai Playwright vendorMenu mới và hai vendorProfile đạt với Edge/API kiểm soát: tạo/sửa đủ sáu trường, chọn nguyên liệu thực tế, dialog Escape/focus, DELETE giữ record và POST mất phản hồi không gửi lặp. Đã xem ảnh desktop/mobile, không tràn ngang 360/390/768/1280px. Chưa chạy UI thực đơn với backend/PostgreSQL thật; không thay backend/schema/dependencies.

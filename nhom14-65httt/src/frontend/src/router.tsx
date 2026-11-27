@@ -19,6 +19,7 @@ import VendorOrderDetailPage from "./pages/vendor/OrderDetailPage";
 import VendorMenuPage from "./pages/vendor/MenuManagePage";
 import VendorMenuItemPage from "./pages/vendor/MenuItemPage";
 import { CartProvider } from "./contexts/CartContext";
+import AdminRestaurantManagePage from "./pages/admin/RestaurantManagePage";
 
 export default function AppRouter() {
   return (
@@ -58,6 +59,10 @@ export default function AppRouter() {
           </Route>
           <Route element={<RoleGuard roles={["admin"]} />}>
             <Route path="admin" element={<AccountPage />} />
+            <Route
+              path="admin/restaurants"
+              element={<AdminRestaurantManagePage />}
+            />
           </Route>
           <Route
             path="forbidden"
