@@ -350,6 +350,12 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Ngừng bán dùng dialog xác nhận, Escape/hủy và phục hồi focus. DELETE 204 giữ record/lịch sử; sau thao tác đọc lại danh sách, kể cả khi mất phản hồi, không tự DELETE lại. Có thể bật lại bằng form sửa. Pending/suspended vẫn chuẩn bị thực đơn, việc công khai và nhận đơn do backend kiểm tra.
 - 349 kiểm thử frontend đạt (321 trước + 28 mới); hai Playwright vendorMenu mới và hai vendorProfile đạt với Edge/API kiểm soát. Đã xem ảnh mobile/desktop, không tràn ngang ở 360/390/768/1280px. TypeScript/lint/format/build/diff check đạt; chưa kiểm tra UI thực đơn với backend/PostgreSQL thật. Không đổi backend/schema/dependencies, chưa có IngredientPage riêng, đơn vendor hoặc giao diện admin. Chưa stage/commit/push.
 
+## Danh sách và chi tiết đơn vendor F.12.10
+
+- Tiếp tục bước 12, thêm OrderManagePage và OrderDetailPage tại /vendor/orders, /vendor/orders/:id. Có liên kết từ tài khoản vendor, RoleGuard và returnTo đăng nhập. Backend xác định phạm vi quán qua membership.
+- Danh sách 10 đơn/trang, gọi limit11 để dò trang kế tiếp, không tạo tổng giả. Chi tiết hiển thị tên/giá snapshot, tổng máy chủ, địa chỉ/tọa độ giao và lịch sử trạng thái. Có tải/rỗng/lỗi/retry và làm mới thủ công; ID sai không gọi API, phản hồi sai ID không hiển thị, đổi tài khoản tải lại dữ liệu.
+- Phần này chỉ đọc đơn; thao tác xác nhận/từ chối/chuẩn bị/giao/hoàn tất sẽ triển khai riêng. Tái sử dụng CSS và component đơn hàng hiện có. Chưa kiểm tra trình duyệt hoặc backend/PostgreSQL thật trong lượt này.
+
 ## Dọn bản nháp cục bộ
 
 - Theo yêu cầu người dùng, chỉ dọn bản nháp khi bản chính tương ứng đã được tích hợp, kiểm thử, commit và không có thay đổi chưa commit.

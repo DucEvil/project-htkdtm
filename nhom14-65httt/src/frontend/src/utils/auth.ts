@@ -31,12 +31,17 @@ export function safeReturnTo(value: unknown, fallback: string): string {
       "/vendor",
       "/vendor/profile",
       "/vendor/menu",
+      "/vendor/orders",
       "/vendor/menu/new",
       "/admin",
       "/onboarding/taste",
       "/checkout",
       "/orders",
     ].includes(path) &&
+    !(
+      path.startsWith("/vendor/orders/") &&
+      routeEntityId(path.slice(15)) !== null
+    ) &&
     !(path.startsWith("/orders/") && routeEntityId(path.slice(8)) !== null) &&
     !(
       path.startsWith("/vendor/menu/") &&
