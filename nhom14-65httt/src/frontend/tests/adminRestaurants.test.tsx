@@ -4,10 +4,64 @@ import { afterEach, expect, it, vi } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 import AppRouter from "../src/router";
 import { AuthContext, type AuthState } from "../src/contexts/authState";
-import { listAdminRestaurants } from "../src/api/admin";
+import {
+  listAdminRestaurants,
+  approveAdminRestaurant,
+  suspendAdminRestaurant,
+} from "../src/api/admin";
 import { restaurant } from "./fixtures/catalog";
 import { safeReturnTo } from "../src/utils/auth";
-vi.mock("../src/api/admin", () => ({ listAdminRestaurants: vi.fn() }));
+vi.mock("../src/api/admin", () => ({
+  listAdminRestaurants: vi.fn(),
+  approveAdminRestaurant: vi.fn(),
+  suspendAdminRestaurant: vi.fn(),
+}));
+it("approves after confirmation and rereads", async () => {
+  vi.mocked(listAdminRestaurants)
+    .mockResolvedValueOnce({
+      ...page,
+      items: [{ ...record, status: "pending" }],
+    })
+    .mockResolvedValue(page);
+  vi.mocked(approveAdminRestaurant).mockResolvedValue(record);
+  mount();
+  await userEvent.click(
+    await screen.findByRole("button", { name: "Duyệt quán Bếp Việt" }),
+  );
+  expect(approveAdminRestaurant).not.toHaveBeenCalled();
+  await userEvent.click(screen.getByRole("button", { name: "Quay lại" }));
+  expect(approveAdminRestaurant).not.toHaveBeenCalled();
+  await userEvent.click(
+    screen.getByRole("button", { name: "Duyệt quán Bếp Việt" }),
+  );
+  await userEvent.click(
+    screen.getByRole("button", { name: "Xác nhận thao tác" }),
+  );
+  await screen.findByText("Đã duyệt quán Bếp Việt.");
+  expect(approveAdminRestaurant).toHaveBeenCalledExactlyOnceWith(3);
+  expect(listAdminRestaurants).toHaveBeenCalledTimes(2);
+});
+it("failed suspension rereads without repeating mutation", async () => {
+  vi.mocked(listAdminRestaurants)
+    .mockResolvedValueOnce(page)
+    .mockResolvedValue({
+      ...page,
+      items: [{ ...record, status: "suspended", accepting_orders: false }],
+    });
+  vi.mocked(suspendAdminRestaurant).mockRejectedValue(
+    new Error("Mất phản hồi"),
+  );
+  mount();
+  await userEvent.click(
+    await screen.findByRole("button", { name: "Tạm ngừng quán Bếp Việt" }),
+  );
+  await userEvent.click(
+    screen.getByRole("button", { name: "Xác nhận thao tác" }),
+  );
+  await screen.findByRole("button", { name: "Duyệt quán Bếp Việt" });
+  expect(suspendAdminRestaurant).toHaveBeenCalledExactlyOnceWith(3);
+  expect(screen.queryByText("Đã tạm ngừng quán Bếp Việt.")).toBeNull();
+});
 const auth: AuthState = {
   user: {
     id: 1,

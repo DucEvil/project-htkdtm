@@ -374,6 +374,13 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Hiển thị tên/địa chỉ, trạng thái duyệt và khả năng nhận đơn từ máy chủ. Mỗi thẻ có details/summary mở hồ sơ: giờ Việt Nam (cả ngày/qua đêm), bán kính, tọa độ, cờ nhận đơn và dữ liệu mô phỏng. Không suy khả năng nhận đơn chỉ từ trạng thái approved. Duyệt/tạm ngừng và catalog admin sẽ triển khai riêng.
 - 366 kiểm thử frontend đạt (360 trước + 6 mới), một Playwright adminRestaurants đạt trên Edge/API kiểm soát, không tràn ngang 360/390/768/1280px. TypeScript/lint/build đạt; chưa kiểm chứng backend/PostgreSQL thật. Không đổi API/schema/dependencies; chưa stage/commit/push.
 
+## Duyệt và tạm ngừng quán admin F.12.14
+
+- Bổ sung nút duyệt cho pending/suspended, tạm ngừng cho pending/approved trong danh sách admin. Có xác nhận tác động trước PATCH, quay lại không gửi. Duyệt không tự bật nhận đơn; tạm ngừng tắt nhận đơn và giữ các đơn cũ theo backend.
+- Khóa gửi lặp/bộ lọc/phân trang/làm mới trong khi ghi. Chỉ báo thành công khi response đúng ID và trạng thái đích. Sau thành công hoặc lỗi đều đọc lại danh sách theo bộ lọc hiện tại, không tự lặp PATCH; GET lỗi không hiển thị các nút ghi. Bỏ phản hồi muộn khi đổi tài khoản/rời trang.
+- 368 unit/UI đạt, hai Playwright adminRestaurants đạt với Edge/API kiểm soát (một ca mới), TypeScript/lint/build đạt. Chưa kiểm chứng backend/PostgreSQL thật. Chưa stage/commit/push.
+- Theo yêu cầu người dùng, cần báo rõ khi hoàn tất toàn bộ giao diện. Hiện chưa hoàn tất: CRUD món chuẩn/nguyên liệu và các màn hình khác trong Markdown cần tiếp tục đối chiếu; dashboard/thống kê/gợi ý/đánh giá còn phụ thuộc các bước API/dữ liệu sau.
+
 ## Dọn bản nháp cục bộ
 
 - Theo yêu cầu người dùng, chỉ dọn bản nháp khi bản chính tương ứng đã được tích hợp, kiểm thử, commit và không có thay đổi chưa commit.

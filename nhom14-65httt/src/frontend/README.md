@@ -231,6 +231,12 @@ Thẻ quán hiển thị trạng thái nhận đơn máy chủ, địa chỉ; m�
 
 366 kiểm thử frontend đạt, một Playwright adminRestaurants đạt với Edge/API kiểm soát; kiểm tra không tràn ngang 360/390/768/1280px. TypeScript/lint/build đạt. Chưa kiểm chứng backend/PostgreSQL thật.
 
+## Duyệt và tạm ngừng quán — F.12.14
+
+Danh sách admin đã có duyệt pending/suspended và tạm ngừng pending/approved, xác nhận trước khi gửi và quay lại không gửi. Trong khi PATCH khóa thao tác, bộ lọc/phân trang/làm mới; chỉ ghi nhận thành công khi response đúng ID/trạng thái. Cả thành công và lỗi đều GET lại danh sách, không tự PATCH lại. Duyệt không tự bật nhận đơn; tạm ngừng giữ đơn cũ để tiếp tục xử lý. Các ghi chú chưa có thao tác duyệt ở mốc trước đã được thay thế bởi mốc này; CRUD catalog chưa có UI.
+
+368 unit/UI và hai Playwright adminRestaurants đạt với API kiểm soát; TypeScript/lint/build đạt. Chưa kiểm chứng backend/PostgreSQL thật.
+
 ## Auth đã triển khai
 
 | Route | Nội dung hiện có |

@@ -1,3 +1,18 @@
+.admin-restaurant-actions,
+.admin-restaurant-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+.admin-restaurant-confirm {
+  border-top: 1px solid #c9d1c5;
+  padding-top: 16px;
+}
+.admin-restaurant-confirm h3,
+.admin-restaurant-confirm p {
+  margin: 0;
+}
 .admin-restaurants {
   max-width: 1180px;
   margin: 24px auto 72px;
