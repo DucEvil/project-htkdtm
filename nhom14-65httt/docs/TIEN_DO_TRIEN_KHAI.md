@@ -368,6 +368,12 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Kiểm tra Bearer token, hủy xác nhận không gửi, PATCH đúng thứ tự/đúng lý do trim, snapshot giữ nguyên, không tự PATCH lại, link lỗi quay về danh sách vendor, focus lý do và trạng thái cuối không có thao tác ghi.
 - Ba kịch bản đạt trên Edge với API kiểm soát. Đã xem ảnh desktop và mobile, kiểm tra không tràn ngang ở 360/390/768/1280px. TypeScript/lint/format/diff check đạt. Không thay mã ứng dụng; mốc 360 unit/UI ở F.12.11 được giữ, không chạy lại unit/build trong lượt chỉ thêm E2E này. Chưa kiểm chứng backend/PostgreSQL thật.
 
+## Danh sách quán admin F.12.13
+
+- Thêm RestaurantManagePage tại /admin/restaurants, liên kết từ tài khoản admin, RoleGuard và returnTo login. GET admin phân trang 12 mục theo total/offset/limit; lọc tất cả/pending/approved/suspended và đổi bộ lọc về trang đầu. Có tải/rỗng/lỗi/retry, giữ đường quay lại khi trang cuối rỗng; đổi tài khoản bỏ dữ liệu cũ.
+- Hiển thị tên/địa chỉ, trạng thái duyệt và khả năng nhận đơn từ máy chủ. Mỗi thẻ có details/summary mở hồ sơ: giờ Việt Nam (cả ngày/qua đêm), bán kính, tọa độ, cờ nhận đơn và dữ liệu mô phỏng. Không suy khả năng nhận đơn chỉ từ trạng thái approved. Duyệt/tạm ngừng và catalog admin sẽ triển khai riêng.
+- 366 kiểm thử frontend đạt (360 trước + 6 mới), một Playwright adminRestaurants đạt trên Edge/API kiểm soát, không tràn ngang 360/390/768/1280px. TypeScript/lint/build đạt; chưa kiểm chứng backend/PostgreSQL thật. Không đổi API/schema/dependencies; chưa stage/commit/push.
+
 ## Dọn bản nháp cục bộ
 
 - Theo yêu cầu người dùng, chỉ dọn bản nháp khi bản chính tương ứng đã được tích hợp, kiểm thử, commit và không có thay đổi chưa commit.

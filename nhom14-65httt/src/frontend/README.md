@@ -223,6 +223,14 @@ Chi tiết đơn vendor có nhận/từ chối pending, bắt đầu chuẩn b�
 
 Ba ca `e2e/vendorOrders.spec.ts` kiểm tra mở danh sách/chi tiết, xác nhận đủ bốn bước xử lý, từ chối với lý do và lịch sử, PATCH mất phản hồi rồi GET lỗi/tải lại. Kiểm tra token, không gửi khi hủy xác nhận, không tự PATCH lại và khóa thao tác khi chưa đọc được trạng thái. Đạt trên Edge với API kiểm soát; đã xem ảnh desktop/mobile và kiểm tra không tràn ngang 360/390/768/1280px. TypeScript/lint/format đạt. Đây là kiểm chứng UI bổ sung cho F.12.10–F.12.11; chưa phải kiểm thử backend/PostgreSQL thật.
 
+## Danh sách quán dành cho admin — F.12.13
+
+Admin mở **Danh sách quán** từ tài khoản hoặc `/admin/restaurants`. Trang có RoleGuard và hỗ trợ quay lại sau login. GET `/admin/restaurants` dùng 12 mục/trang, total từ máy chủ, bộ lọc tất cả/chờ duyệt/đã duyệt/tạm ngừng. Đổi bộ lọc về trang đầu, hủy/bỏ phản hồi cũ; đổi tài khoản không giữ danh sách trước. Có tải/rỗng/lỗi/retry và làm mới.
+
+Thẻ quán hiển thị trạng thái nhận đơn máy chủ, địa chỉ; mở thông tin bằng details/summary native để xem giờ Việt Nam/cả ngày/qua đêm, bán kính, tọa độ và cờ mô phỏng. Không gọi API công khai để đọc quán pending/suspended. Đây là UI đọc admin đầu tiên; các ghi chú chưa có UI admin ở mốc cũ vẫn áp dụng cho thao tác duyệt/tạm ngừng và CRUD catalog chưa triển khai.
+
+366 kiểm thử frontend đạt, một Playwright adminRestaurants đạt với Edge/API kiểm soát; kiểm tra không tràn ngang 360/390/768/1280px. TypeScript/lint/build đạt. Chưa kiểm chứng backend/PostgreSQL thật.
+
 ## Auth đã triển khai
 
 | Route | Nội dung hiện có |
