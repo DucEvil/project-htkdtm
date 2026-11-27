@@ -1,4 +1,5 @@
 import type { UserRole } from "../types/auth";
+import { routeEntityId } from "./catalog";
 
 export const roleLabels: Record<UserRole, string> = {
   customer: "Khách hàng",
@@ -20,14 +21,20 @@ export function safeReturnTo(value: unknown, fallback: string): string {
     !value.startsWith("/") ||
     value.startsWith("//") ||
     value.includes("\\") ||
-    Array.from(value).some((character) => character.charCodeAt(0) <= 32) ||
+    Array.from(value).some((character) => character.charCodeAt(0) <= 32)
+  )
+    return fallback;
+  const path = value.split(/[?#]/, 1)[0];
+  if (
     ![
       "/account",
       "/vendor",
       "/admin",
       "/onboarding/taste",
       "/checkout",
-    ].includes(value.split(/[?#]/, 1)[0])
+      "/orders",
+    ].includes(path) &&
+    !(path.startsWith("/orders/") && routeEntityId(path.slice(8)) !== null)
   )
     return fallback;
   return value;

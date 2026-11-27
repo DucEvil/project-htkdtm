@@ -25,6 +25,7 @@ export default function Navbar() {
         </NavLink>
         <NavLink to="/search">Tìm món, quán</NavLink>
         <NavLink to="/cart">Giỏ hàng{count > 0 ? ` (${count})` : ""}</NavLink>
+        {user?.role === "customer" && <NavLink to="/orders">Đơn hàng</NavLink>}
         {user ? (
           <>
             <NavLink to={roleHome(user.role)}>{roleLabels[user.role]}</NavLink>

@@ -197,6 +197,9 @@ function CheckoutContent({ userId }: { userId: number }) {
           <Link className="button" to="/search">
             Tiếp tục tìm món
           </Link>
+          <Link className="cart-inline-link" to={`/orders/${receipt.id}`}>
+            Theo dõi đơn hàng
+          </Link>
           <Link className="cart-inline-link" to="/cart">
             Về giỏ hàng
           </Link>
@@ -298,6 +301,9 @@ function CheckoutContent({ userId }: { userId: number }) {
               >
                 {checking ? "Đang kiểm tra…" : "Kiểm tra các đơn gần đây"}
               </button>
+              <Link className="cart-inline-link" to="/orders">
+                Mở toàn bộ lịch sử đơn hàng
+              </Link>
               {recent && (
                 <div>
                   <h3>20 đơn gần nhất</h3>

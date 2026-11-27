@@ -35,6 +35,9 @@ export default function AccountPage() {
           <Link className="button" to="/onboarding/taste">
             Khai báo khẩu vị
           </Link>
+          <Link className="button secondary" to="/orders">
+            Đơn hàng của tôi
+          </Link>
         </div>
       )}
     </section>

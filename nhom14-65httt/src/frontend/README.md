@@ -1,6 +1,6 @@
 # Frontend Vị Việt
 
-Đã có frontend auth F.8 theo thiết kế cấu trúc: đăng ký/đăng nhập, AuthContext/useAuth, API client, AppShell/Navbar/Footer và RoleGuard. F.12.1 có trang khẩu vị, F.12.2 có tìm món/quán và chọn vị trí gọi backend thật; chưa có giao diện đặt hàng hoặc dashboard quán/admin.
+Đã có frontend auth F.8 theo thiết kế cấu trúc: đăng ký/đăng nhập, AuthContext/useAuth, API client, AppShell/Navbar/Footer và RoleGuard. F.12.1 có trang khẩu vị, F.12.2 có tìm món/quán và chọn vị trí gọi backend thật; đã có giỏ/checkout/đơn customer, dashboard quán/admin chưa triển khai.
 
 ## API công khai đã chuẩn bị — F.11.1
 
@@ -29,7 +29,7 @@ Phụ trách dự kiến xem tại [danhsachnhom.md](../../danhsachnhom.md).
 
 ## API nghiệp vụ khách hàng đã chuẩn bị — F.11.2
 
-`src/types/preference.ts`, `order.ts`, `review.ts` mô tả payload/response theo backend F.10.5–F.10.7. Các hàm ở `src/api/preferences.ts`, `orders.ts`, `reviews.ts` dùng phiên đăng nhập và cơ chế refresh của API client chung. Khẩu vị đã nối vào F.12.1, checkout COD ở F.12.5; trang lịch sử/chi tiết đơn và đánh giá chưa có.
+`src/types/preference.ts`, `order.ts`, `review.ts` mô tả payload/response theo backend F.10.5–F.10.7. Các hàm ở `src/api/preferences.ts`, `orders.ts`, `reviews.ts` dùng phiên đăng nhập và cơ chế refresh của API client chung. Khẩu vị đã nối vào F.12.1, checkout COD ở F.12.5; lịch sử/chi tiết đơn đã có ở F.12.6, giao diện đánh giá chưa có.
 
 | Hàm | Endpoint dưới `/api/v1` | Kết quả |
 | :--- | :--- | :--- |
@@ -151,13 +151,25 @@ Thêm quán khác mở dialog xác nhận: giữ giỏ hiện tại hoặc thay 
 
 Customer mở `/checkout` từ giỏ; guest đi qua login rồi quay về checkout, vendor/admin bị RoleGuard chặn. `CheckoutForm` nhận địa chỉ 5–500 ký tự, tọa độ từ LocationPicker và xác nhận hai thông tin cùng điểm giao/COD. Tọa độ thay đổi hoặc sửa địa chỉ yêu cầu xác nhận lại. Chưa có geocoding nên client không tự kiểm tra địa chỉ dạng chữ khớp tọa độ.
 
-`CheckoutPage` gọi POST `/orders/` qua API client thật, gửi expected_price của từng dòng, không gửi total/snapshot/trạng thái. Khóa gửi lặp bằng ref và nút disabled. Chỉ hiện ghi nhận đơn sau response 201/200 của server, dùng mã đơn/trạng thái/snapshot/tổng tiền trả về. Chỉ xóa giỏ nếu vẫn trùng nội dung đã gửi; giỏ chỉnh sửa sau đó được giữ. Trang lịch sử/theo dõi đơn đầy đủ sẽ làm ở phần riêng.
+`CheckoutPage` gọi POST `/orders/` qua API client thật, gửi expected_price của từng dòng, không gửi total/snapshot/trạng thái. Khóa gửi lặp bằng ref và nút disabled. Chỉ hiện ghi nhận đơn sau response 201/200 của server, dùng mã đơn/trạng thái/snapshot/tổng tiền trả về. Chỉ xóa giỏ nếu vẫn trùng nội dung đã gửi; giỏ chỉnh sửa sau đó được giữ. Trang lịch sử và theo dõi đơn đã nối ở F.12.6.
 
 `useIdempotency` giữ một yêu cầu chờ cho mỗi customer trong tab: payload gồm địa chỉ/tọa độ, session UUID v4 và key UUID v4. Lưu payload trong sessionStorage `viviet.checkout.pending.v1.{userId}`, session trong `viviet.session.v1`; localStorage chỉ giữ key dưới `viviet.checkout.key.v1.{userId}.{sessionId}`, không lưu địa chỉ/tọa độ. Cache bộ nhớ giữ cùng yêu cầu qua điều hướng; reload khôi phục từ sessionStorage ngay cả khi giỏ trong bộ nhớ đã mất. Xóa dữ liệu yêu cầu chờ khi thành công, lỗi nghiệp vụ chắc chắn không tạo đơn hoặc khi người dùng chủ động bỏ sau kiểm tra. Yêu cầu chờ chưa rõ kết quả được giữ theo tài khoản qua logout/login để tránh phát sinh key mới. Nếu storage bị chặn, có thông báo giữ trang mở; không bảo đảm khôi phục sau reload/đóng tab trong trường hợp đó.
 
 Lỗi mạng/5xx/401/403 không biết chắc kết quả giữ nguyên payload/key, khóa sửa nội dung và có **Thử lại cùng đơn**. Backend 400/404/422 hoặc 409 nghiệp vụ không tạo đơn mở lại form, giữ địa chỉ/câu trả lời. ORDER_PRICE_CHANGED hiển thị giá cũ/mới, lấy lại giá từ API món và yêu cầu đồng ý cập nhật; cập nhật chưa gửi đơn, phải bấm đặt lại. IDEMPOTENCY_CONFLICT/EXPIRED không tự sinh key; có nút tải 20 đơn gần nhất với mã/thời gian/trạng thái/địa chỉ/món/tổng. Danh sách không tự suy đơn nào khớp key và không thay thế lịch sử đầy đủ. Chỉ sau khi tải danh sách và xác nhận cảnh báo, người dùng mới có thể bỏ yêu cầu cũ để lập lại; thao tác này có thể tạo thêm đơn nếu lần trước đã thành công.
 
 247 kiểm thử frontend đạt (229 trước + 18 mới). Hai Playwright checkout mới và hai cart đạt trên Edge/API kiểm soát, kiểm tra mất phản hồi → reload → retry cùng payload/key và đồng ý giá mới trước gửi lại. Đã xem ảnh desktop/mobile, không tràn ngang ở 360/390/768/1280px; TypeScript/lint/format/build đạt. Chưa kiểm tra UI checkout với backend/PostgreSQL thật; backend orders đã có bộ kiểm thử riêng của F.10.5.
+
+## Lịch sử và chi tiết đơn khách hàng — F.12.6
+
+Customer mở `/orders` từ Navbar/tài khoản, hoặc `/orders/:id` từ receipt sau checkout. Hai route có RoleGuard; đăng nhập có thể quay về đường dẫn đơn hợp lệ. Backend vẫn xác định chủ đơn từ token. Nội dung được tải lại khi đổi tài khoản/ID, hủy request cũ và không lưu danh sách/chi tiết đơn vào storage.
+
+`OrderListPage` gọi GET `/orders/`, mới nhất trước theo backend, 10 đơn/trang với limit11 để dò trang sau vì API trả mảng không có total. Có làm mới, tải/rỗng/lỗi/retry và phân trang. Thẻ đơn dùng tên/giá snapshot, tổng máy chủ, địa chỉ và thời gian theo Việt Nam; link tới chi tiết. Không đọc lại thực đơn để thay snapshot.
+
+`OrderDetailPage` và `useCustomerOrder` đọc GET chi tiết, hiển thị trạng thái, món/giá lúc mua, COD, địa chỉ/tọa độ và timeline thực tế từ history (gồm lý do từ chối nếu có). DTO không có tên người thao tác nên giao diện không tự tạo thông tin này. Tự GET mỗi 15 giây khi tab đang hiển thị và đơn còn xử lý, đọc lại khi trở về tab; dừng sau completed/cancelled/rejected hoặc unmount. Có nút cập nhật thủ công. Lỗi refresh mạng giữ dữ liệu gần nhất kèm thông báo và khóa hủy; lỗi 401/403/404 ẩn dữ liệu cũ.
+
+Chỉ pending có nút hủy. Dialog yêu cầu xác nhận, Escape giữ đơn và trả focus. PATCH hủy khóa gửi lặp, không cập nhật lạc quan; dùng response máy chủ. Nếu hủy lỗi/409, tự GET trạng thái mới và không tự PATCH lại. GET cũ đang chờ bị hủy/bỏ qua để không ghi đè kết quả hủy. Khi quán vừa xác nhận, UI giữ trạng thái confirmed do server trả và bỏ nút hủy. Đánh giá món sẽ bổ sung riêng, chưa có nút chưa hoạt động.
+
+Component chung: OrderStatusBadge, OrderTimeline, OrderError, CancelOrderDialog ở `components/order/`. `orders.css` đồng bộ font/màu và focus, card 24–28px, bố cục một/hai cột thích ứng. 271 kiểm thử frontend đạt (247 trước + 24 mới), gồm quyền/chủ đơn, ID sai/404, snapshot, phân trang, polling/tab ẩn/trạng thái cuối, thay tài khoản/ID, hủy xác nhận/lỗi/409/gửi lặp và GET không ghi đè PATCH. Hai Playwright orders mới và hai checkout đạt với Edge/API kiểm soát; đã xem ảnh desktop/mobile, không tràn ngang 360/390/768/1280px. TypeScript/lint/format/build đạt; chưa chạy UI đơn với backend/PostgreSQL thật.
 
 ## Auth đã triển khai
 
@@ -173,6 +185,7 @@ Lỗi mạng/5xx/401/403 không biết chắc kết quả giữ nguyên payload/
 | `/menu-items/:id` | Công khai: giá/đặc trưng món, nguyên liệu thực tế/tham khảo và thông tin quán |
 | `/cart` | Giỏ hàng một quán: đổi số lượng, xóa món, tạm tính và chuyển checkout |
 | `/checkout` | Customer: địa chỉ/tọa độ, gửi đơn COD, retry chống trùng và ghi nhận kết quả máy chủ |
+| `/orders`, `/orders/:id` | Customer: danh sách phân trang, snapshot, tiến trình cập nhật và hủy pending có xác nhận |
 | `/vendor`, `/admin` | Thông tin tài khoản có guard vai trò tương ứng; chưa có dashboard nghiệp vụ |
 | `/forbidden`, route không tồn tại | Thông báo không đủ quyền/trang 404 |
 
@@ -309,7 +322,7 @@ Xem [hướng dẫn cài đặt](../../docs/HUONG_DAN_CAI_DAT.md) và [tiến đ
 
 ### Cấu trúc auth hiện có
 
-Đường dẫn theo F.8 và bước 11–12 của [thiết kế cấu trúc chung](../../docs/THIET_KE_CAU_TRUC.md). Đã có khẩu vị, tìm kiếm, trang quán/món, giỏ hàng và checkout COD; cache truy vấn, bản đồ, trang lịch sử/theo dõi đơn và dashboard chưa triển khai.
+Đường dẫn theo F.8 và bước 11–12 của [thiết kế cấu trúc chung](../../docs/THIET_KE_CAU_TRUC.md). Đã có khẩu vị, tìm kiếm, trang quán/món, giỏ hàng và checkout COD; cache truy vấn, bản đồ, đánh giá và dashboard chưa triển khai.
 
 ```text
 src/frontend/

@@ -10,11 +10,11 @@ Website đặt món trực tuyến tích hợp trí tuệ nhân tạo gợi ý �
 
 Thông tin thành viên được ghi tại [danhsachnhom.md](danhsachnhom.md). Cần hoàn thiện các trường đang đánh dấu trước khi xác nhận hồ sơ nộp đầy đủ.
 
-Phần đơn hàng đã có API COD, snapshot giá, chống gửi lặp và chuyển trạng thái/lịch sử cùng transaction (F.10.4–F.10.5). Customer có thể gửi đánh giá món trong đơn completed qua API F.10.6; chưa có giao diện đơn hàng/đánh giá. Xem [README backend](src/backend/README.md#api-đơn-cod-và-idempotency).
+Phần đơn hàng đã có API COD, snapshot giá, chống gửi lặp và chuyển trạng thái/lịch sử cùng transaction (F.10.4–F.10.5). Customer có thể gửi đánh giá món trong đơn completed qua API F.10.6; giao diện đơn customer đã có ở F.12.6, đánh giá chưa triển khai. Xem [README backend](src/backend/README.md#api-đơn-cod-và-idempotency).
 
 Customer có thể lưu năm câu trả lời khẩu vị qua API F.10.7 và màn hình `/onboarding/taste` ở F.12.1; mở từ tài khoản, bỏ qua không tạo hồ sơ. API F.10.8 tiếp nhận batch sự kiện tương tác và ghi nhận hiển thị thực tế; luồng sinh gợi ý và giao diện tracking sẽ tích hợp sau.
 
-Frontend F.11.1 đã có types và tám hàm gọi API đọc quán, món, danh mục, tìm kiếm. F.12.2 có `/search`; F.12.3 có trang quán/thực đơn `/restaurants/:id` và chi tiết món `/menu-items/:id`. F.12.4 có giỏ một quán `/cart`; F.12.5 có `/checkout` customer tạo đơn COD, xác nhận giá/địa chỉ/tọa độ và retry cùng key khi mất phản hồi. Bản đồ/geocoding và lịch sử/theo dõi đơn đầy đủ chưa tích hợp. Xem [README frontend](src/frontend/README.md#checkout-cod--f125).
+Frontend F.11.1 đã có types và tám hàm gọi API đọc quán, món, danh mục, tìm kiếm. F.12.2 có `/search`; F.12.3 có trang quán/thực đơn `/restaurants/:id` và chi tiết món `/menu-items/:id`. F.12.4 có giỏ một quán `/cart`; F.12.5 có `/checkout` customer tạo đơn COD, xác nhận giá/địa chỉ/tọa độ và retry cùng key khi mất phản hồi. F.12.6 thêm lịch sử/chi tiết và hủy đơn customer tại /orders, /orders/:id. Bản đồ/geocoding và giao diện đánh giá chưa tích hợp. Xem [README frontend](src/frontend/README.md#checkout-cod--f125).
 
 F.11.2 bổ sung types và bảy hàm gọi API khách hàng: khẩu vị, đơn COD và đánh giá món đã mua. Dùng phiên đăng nhập hiện có, giữ key khi gửi lại đơn; các màn hình nghiệp vụ sẽ tích hợp ở F.12.
 

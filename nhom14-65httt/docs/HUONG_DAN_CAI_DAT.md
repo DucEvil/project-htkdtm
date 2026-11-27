@@ -76,6 +76,10 @@ Docker chưa được kiểm chứng trong phiên phát triển này vì máy kh
 
 ## Kiểm tra
 
+Mốc F.12.6: **271 kiểm thử frontend đạt** (247 trước + 24 ca đơn hàng mới), TypeScript/lint/format/build đạt. Hai Playwright orders mới và hai checkout đạt với Edge/API kiểm soát: danh sách/chi tiết/hủy, xác nhận và Escape/focus, lỗi 409 đọc trạng thái quán mới, snapshot/lý do từ chối, reload và responsive 360/390/768/1280px. Đã xem ảnh desktop/mobile. Chưa chạy UI đơn với backend/PostgreSQL thật.
+
+Thử thủ công với backend: đăng nhập customer, mở **Đơn hàng** trên Navbar hoặc từ tài khoản. Chọn một đơn để xem snapshot/lịch sử. Vendor xử lý đơn qua API Swagger; chi tiết customer sẽ GET lại mỗi 15 giây khi tab hiện, dừng khi đơn kết thúc; có nút cập nhật thủ công. Chỉ pending cho hủy, cần xác nhận; nếu quán vừa nhận đơn, API trả lỗi và UI đọc trạng thái mới. Đơn ngoài quyền và ID không tồn tại cùng hiện không tìm thấy; không hiển thị dữ liệu cũ khi bị 401/403/404. Chạy riêng `npx playwright test e2e/orders.spec.ts` với frontend dev server và E2E_BASE_URL/E2E_BROWSER_CHANNEL như trước; response được chặn trong test, không hủy đơn thật.
+
 Mốc F.12.5: **247 kiểm thử frontend đạt** (229 trước + 18 ca checkout mới), TypeScript/lint/format/build đạt. Hai Playwright checkout mới và hai cart đạt trên Edge với API kiểm soát: mất phản hồi → reload → retry cùng payload/key, đổi giá không tự gửi lại, responsive 360/390/768/1280px. Đã xem ảnh desktop/mobile. Chưa chạy UI checkout với backend/PostgreSQL thật; không nâng kết quả test mock thành nghiệm thu giao dịch thực tế.
 
 Thử thủ công với backend: đăng nhập customer, thêm món đang bán tại quán approved/mở cửa/nhận đơn, mở giỏ → **Tiếp tục đặt hàng**. Chọn đúng tọa độ giao trong bán kính quán, nhập địa chỉ 5–500 ký tự và xác nhận hai thông tin cùng điểm/COD. Bấm đặt đơn và chỉ coi được ghi nhận khi có mã đơn từ API. Địa chỉ chưa geocode nên phải tự kiểm tra điểm giao. Giá đổi sẽ yêu cầu đồng ý cập nhật rồi bấm gửi lại. Lỗi mạng giữ yêu cầu chờ; dùng **Thử lại cùng đơn**, tránh lập đơn mới khi chưa rõ kết quả.

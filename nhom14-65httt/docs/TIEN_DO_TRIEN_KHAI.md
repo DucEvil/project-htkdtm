@@ -35,9 +35,10 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | F.12.2 | Chọn vị trí và tìm món/quán | Có /search, LocationContext/useLocation/LocationPicker, định vị hoặc tọa độ thủ công; chưa có MapView/geocoding |
 | F.12.3 | Chi tiết quán/thực đơn/món | Có hai route công khai, liên kết từ tìm kiếm, phân trang; thêm món vào giỏ ở F.12.4 |
 | F.12.4 | Giỏ hàng một quán | Có /cart, CartContext/useCart, thêm/gộp/sửa/xóa, đổi quán và link checkout |
-| F.12.5 | Checkout COD và chống gửi trùng | Có /checkout customer, CheckoutForm/useIdempotency, xác nhận địa chỉ/tọa độ và gửi API đơn; chưa có lịch sử/theo dõi đầy đủ |
+| F.12.5 | Checkout COD và chống gửi trùng | Có /checkout customer, CheckoutForm/useIdempotency, xác nhận địa chỉ/tọa độ, gửi API và link theo dõi đơn |
+| F.12.6 | Lịch sử/chi tiết đơn customer | Có /orders và /orders/:id, phân trang/snapshot/timeline, polling và hủy pending; đánh giá làm riêng |
 | F.10 còn lại | Các nghiệp vụ khác | Tiếp tục tách từng module để commit |
-| Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Có backend nghiệp vụ, frontend API, khẩu vị/tìm kiếm/thực đơn/giỏ/checkout; lịch sử/theo dõi đơn, vendor/admin chưa có UI |
+| Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Có backend nghiệp vụ, frontend API, khẩu vị/tìm kiếm/thực đơn/giỏ/checkout/đơn customer; đánh giá, vendor/admin chưa có UI |
 | Phase 3 | AI, tracking và dữ liệu | Đã có model/API nhận tracking; AI, ETL và KPI chưa triển khai |
 | Phase 4 | ETL, BI, Power BI và đánh giá | Chưa đưa vào mã nguồn hiện tại |
 | Phase 5 | Tích hợp, kiểm thử và bàn giao | Chưa thực hiện |
@@ -315,6 +316,14 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Lỗi chưa rõ kết quả giữ payload, không tự đổi key; lỗi nghiệp vụ chắc chắn không tạo đơn mở form giữ dữ liệu. Giá đổi yêu cầu xem giá mới, đồng ý cập nhật rồi chủ động gửi lại. Key conflict/expired yêu cầu xem đơn gần đây, không tự tạo lại; người dùng có thể xác nhận bỏ yêu cầu sau khi kiểm tra, có cảnh báo khả năng tạo thêm đơn.
 - Receipt dùng mã/trạng thái/snapshot/tổng server, không giả thành công. Danh sách 20 đơn gần đây phục vụ đối chiếu, chưa có trang lịch sử/theo dõi đầy đủ. Chưa có geocoding/đối chiếu địa chỉ với tọa độ.
 - 247 kiểm thử frontend đạt (229 trước + 18 mới), hai Playwright checkout mới và hai cart đạt với Edge/API kiểm soát. Đã xem ảnh desktop/mobile và không tràn ngang 360/390/768/1280px; TypeScript/lint/format/build/diff check đạt. Chưa chạy UI checkout với backend/PostgreSQL thật; chưa stage/commit/push.
+
+## Lịch sử và chi tiết đơn customer F.12.6
+
+- Sau commit checkout, thêm OrderListPage/OrderDetailPage, route customer /orders và /orders/:id, link từ tài khoản/Navbar/receipt và recovery checkout. Chặn vai trò, hỗ trợ quay lại route đơn an toàn sau login; đổi tài khoản/ID tải dữ liệu mới và bỏ phản hồi cũ.
+- Danh sách 10 đơn/trang, limit11/offset tăng10, không tạo tổng giả. Chi tiết dùng snapshot/history backend, giờ Việt Nam, lý do từ chối và địa chỉ giao; không suy tên người thao tác từ DTO thiếu trường.
+- useCustomerOrder polling15 giây cho trạng thái chưa kết thúc khi tab hiện, đọc khi trở lại tab; dừng trạng thái cuối/unmount, có cập nhật thủ công. Lỗi refresh giữ dữ liệu cũ có cảnh báo/khóa hủy; 401/403/404 ẩn dữ liệu cũ.
+- Hủy pending có dialog/Escape/focus, khóa PATCH lặp, chỉ dùng response server. Lỗi/409 hủy GET lại, không tự PATCH; GET đang chờ không ghi đè kết quả hủy. Chưa có ReviewForm, không thêm nút đánh giá chưa hoạt động.
+- 271 kiểm thử frontend đạt (247 trước + 24 mới), hai Playwright orders mới và hai checkout đạt với Edge/API kiểm soát. Đã xem ảnh và không tràn ngang ở 360/390/768/1280px; TypeScript/lint/format/build/diff check đạt. Chưa kiểm tra UI đơn với backend/PostgreSQL thật; không đổi backend/dependencies, chưa stage/commit/push.
 
 ## Dọn bản nháp cục bộ
 
