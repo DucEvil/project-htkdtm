@@ -30,12 +30,19 @@ export function safeReturnTo(value: unknown, fallback: string): string {
       "/account",
       "/vendor",
       "/vendor/profile",
+      "/vendor/menu",
+      "/vendor/menu/new",
       "/admin",
       "/onboarding/taste",
       "/checkout",
       "/orders",
     ].includes(path) &&
-    !(path.startsWith("/orders/") && routeEntityId(path.slice(8)) !== null)
+    !(path.startsWith("/orders/") && routeEntityId(path.slice(8)) !== null) &&
+    !(
+      path.startsWith("/vendor/menu/") &&
+      path.endsWith("/edit") &&
+      routeEntityId(path.slice(13, -5)) !== null
+    )
   )
     return fallback;
   return value;

@@ -6,7 +6,7 @@ Website đặt món trực tuyến tích hợp trí tuệ nhân tạo gợi ý �
 
 ## Trạng thái hiện tại
 
-Đang triển khai theo từng phần của [thiết kế cấu trúc](docs/THIET_KE_CAU_TRUC.md) để nhóm commit riêng từng nội dung. Đã có nền tảng FastAPI, React/Vite/TypeScript, cấu hình môi trường, Docker, models F.5, migration `001`, ERD/từ điển dữ liệu, auth backend/frontend và API hồ sơ/duyệt quán, thực đơn/món chuẩn/nguyên liệu, tìm kiếm F.10.1–F.10.3. API đơn COD đã được bổ sung ở F.10.5; frontend đã có khẩu vị và tìm kiếm F.12.1–F.12.2. AI, ETL, dashboard và giao diện quản lý thực đơn triển khai sau. Xem [tiến độ](docs/TIEN_DO_TRIEN_KHAI.md).
+Đang triển khai theo từng phần của [thiết kế cấu trúc](docs/THIET_KE_CAU_TRUC.md) để nhóm commit riêng từng nội dung. Đã có nền tảng FastAPI, React/Vite/TypeScript, cấu hình môi trường, Docker, models F.5, migration `001`, ERD/từ điển dữ liệu, auth backend/frontend và API hồ sơ/duyệt quán, thực đơn/món chuẩn/nguyên liệu, tìm kiếm F.10.1–F.10.3. API đơn COD đã được bổ sung ở F.10.5; frontend đã có khẩu vị, tìm kiếm, giao dịch customer và hồ sơ/thực đơn vendor F.12.1–F.12.9. AI, ETL, dashboard, xử lý đơn vendor và giao diện admin triển khai sau. Xem [tiến độ](docs/TIEN_DO_TRIEN_KHAI.md).
 
 Thông tin thành viên được ghi tại [danhsachnhom.md](danhsachnhom.md). Cần hoàn thiện các trường đang đánh dấu trước khi xác nhận hồ sơ nộp đầy đủ.
 
@@ -18,7 +18,7 @@ Frontend F.11.1 đã có types và tám hàm gọi API đọc quán, món, danh 
 
 F.11.2 bổ sung types và bảy hàm gọi API khách hàng: khẩu vị, đơn COD và đánh giá món đã mua. Dùng phiên đăng nhập hiện có, giữ key khi gửi lại đơn; các màn hình nghiệp vụ sẽ tích hợp ở F.12.
 
-F.11.3 bổ sung types quản lý và 15 hàm API chủ quán cho hồ sơ, thực đơn và xử lý đơn. Xem [API vendor frontend](src/frontend/README.md#api-chủ-quán-đã-chuẩn-bị--f113); hồ sơ vendor đã có ở /vendor/profile (F.12.8), thực đơn và xử lý đơn vendor chưa có UI.
+F.11.3 bổ sung types quản lý và 15 hàm API chủ quán cho hồ sơ, thực đơn và xử lý đơn. Xem [API vendor frontend](src/frontend/README.md#api-chủ-quán-đã-chuẩn-bị--f113); hồ sơ vendor có ở /vendor/profile (F.12.8), thực đơn ở /vendor/menu với tạo/sửa món, chọn nguyên liệu thực tế và ngừng bán (F.12.9). Xử lý đơn vendor chưa có UI.
 
 F.11.4 bổ sung 11 hàm API quản trị để duyệt/tạm ngừng quán và quản lý món chuẩn/nguyên liệu, kèm types và kiểm thử. Xem [API admin frontend](src/frontend/README.md#api-quản-trị-đã-chuẩn-bị--f114); giao diện quản trị sẽ tích hợp ở bước 12.
 

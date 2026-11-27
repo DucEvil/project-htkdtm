@@ -1,6 +1,6 @@
 # Frontend Vị Việt
 
-Đã có frontend auth F.8 theo thiết kế cấu trúc: đăng ký/đăng nhập, AuthContext/useAuth, API client, AppShell/Navbar/Footer và RoleGuard. F.12.1 có trang khẩu vị, F.12.2 có tìm món/quán và chọn vị trí gọi backend thật; đã có giỏ/checkout/đơn customer, dashboard quán/admin chưa triển khai.
+Đã có frontend auth F.8 theo thiết kế cấu trúc: đăng ký/đăng nhập, AuthContext/useAuth, API client, AppShell/Navbar/Footer và RoleGuard. F.12.1 có trang khẩu vị, F.12.2 có tìm món/quán và chọn vị trí gọi API backend; đã có giỏ/checkout/đơn customer, hồ sơ/thực đơn vendor. Đơn vendor và dashboard quán/admin chưa triển khai.
 
 ## API công khai đã chuẩn bị — F.11.1
 
@@ -49,7 +49,7 @@ Checkout sau này phải tạo UUID v4 cho session/key, giữ cùng `idempotency
 
 ## API chủ quán đã chuẩn bị — F.11.3
 
-`src/api/vendor.ts` có 15 hàm gọi API hiện có của vendor, tái sử dụng token/refresh/lỗi của ApiClient. Types quản lý nằm trong `types/restaurant.ts`, `types/menu.ts` và dùng chung `OrderDetail` ở `types/order.ts`. Hồ sơ đã nối trang vendor ở F.12.8; quản lý thực đơn và xử lý đơn vendor chưa có UI.
+`src/api/vendor.ts` có 15 hàm gọi API hiện có của vendor, tái sử dụng token/refresh/lỗi của ApiClient. Types quản lý nằm trong `types/restaurant.ts`, `types/menu.ts` và dùng chung `OrderDetail` ở `types/order.ts`. Hồ sơ và thực đơn đã nối trang vendor ở F.12.8–F.12.9; xử lý đơn vendor chưa có UI.
 
 | Hàm | Method và đường dẫn dưới `/api/v1/vendor` | Kết quả |
 | :--- | :--- | :--- |
@@ -193,9 +193,23 @@ POST tạo quán gửi hồ sơ, không gửi status/owner/id/cờ nhận đơn.
 
 Có loading/lỗi/retry, lỗi theo trường, focus ô sai, ref khóa gửi lặp và giữ dữ liệu khi lưu lỗi. Chỉ báo lưu sau response hồ sơ hợp lệ. Tạo quán lỗi mạng/5xx/response sai hoặc RESTAURANT_ALREADY_LINKED khóa POST tiếp, có nút kiểm tra hồ sơ đã liên kết: GET thấy quán thì chuyển sang sửa, GET xác nhận chưa có mới cho tạo tiếp. Backend membership UNIQUE là chốt chống tạo trùng; UI không giả thành công từ lỗi. PUT thử lại cùng nội dung có tính thay thế hồ sơ, không tạo quán mới.
 
-Không lưu nháp vào storage; reload làm mất chỉnh sửa chưa lưu. Chưa có giao diện duyệt admin, quản lý thực đơn/đơn vendor hoặc dashboard. CSS `profile.css` đồng bộ màu/font, focus, vùng chạm, card 24–28px và bố cục thích ứng.
+Không lưu nháp vào storage; reload làm mất chỉnh sửa chưa lưu. Quản lý thực đơn đã nối ở F.12.9; chưa có giao diện duyệt admin, đơn vendor hoặc dashboard. CSS `profile.css` đồng bộ màu/font, focus, vùng chạm, card 24–28px và bố cục thích ứng.
 
 321 kiểm thử frontend đạt (297 trước + 24 mới), hai Playwright vendorProfile đạt với Edge/API kiểm soát. Bao phủ tạo/sửa đủ payload, pending/suspended/approved, GET/retry, dữ liệu lỗi giữ nguyên, 422, 409 chưa duyệt, tạo mất phản hồi/already linked, quyền và đổi tài khoản. Đã xem ảnh desktop/mobile, không tràn ngang 360/390/768/1280px; TypeScript/lint/format/build đạt. Chưa chạy UI profile với backend/PostgreSQL thật. Lượt gọi kèm E2E auth cũ không đạt vì backend 127.0.0.1:8000 không chạy (ECONNREFUSED); đã dừng bộ đó và kiểm tra riêng vendor bằng API kiểm soát, không coi đây là kết quả auth E2E mới.
+
+## Thực đơn và nguyên liệu dành cho vendor — F.12.9
+
+Vendor mở **Quản lý thực đơn** từ `/vendor`. Ba route `/vendor/menu`, `/vendor/menu/new`, `/vendor/menu/:id/edit` có RoleGuard và hỗ trợ quay lại sau đăng nhập. `MenuManagePage` gọi GET danh sách 12 món/trang theo total/offset/limit, gồm món đang bán và ngừng bán; có tải/rỗng/lỗi/retry, liên kết hồ sơ khi chưa có membership. Đổi tài khoản tải dữ liệu mới, không giữ editor của tài khoản trước.
+
+`MenuItemPage` đọc hồ sơ và món riêng qua API vendor khi sửa. ID sai không gọi API; món sai quán/sai ID hoặc response không hợp lệ không mở form tạo mới. Form tên 1–180 ký tự, giá nguyên 1–10.000.000 VNĐ, một món chuẩn, trạng thái bán, danh sách tối đa 100 ID nguyên liệu khác nhau và cờ xác nhận. Xác nhận nguyên liệu cần ít nhất một thành phần thực tế. `CatalogPicker` dùng GET món chuẩn/nguyên liệu công khai, 10 mục/trang, giữ lựa chọn qua nhiều trang và cho bỏ nguyên liệu bằng chip. Không tự dùng JSON nguyên liệu tham khảo của món chuẩn làm nguyên liệu thực tế tại quán.
+
+POST và PUT gửi đủ sáu trường: `canonical_dish_id`, `name`, `price`, `is_available`, `ingredients_verified`, `ingredient_ids`. Không gửi ID quán/tài khoản/trạng thái duyệt/cờ mô phỏng. Quán pending/suspended vẫn chuẩn bị món; công khai và nhận đơn phụ thuộc backend. Validation tiếng Việt dưới trường, focus lỗi, disabled/loading và ref ngăn gửi lặp. Chỉ thông báo lưu sau response hợp lệ đúng quán/món; lỗi giữ draft, không lưu nháp vào storage.
+
+Tạo món chưa có idempotency backend. Khi POST lỗi mạng/5xx/response sai hoặc chưa rõ kết quả, form khóa gửi tiếp và dẫn **Kiểm tra thực đơn đã lưu**; không tự thử POST lại hay giả thành công. Sau đối chiếu danh sách, vendor chủ động quyết định có tạo lại hay không. PUT lỗi cho sửa/thử lại với nội dung thay thế đầy đủ. Native dialog ngừng bán có xác nhận, Escape/hủy và trả focus. DELETE 204 giữ record/liên kết/lịch sử, sau đó GET lại danh sách; lỗi DELETE cũng GET lại để đối chiếu, không tự lặp mutation. Bật bán lại qua form sửa.
+
+Thành phần chung ở `components/menu/CatalogPicker.tsx`, `StopSellingDialog.tsx`; kiểm tra/ánh xạ form ở `utils/vendorMenuValidation.ts`, giao diện ở `pages/vendor/menu.css`. Nguyên liệu được quản lý ngay trong form món; chưa có `IngredientPage` riêng, trang xử lý đơn vendor, catalog admin hoặc dashboard. Không đổi backend/schema/dependencies.
+
+349 kiểm thử frontend đạt (321 trước + 28 mới); hai Playwright vendorMenu mới và hai vendorProfile đạt với Edge/API kiểm soát. Bao phủ payload đủ trường, nguyên liệu thực tế, phân trang/giữ lựa chọn, validation/422, khóa gửi, POST chưa rõ kết quả, ngừng bán, guard/ID và đổi tài khoản. Đã xem ảnh desktop/mobile, không tràn ngang 360/390/768/1280px; TypeScript/lint/format/build đạt. Chưa chạy UI thực đơn với backend/PostgreSQL thật.
 
 ## Auth đã triển khai
 
@@ -214,6 +228,8 @@ Không lưu nháp vào storage; reload làm mất chỉnh sửa chưa lưu. Chư
 | `/orders`, `/orders/:id` | Customer: danh sách phân trang, snapshot, tiến trình cập nhật và hủy pending có xác nhận |
 | `/vendor`, `/admin` | Thông tin tài khoản có guard vai trò tương ứng; chưa có dashboard nghiệp vụ |
 | `/vendor/profile` | Vendor: tạo/xem/sửa hồ sơ, trạng thái duyệt, giờ/phạm vi giao và bật/tắt nhận đơn |
+| `/vendor/menu` | Vendor: thực đơn phân trang, gồm món ngừng bán, xác nhận ngừng bán và liên kết sửa |
+| `/vendor/menu/new`, `/vendor/menu/:id/edit` | Vendor: tạo/sửa món, chọn món chuẩn và nguyên liệu thực tế, trạng thái bán/xác nhận |
 | `/forbidden`, route không tồn tại | Thông báo không đủ quyền/trang 404 |
 
 API theo [contract auth](../../docs/API_CONTRACT.md). Mật khẩu giữ nguyên khi gửi, không lưu vào storage; role đăng ký chỉ có customer/vendor. Form có nhãn, autocomplete, validation, trạng thái chờ và khóa gửi lặp. Không thêm đăng nhập xã hội hoặc khôi phục mật khẩu khi backend chưa hỗ trợ.
