@@ -21,7 +21,9 @@ export function safeReturnTo(value: unknown, fallback: string): string {
     value.startsWith("//") ||
     value.includes("\\") ||
     Array.from(value).some((character) => character.charCodeAt(0) <= 32) ||
-    !["/account", "/vendor", "/admin"].includes(value.split(/[?#]/, 1)[0])
+    !["/account", "/vendor", "/admin", "/onboarding/taste"].includes(
+      value.split(/[?#]/, 1)[0],
+    )
   )
     return fallback;
   return value;

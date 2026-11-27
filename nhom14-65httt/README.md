@@ -12,7 +12,7 @@ Thông tin thành viên được ghi tại [danhsachnhom.md](danhsachnhom.md). C
 
 Phần đơn hàng đã có API COD, snapshot giá, chống gửi lặp và chuyển trạng thái/lịch sử cùng transaction (F.10.4–F.10.5). Customer có thể gửi đánh giá món trong đơn completed qua API F.10.6; chưa có giao diện đơn hàng/đánh giá. Xem [README backend](src/backend/README.md#api-đơn-cod-và-idempotency).
 
-Customer có thể lưu năm câu trả lời khẩu vị qua API F.10.7; bỏ qua không tạo hồ sơ. API F.10.8 tiếp nhận batch sự kiện tương tác và ghi nhận hiển thị thực tế; luồng sinh gợi ý và giao diện khai báo khẩu vị/tracking sẽ tích hợp sau.
+Customer có thể lưu năm câu trả lời khẩu vị qua API F.10.7 và màn hình `/onboarding/taste` ở F.12.1; mở từ tài khoản, bỏ qua không tạo hồ sơ. API F.10.8 tiếp nhận batch sự kiện tương tác và ghi nhận hiển thị thực tế; luồng sinh gợi ý và giao diện tracking sẽ tích hợp sau.
 
 Frontend F.11.1 đã có types và tám hàm gọi API đọc quán, món, danh mục, tìm kiếm, chuẩn bị cho các trang khách hàng F.12. Xem [README frontend](src/frontend/README.md#api-công-khai-đã-chuẩn-bị--f111); chưa có giao diện tìm kiếm/thực đơn.
 

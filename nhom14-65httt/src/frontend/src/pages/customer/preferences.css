@@ -1,0 +1,265 @@
+.taste-page {
+  font-family: var(--auth-font, "Segoe UI", sans-serif);
+  --taste-primary: var(--md-sys-color-primary, #315f47);
+  --taste-outline: var(--md-sys-color-outline-variant, #c9d1c5);
+  --taste-surface: var(--md-sys-color-surface, #fffcf7);
+  max-width: 1180px;
+  margin: 30px auto 72px;
+  padding: 0 28px;
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 56px;
+  color: var(--md-sys-color-on-surface, #243127);
+}
+.taste-intro {
+  padding-top: 34px;
+}
+.taste-intro h1 {
+  font-size: clamp(36px, 4vw, 50px);
+  letter-spacing: -2px;
+  line-height: 1.3;
+  margin: 20px 0;
+}
+.taste-intro h1 span {
+  color: var(--taste-primary);
+}
+.taste-intro p {
+  color: #5c695e;
+  font-size: 14px;
+}
+.taste-note {
+  margin: 32px 0;
+  padding: 24px;
+  border-radius: 24px;
+  background: #dfeddf;
+}
+.taste-note strong {
+  font-size: 14px;
+  color: #183d29;
+}
+.taste-note p {
+  margin-bottom: 0;
+}
+.taste-intro .taste-disclaimer {
+  font-size: 12px;
+}
+.taste-intro > a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  font-size: 13px;
+}
+.taste-card {
+  border: 1px solid var(--taste-outline);
+  background: var(--taste-surface);
+  border-radius: 28px;
+  padding: 36px;
+  box-shadow: 0 8px 36px rgb(36 58 35 / 4%);
+  min-width: 0;
+}
+.taste-card h2 {
+  font-size: 23px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 10px 0;
+  letter-spacing: -0.6px;
+}
+.taste-card-heading > p,
+.taste-question > p {
+  font-size: 12px;
+  color: #5c695e;
+  margin: 8px 0 16px;
+}
+.taste-question {
+  padding: 26px 0;
+  border-top: 1px solid #e1e6db;
+}
+fieldset.taste-question {
+  margin-top: 26px;
+  padding-top: 10px;
+}
+.taste-question legend,
+.taste-question > label {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.7;
+  margin: 0;
+  padding: 0 8px 0 0;
+}
+.taste-question legend > span,
+.taste-question > label > span {
+  color: var(--taste-primary);
+  font-size: 11px;
+  margin-right: 10px;
+}
+.taste-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+.taste-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 15px;
+  margin: 0;
+  min-height: 48px;
+  border: 1px solid var(--taste-outline);
+  border-radius: 14px;
+  cursor: pointer;
+  transition:
+    background 180ms,
+    border-color 180ms;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.taste-option:has(input:checked) {
+  background: #dfeddf;
+  border-color: var(--taste-primary);
+  color: #183d29;
+}
+.taste-option:hover {
+  background: #eef3e9;
+}
+.taste-page input[type="checkbox"],
+.taste-page input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  min-height: 18px;
+  flex-shrink: 0;
+  accent-color: var(--taste-primary);
+  padding: 0;
+  margin: 0;
+}
+.taste-page input:not([type="checkbox"]):not([type="radio"]) {
+  border-radius: 12px;
+  min-height: 52px;
+  font-size: 14px;
+  background: white;
+}
+.taste-page input[aria-invalid="true"] {
+  border-color: #a82225;
+}
+.taste-page :focus-visible {
+  outline: 3px solid var(--taste-primary);
+  outline-offset: 4px;
+}
+.taste-options-stack {
+  display: grid;
+}
+.taste-consent {
+  border-top: 1px solid var(--taste-outline);
+  padding-top: 12px;
+}
+.taste-consent label {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  min-height: 48px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.8;
+  cursor: pointer;
+}
+.taste-consent input {
+  margin-top: 3px !important;
+}
+.taste-page .taste-error {
+  font-size: 12px;
+  color: #a82225;
+  margin: 10px 0;
+}
+.taste-page .taste-caution {
+  padding: 12px 14px;
+  margin-bottom: 0;
+  border-radius: 12px;
+  background: #f3f5ed;
+}
+.taste-success {
+  padding: 14px;
+  background: #e7f1e3;
+  color: #254e30;
+  border-radius: 12px;
+  font-size: 13px;
+}
+.taste-actions {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+.taste-actions .button,
+.taste-card > .button {
+  border-radius: 999px;
+  background: var(--taste-primary);
+  min-height: 52px;
+  padding: 12px 28px;
+}
+.taste-actions a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  font-size: 13px;
+}
+.taste-actions > span {
+  font-size: 12px;
+  color: #5c695e;
+}
+@media (max-width: 850px) {
+  .taste-page {
+    grid-template-columns: 1fr;
+    max-width: 720px;
+    gap: 24px;
+  }
+  .taste-intro {
+    padding-top: 0;
+  }
+  .taste-intro h1 {
+    margin: 10px 0;
+    font-size: 36px;
+  }
+  .taste-intro h1 br {
+    display: none;
+  }
+  .taste-note {
+    margin: 16px 0;
+    padding: 16px 20px;
+  }
+}
+@media (max-width: 480px) {
+  .taste-intro h1 {
+    font-size: 32px;
+    letter-spacing: -1px;
+  }
+  .taste-note {
+    display: none;
+  }
+  .taste-page {
+    margin-top: 12px;
+    padding: 0 18px;
+  }
+  .taste-card {
+    padding: 24px 18px;
+    border-radius: 24px;
+  }
+  .taste-card h2 {
+    font-size: 21px;
+  }
+  .taste-actions {
+    gap: 12px;
+  }
+  .taste-actions .button {
+    width: 100%;
+  }
+  .taste-option {
+    padding: 10px 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .taste-option {
+    transition: none;
+  }
+}

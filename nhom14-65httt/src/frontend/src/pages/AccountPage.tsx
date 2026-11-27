@@ -1,5 +1,6 @@
 import { useAuth } from "../hooks/useAuth";
 import { roleLabels } from "../utils/auth";
+import { Link } from "react-router-dom";
 
 export default function AccountPage() {
   const { user, persisted } = useAuth();
@@ -29,6 +30,13 @@ export default function AccountPage() {
           <dd>{roleLabels[user.role]}</dd>
         </div>
       </dl>
+      {user.role === "customer" && (
+        <div className="button-row">
+          <Link className="button" to="/onboarding/taste">
+            Khai báo khẩu vị
+          </Link>
+        </div>
+      )}
     </section>
   );
 }

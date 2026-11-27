@@ -25,14 +25,15 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | F.10.4 | Quy tắc chuyển trạng thái và lịch sử đơn | Có state machine/service và 167 kiểm thử, đã nối API F.10.5 |
 | F.10.5 | Tạo đơn COD, idempotency và API đơn hàng | Có 11 thao tác API customer/vendor; chưa có UI |
 | F.10.6 | Đánh giá món đã mua sau đơn hoàn tất | Có POST customer, 30 kiểm thử mới; chưa có ReviewForm |
-| F.10.7 | Hồ sơ khẩu vị năm câu hỏi | Có GET/PUT customer, 36 kiểm thử mới; chưa có PreferencePage |
+| F.10.7 | Hồ sơ khẩu vị năm câu hỏi | Có GET/PUT customer, 36 kiểm thử backend; PreferencePage ở F.12.1 |
 | F.10.8 | Tiếp nhận sự kiện tương tác | Có POST batch customer, 31 kiểm thử mới; chưa có API sinh gợi ý/UI |
 | F.11.1 | Kiểu dữ liệu và API client công khai frontend | Có tám hàm đọc quán/món/danh mục/tìm kiếm và 15 kiểm thử mới; chưa có màn hình F.12 |
-| F.11.2 | API client nghiệp vụ khách hàng | Có bảy hàm khẩu vị/đơn COD/đánh giá và 21 kiểm thử mới; chưa có màn hình F.12 |
+| F.11.2 | API client nghiệp vụ khách hàng | Có bảy hàm khẩu vị/đơn COD/đánh giá, màn hình khẩu vị ở F.12.1; đơn/đánh giá chưa có UI |
 | F.11.3 | API client chủ quán | Có 15 hàm hồ sơ/thực đơn/xử lý đơn và 34 kiểm thử mới; chưa có màn hình F.12 |
 | F.11.4 | API client quản trị | Có 11 hàm duyệt/tạm ngừng quán, món chuẩn/nguyên liệu và 28 kiểm thử mới; chưa có màn hình F.12 |
+| F.12.1 | Màn hình khẩu vị customer | Có route /onboarding/taste, đọc/lưu, validation, bỏ qua; 13 ca unit/UI và hai kịch bản trình duyệt mới |
 | F.10 còn lại | Các nghiệp vụ khác | Tiếp tục tách từng module để commit |
-| Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Đã có backend hồ sơ/duyệt quán, thực đơn/catalog và tìm kiếm; đã có API đơn COD; chưa có màn hình nghiệp vụ |
+| Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Có backend nghiệp vụ, frontend API và màn hình khẩu vị; màn hình tìm kiếm/đơn/vendor/admin chưa có |
 | Phase 3 | AI, tracking và dữ liệu | Đã có model/API nhận tracking; AI, ETL và KPI chưa triển khai |
 | Phase 4 | ETL, BI, Power BI và đánh giá | Chưa đưa vào mã nguồn hiện tại |
 | Phase 5 | Tích hợp, kiểm thử và bàn giao | Chưa thực hiện |
@@ -274,6 +275,13 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Query hỗ trợ lọc trạng thái và bỏ trường chưa chọn; GET có AbortSignal. POST dùng mặc định khi bỏ trường tùy chọn, PUT món chuẩn yêu cầu đủ đặc trưng và source_id nullable. Hai DELETE trả void với 204; lỗi catalog đang sử dụng 409 được giữ lại. PATCH duyệt/tạm ngừng dùng response máy chủ, không tự bật nhận đơn.
 - 28 ca mới kiểm tra request/token/thiếu phiên, bộ lọc/phân trang, 204, lỗi quyền/không tồn tại/catalog đang dùng, hủy tải và refresh giữ payload PUT. Toàn bộ 152 kiểm thử frontend đạt (124 trước + 28 mới); TypeScript, lint, format, production build và diff check đạt.
 - Chưa có giao diện admin; các trang nghiệp vụ tiếp tục theo bước 12. API gợi ý/tracking frontend phụ thuộc phần tương ứng ở bước 15–16. Không đổi backend/dependencies; chưa stage/commit/push.
+
+## Màn hình khẩu vị khách hàng F.12.1
+
+- Bắt đầu bước 12 với PreferencePage tại `/onboarding/taste`, liên kết từ tài khoản customer và guard vai trò. Không đổi đích sau đăng nhập thông thường; bổ sung route vào danh sách quay lại an toàn sau login. Chưa tự kiểm tra onboarding lần đầu.
+- Đọc hồ sơ thật từ API; chỉ NOT_FOUND 404 được coi chưa khai báo. Lỗi tải có retry, không mở form ghi đè. Form năm câu giữ nhãn vùng có sẵn, validation giới hạn API, đồng ý lưu ở client, focus lỗi, trạng thái gửi/khóa gửi lặp và lỗi theo trường. Chỉ hiện lưu thành công sau response PUT; bỏ qua không ghi/xóa dữ liệu.
+- Bố cục hai cột desktop, một cột mobile, màu/font đồng bộ auth, vùng chạm 48px và giảm chuyển động. Không lưu câu trả lời ở storage, không đổi schema/backend hoặc triển khai lịch sử đồng ý.
+- 165 kiểm thử frontend đạt (152 trước + 13 mới); hai kịch bản Playwright mới đạt với Edge/API kiểm soát trong test. Đã kiểm tra ảnh và không tràn ngang ở 360/390/768/1280px, focus và gửi bằng bàn phím, lưu lỗi/giữ dữ liệu/thử lại/tải lại. Chưa kiểm tra khẩu vị trên trình duyệt với backend/PostgreSQL thật. TypeScript/lint/format/build/diff check đạt; chưa stage/commit/push.
 
 ## Dọn bản nháp cục bộ
 

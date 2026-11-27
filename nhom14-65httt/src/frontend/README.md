@@ -1,6 +1,6 @@
 # Frontend Vị Việt
 
-Đã có frontend auth F.8 theo thiết kế cấu trúc: đăng ký/đăng nhập, AuthContext/useAuth, API client, AppShell/Navbar/Footer và RoleGuard. Giao diện gọi API backend thật; chưa có chức năng tìm món, đặt hàng hoặc dashboard quán/admin.
+Đã có frontend auth F.8 theo thiết kế cấu trúc: đăng ký/đăng nhập, AuthContext/useAuth, API client, AppShell/Navbar/Footer và RoleGuard. F.12.1 có trang khai báo khẩu vị gọi backend thật; chưa có giao diện tìm món, đặt hàng hoặc dashboard quán/admin.
 
 ## API công khai đã chuẩn bị — F.11.1
 
@@ -29,7 +29,7 @@ Phụ trách dự kiến xem tại [danhsachnhom.md](../../danhsachnhom.md).
 
 ## API nghiệp vụ khách hàng đã chuẩn bị — F.11.2
 
-`src/types/preference.ts`, `order.ts`, `review.ts` mô tả payload/response theo backend F.10.5–F.10.7. Các hàm ở `src/api/preferences.ts`, `orders.ts`, `reviews.ts` dùng phiên đăng nhập và cơ chế refresh của API client chung. Chưa nối vào màn hình khai báo khẩu vị, checkout, đơn hàng hoặc đánh giá ở F.12.
+`src/types/preference.ts`, `order.ts`, `review.ts` mô tả payload/response theo backend F.10.5–F.10.7. Các hàm ở `src/api/preferences.ts`, `orders.ts`, `reviews.ts` dùng phiên đăng nhập và cơ chế refresh của API client chung. Khẩu vị đã nối vào F.12.1; checkout, đơn hàng và đánh giá chưa có màn hình.
 
 | Hàm | Endpoint dưới `/api/v1` | Kết quả |
 | :--- | :--- | :--- |
@@ -99,6 +99,18 @@ POST món chuẩn cho phép bỏ mức cay/danh sách/source_id để dùng mặ
 
 Mọi request dùng phiên/refresh của ApiClient; backend xác nhận role admin từ DB. Lỗi 403/404/409 giữ nguyên và không tự xóa phiên. 28 ca mới trong `tests/adminApi.test.ts` kiểm tra 11 request và token/thiếu phiên, bộ lọc, phân trang, response 204, lỗi nghiệp vụ, hủy tải và PUT gửi lại sau refresh giữ source_id null. Toàn bộ 152 kiểm thử frontend đạt (124 trước + 28 mới); TypeScript, lint, format và production build đạt. Fetch được thay thế trong kiểm thử; chưa kiểm thử màn hình quản trị trên trình duyệt.
 
+## Màn hình khẩu vị đã triển khai — F.12.1
+
+Customer mở `/onboarding/taste` từ nút **Khai báo khẩu vị** tại `/account`. RoleGuard chặn vendor/admin và chuyển người chưa đăng nhập về login; đăng nhập lại có thể quay về route này. Sau đăng nhập thông thường vẫn về trang tài khoản, chưa tự kiểm tra/lần đầu chuyển onboarding.
+
+`pages/customer/PreferencePage.tsx` đọc GET `/preferences/`: 404 NOT_FOUND mở hồ sơ mới, dữ liệu có sẵn được điền lại (giữ cả nhãn vùng tùy chỉnh), lỗi khác hiện nút thử lại và không mở form để tránh ghi đè hồ sơ chưa tải được. Năm câu hỏi gồm vùng miền (nhiều lựa chọn), mức cay, nguyên liệu thích/tránh (ngăn cách bằng dấu phẩy), mức khám phá. Vùng và nguyên liệu cho phép trống; hai mức cần được chọn. Validation giới hạn mỗi danh sách 100 mục, mỗi mục 100 ký tự, lỗi dưới trường và focus trường lỗi đầu tiên.
+
+Người dùng cần chọn đồng ý lưu trước PUT. Đây là điều kiện ở client, chưa có lịch sử đồng ý trong DB. Bỏ qua về tài khoản và không gọi PUT; hồ sơ cũ cũng không bị xóa. Khi lưu, khóa trường/nút để ngăn gửi lặp; lỗi giữ câu trả lời, lỗi validation 422 được ánh xạ theo trường. Chỉ hiện thành công sau response backend, sau đó dùng hồ sơ đã chuẩn hóa. Giao diện giải thích dữ liệu phục vụ gợi ý sau này; chưa tạo gợi ý hoặc cam kết lọc dị ứng.
+
+CSS riêng `preferences.css` dùng màu/font hiện có, card 28px, lựa chọn và nút có vùng chạm tối thiểu 48px, focus rõ và giảm chuyển động. Desktop hai cột giới thiệu/biểu mẫu, mobile một cột rút gọn giới thiệu. Không lưu câu trả lời vào localStorage.
+
+Toàn bộ 165 kiểm thử frontend đạt (152 trước + 13 mới). Hai kịch bản Playwright mới đạt trên Edge với API được chặn và trả response kiểm soát trong test: bỏ qua, lỗi/thử lại/tải lại, payload qua API client thật, responsive 360/390/768/1280px và bàn phím. Đã xem ảnh desktop/mobile; chưa chạy luồng khẩu vị với PostgreSQL/backend thật trong trình duyệt. Backend khẩu vị vẫn có bộ kiểm thử SQLite riêng đã ghi tại F.10.7. TypeScript, lint, format và build đạt.
+
 ## Auth đã triển khai
 
 | Route | Nội dung hiện có |
@@ -107,6 +119,7 @@ Mọi request dùng phiên/refresh của ApiClient; backend xác nhận role adm
 | `/register` | Đăng ký customer/vendor, xác nhận mật khẩu, chuyển về đăng nhập khi thành công |
 | `/login` | Đăng nhập bằng email/mật khẩu, hiển thị lỗi và chuyển đến trang theo vai trò |
 | `/account` | Thông tin tài khoản đã đăng nhập |
+| `/onboarding/taste` | Customer đọc/lưu năm câu khẩu vị, đồng ý lưu hoặc bỏ qua về tài khoản |
 | `/vendor`, `/admin` | Thông tin tài khoản có guard vai trò tương ứng; chưa có dashboard nghiệp vụ |
 | `/forbidden`, route không tồn tại | Thông báo không đủ quyền/trang 404 |
 

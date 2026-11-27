@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage";
 import AccountPage from "./pages/AccountPage";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
+import PreferencePage from "./pages/customer/PreferencePage";
 
 export default function AppRouter() {
   return (
@@ -18,6 +19,9 @@ export default function AppRouter() {
         </Route>
         <Route element={<RoleGuard roles={["vendor"]} />}>
           <Route path="vendor" element={<AccountPage />} />
+        </Route>
+        <Route element={<RoleGuard roles={["customer"]} />}>
+          <Route path="onboarding/taste" element={<PreferencePage />} />
         </Route>
         <Route element={<RoleGuard roles={["admin"]} />}>
           <Route path="admin" element={<AccountPage />} />

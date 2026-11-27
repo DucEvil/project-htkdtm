@@ -479,7 +479,7 @@ GET và PUT `/api/v1/preferences/` yêu cầu access token vai trò `customer`. 
 
 PUT yêu cầu đủ năm trường. Hai mức là số nguyên JSON: spice_level 0–3 (không/ít/vừa/rất cay), exploration_level 0–2 (món quen/cân bằng/khám phá); không nhận Boolean, thập phân hoặc chuỗi số. Ba danh sách cho phép rỗng, mỗi danh sách tối đa 100 chuỗi, mỗi chuỗi sau trim dài 1–100 ký tự. Loại trùng không phân biệt hoa/thường; vùng miền giữ cách viết đầu tiên, nguyên liệu chuyển chữ thường. Danh sách 101 phần tử bị từ chối dù trùng nhau. Trường thừa/thiếu, phần tử rỗng/sai kiểu và mức sai trả 422 `VALIDATION_ERROR`. GET/PUT chỉ trả đúng năm trường.
 
-Ghi năm câu trả lời cùng transaction, rollback khi lỗi; khóa hàng User và Preference khi DB hỗ trợ. PK user_id bảo đảm tối đa một hồ sơ; tranh chấp tạo lần đầu được xử lý sau rollback. Chưa kiểm tra danh sách thích/tránh giao nhau; lọc món cần tránh thuộc pipeline gợi ý riêng. API không lưu tọa độ hoặc lịch sử đồng ý điều khoản. Chưa có màn hình PreferencePage.
+Ghi năm câu trả lời cùng transaction, rollback khi lỗi; khóa hàng User và Preference khi DB hỗ trợ. PK user_id bảo đảm tối đa một hồ sơ; tranh chấp tạo lần đầu được xử lý sau rollback. Chưa kiểm tra danh sách thích/tránh giao nhau; lọc món cần tránh thuộc pipeline gợi ý riêng. API không lưu tọa độ hoặc lịch sử đồng ý điều khoản. Frontend F.12.1 đã có PreferencePage tại `/onboarding/taste`, lấy hồ sơ từ GET và gửi đủ năm câu qua PUT; checkbox đồng ý chỉ kiểm tra ở client, không gửi trường thêm vào API.
 
 ## Ghi nhận sự kiện tương tác — F.10.8
 

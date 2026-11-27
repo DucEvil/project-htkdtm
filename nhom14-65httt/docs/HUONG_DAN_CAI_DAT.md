@@ -76,6 +76,10 @@ Docker chưa được kiểm chứng trong phiên phát triển này vì máy kh
 
 ## Kiểm tra
 
+Mốc F.12.1: **165 kiểm thử frontend đạt** (152 trước + 13 ca khẩu vị mới), TypeScript/lint/format/build đạt. Hai kịch bản Playwright mới dùng Edge và API được kiểm soát trong test đạt: luồng bỏ qua/lưu lỗi/thử lại/tải lại, bốn kích thước 360/390/768/1280px, focus và bàn phím. Đã xem ảnh desktop/mobile; chưa chạy UI khẩu vị với backend/PostgreSQL thật.
+
+Để thử thủ công với backend đang chạy: đăng nhập customer, mở tài khoản → **Khai báo khẩu vị**, chọn mức cay/khám phá, thêm vùng/nguyên liệu nếu muốn và đồng ý lưu. Bấm **Lưu khẩu vị**, chờ thông báo từ API rồi tải lại để kiểm tra hồ sơ. Bấm **Bỏ qua lúc này** khi chưa khai báo sẽ về tài khoản và không tạo hồ sơ. Chưa tự chuyển onboarding sau lần đăng nhập đầu. Chạy riêng test trình duyệt (không cần backend, cần frontend dev server) từ `src/frontend/`: đặt E2E_BASE_URL theo server, E2E_BROWSER_CHANNEL=msedge rồi `npx playwright test e2e/preferences.spec.ts`. Test khẩu vị trả API bằng route interception; test auth cũ vẫn cần backend thật như hướng dẫn bên dưới.
+
 Mốc F.11.4: **152 kiểm thử frontend đạt**, gồm 28 ca API admin mới và 124 ca trước. TypeScript, ESLint, Prettier và Vite production build đạt. Các ca mới dùng fetch thay thế để kiểm tra 11 endpoint, token/thiếu phiên, bộ lọc/phân trang, 204, lỗi nghiệp vụ, hủy tải và PUT gửi lại sau refresh. Chưa có UI admin để chạy E2E. Vitest/Vite chạy trực tiếp bằng Node hiện có như các mốc F.11 trước; không đổi dependencies/lockfile.
 
 Mốc F.11.3: **124 kiểm thử frontend đạt**, gồm 34 ca API vendor mới và 90 ca trước. TypeScript, ESLint, Prettier và Vite production build đạt. Các ca mới dùng fetch thay thế để kiểm tra 15 endpoint, token/thiếu phiên, phân trang, lỗi 403/404/409, 204 và hủy tải. Chưa có UI vendor để chạy E2E. Vitest/Vite chạy trực tiếp bằng Node hiện có như các mốc F.11 trước; không đổi dependencies/lockfile.
@@ -90,7 +94,7 @@ POST `/api/v1/tracking/events` nhận batch 1–100 sự kiện từ customer th
 
 Mốc F.10.7: **1102 kiểm thử backend đạt**, gồm 36 ca API khẩu vị mới và 1066 ca trước. Ruff/format đạt. Kiểm thử API dùng SQLite tạm do migration tạo: quyền riêng tư, đủ năm câu, chuẩn hóa, ghi đè, rollback và mô phỏng tranh chấp tạo lần đầu. PostgreSQL thực tế chưa kiểm chứng.
 
-Thử hồ sơ khẩu vị bằng access token customer: GET `/api/v1/preferences/` trước khi khai báo trả 404; PUT cùng đường dẫn với đủ năm câu trong [API contract F.10.7](API_CONTRACT.md#hồ-sơ-khẩu-vị--f107) trả hồ sơ đã chuẩn hóa; GET lại thấy dữ liệu đó. Vendor/admin nhận 403. Bỏ qua onboarding không gọi PUT nên không tạo bản ghi. Chưa có màn hình PreferencePage.
+Thử hồ sơ khẩu vị bằng access token customer: GET `/api/v1/preferences/` trước khi khai báo trả 404; PUT cùng đường dẫn với đủ năm câu trong [API contract F.10.7](API_CONTRACT.md#hồ-sơ-khẩu-vị--f107) trả hồ sơ đã chuẩn hóa; GET lại thấy dữ liệu đó. Vendor/admin nhận 403. Bỏ qua onboarding không gọi PUT nên không tạo bản ghi. Màn hình PreferencePage đã bổ sung ở F.12.1.
 
 Mốc F.10.6: **1066 kiểm thử backend đạt**, gồm 30 ca đánh giá mới và 1036 ca đã có. Ruff/format đạt. Các ca mới kiểm tra quyền người mua, trạng thái completed, món thực sự có trong đơn, chống trùng, snapshot và rollback trên SQLite tạm. PostgreSQL thực tế/chạy đồng thời chưa kiểm chứng.
 

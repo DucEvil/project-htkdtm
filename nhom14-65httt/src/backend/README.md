@@ -69,7 +69,7 @@ Alembic đã import model để nhận metadata và User nằm trong migration `
 
 `app/preferences/models.py` định nghĩa bảng `preferences`. `user_id` vừa là khóa chính vừa tham chiếu `users.id`, nên mỗi tài khoản có tối đa một hồ sơ. Xóa tài khoản sẽ xóa hồ sơ khẩu vị đi kèm. Người bỏ qua khai báo chưa có bản ghi Preference; không tự tạo hồ sơ rỗng khi tạo User.
 
-API GET/PUT `/api/v1/preferences/` dành cho customer đã đăng nhập. GET chưa khai báo trả 404; PUT yêu cầu đủ năm câu hỏi và thay toàn bộ hồ sơ, lấy user_id từ token. Danh sách trim/loại trùng, nguyên liệu chuyển chữ thường; mức cay/khám phá là số nguyên nghiêm ngặt. Ghi transaction, rollback lỗi DB và xử lý tranh chấp tạo lần đầu. Xem [API contract F.10.7](../../docs/API_CONTRACT.md#hồ-sơ-khẩu-vị--f107); chưa có giao diện PreferencePage.
+API GET/PUT `/api/v1/preferences/` dành cho customer đã đăng nhập. GET chưa khai báo trả 404; PUT yêu cầu đủ năm câu hỏi và thay toàn bộ hồ sơ, lấy user_id từ token. Danh sách trim/loại trùng, nguyên liệu chuyển chữ thường; mức cay/khám phá là số nguyên nghiêm ngặt. Ghi transaction, rollback lỗi DB và xử lý tranh chấp tạo lần đầu. Xem [API contract F.10.7](../../docs/API_CONTRACT.md#hồ-sơ-khẩu-vị--f107); frontend PreferencePage đã nối hai API này ở F.12.1.
 
 Năm câu hỏi được đối chiếu với [đặc tả frontend](../frontend/README.md), mục bản đồ route và luồng khách mới. Bản thiết kế cấu trúc yêu cầu năm câu hỏi nhưng chưa chốt từng cột; các quy ước chi tiết được ghi dưới đây để dùng thống nhất ở API và giao diện sau này.
 
