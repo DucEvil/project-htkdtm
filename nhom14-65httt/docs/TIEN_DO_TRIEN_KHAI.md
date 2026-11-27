@@ -362,6 +362,12 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Khóa gửi lặp và làm mới trong khi PATCH. Chỉ ghi nhận thao tác sau response đúng đơn/quán/trạng thái đích; sau cả thành công hoặc lỗi đều GET lại để đối chiếu. Không tự gửi lại PATCH, không cập nhật trạng thái lạc quan. GET lỗi ẩn các thao tác đến khi tải lại thành công; đổi tài khoản/trang bỏ phản hồi muộn.
 - Sửa liên kết quay lại ở lỗi đơn vendor về đúng /vendor/orders. Tái sử dụng API và quy tắc backend hiện có; chưa kiểm chứng UI trên trình duyệt/backend thật trong lượt này.
 
+## Kiểm chứng trình duyệt đơn vendor F.12.12
+
+- Sau commit thao tác xử lý đơn, bổ sung ba kịch bản Playwright trong e2e/vendorOrders.spec.ts: mở danh sách/chi tiết và chuyển đủ bốn bước; từ chối cần lý do và hiển thị lịch sử; PATCH mất phản hồi rồi GET lỗi khóa thao tác cho đến khi tải lại thành công.
+- Kiểm tra Bearer token, hủy xác nhận không gửi, PATCH đúng thứ tự/đúng lý do trim, snapshot giữ nguyên, không tự PATCH lại, link lỗi quay về danh sách vendor, focus lý do và trạng thái cuối không có thao tác ghi.
+- Ba kịch bản đạt trên Edge với API kiểm soát. Đã xem ảnh desktop và mobile, kiểm tra không tràn ngang ở 360/390/768/1280px. TypeScript/lint/format/diff check đạt. Không thay mã ứng dụng; mốc 360 unit/UI ở F.12.11 được giữ, không chạy lại unit/build trong lượt chỉ thêm E2E này. Chưa kiểm chứng backend/PostgreSQL thật.
+
 ## Dọn bản nháp cục bộ
 
 - Theo yêu cầu người dùng, chỉ dọn bản nháp khi bản chính tương ứng đã được tích hợp, kiểm thử, commit và không có thay đổi chưa commit.

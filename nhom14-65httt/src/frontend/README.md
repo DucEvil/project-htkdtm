@@ -219,6 +219,10 @@ Thành phần chung ở `components/menu/CatalogPicker.tsx`, `StopSellingDialog.
 
 Chi tiết đơn vendor có nhận/từ chối pending, bắt đầu chuẩn bị confirmed, giao preparing và hoàn tất delivering. Các nút chỉ hiện cho bước hợp lệ, đều cần xác nhận; từ chối yêu cầu lý do trim 1–500 ký tự. PATCH khóa gửi lặp/làm mới; kết quả phải đúng ID, quán và trạng thái đích. Sau thành công hoặc lỗi đều đọc lại GET, không tự lặp PATCH. Nếu đọc lại lỗi, chỉ cho tải lại dữ liệu trước khi thao tác tiếp. Đơn kết thúc không có nút ghi; chưa có polling. Chưa kiểm chứng trình duyệt/backend thật trong lượt này.
 
+## Kiểm chứng đơn vendor trên trình duyệt — F.12.12
+
+Ba ca `e2e/vendorOrders.spec.ts` kiểm tra mở danh sách/chi tiết, xác nhận đủ bốn bước xử lý, từ chối với lý do và lịch sử, PATCH mất phản hồi rồi GET lỗi/tải lại. Kiểm tra token, không gửi khi hủy xác nhận, không tự PATCH lại và khóa thao tác khi chưa đọc được trạng thái. Đạt trên Edge với API kiểm soát; đã xem ảnh desktop/mobile và kiểm tra không tràn ngang 360/390/768/1280px. TypeScript/lint/format đạt. Đây là kiểm chứng UI bổ sung cho F.12.10–F.12.11; chưa phải kiểm thử backend/PostgreSQL thật.
+
 ## Auth đã triển khai
 
 | Route | Nội dung hiện có |
