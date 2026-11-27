@@ -1,4 +1,7 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { errorMessage } from "../../api/client";
+import type { OrderDetail, OrderStatus } from "../../types/order";
+import VendorOrderActions from "../../components/order/VendorOrderActions";
 import { Link, useParams } from "react-router-dom";
 import { getVendorOrder } from "../../api/vendor";
 import { useAuth } from "../../hooks/useAuth";
@@ -9,6 +12,7 @@ import OrderError from "../../components/order/OrderError";
 import OrderStatusBadge from "../../components/order/OrderStatusBadge";
 import OrderTimeline from "../../components/order/OrderTimeline";
 import "../customer/orders.css";
+import "./orders.css";
 
 export default function OrderDetailPage() {
   const { user } = useAuth();
@@ -38,9 +42,54 @@ function Detail({ id }: { id: number }) {
     [id],
   );
   const result = usePublicData(load);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState("");
+  const lock = useRef(false);
+  const active = useRef(false);
+  useEffect(() => {
+    active.current = true;
+    return () => {
+      active.current = false;
+    };
+  }, []);
+  async function submit(run: () => Promise<OrderDetail>, target: OrderStatus) {
+    if (lock.current) return;
+    lock.current = true;
+    setBusy(true);
+    setMessage("");
+    try {
+      const updated = await run();
+      if (!active.current) return;
+      if (
+        !updated ||
+        updated.id !== id ||
+        updated.restaurant_id !== result.data?.restaurant_id ||
+        updated.status !== target
+      )
+        throw new Error("Chưa xác nhận được kết quả xử lý đơn.");
+      setMessage("Máy chủ đã ghi nhận thao tác. Đang đọc lại trạng thái đơn.");
+    } catch (error) {
+      if (active.current)
+        setMessage(
+          `${errorMessage(error)} Đơn sẽ được đọc lại để kiểm tra trạng thái hiện tại.`,
+        );
+    } finally {
+      lock.current = false;
+      if (active.current) {
+        setBusy(false);
+        result.retry();
+      }
+    }
+  }
   if (result.loading) return <p role="status">Đang tải đơn hàng…</p>;
   if (result.error)
-    return <OrderError error={result.error} retry={result.retry} />;
+    return (
+      <OrderError
+        error={result.error}
+        retry={result.retry}
+        listPath="/vendor/orders"
+      />
+    );
   const order = result.data;
   if (!order) return null;
   return (
@@ -55,10 +104,25 @@ function Detail({ id }: { id: number }) {
       </header>
       <div className="order-update">
         <p>Bấm cập nhật để xem trạng thái mới nhất.</p>
-        <button className="order-refresh" onClick={result.retry}>
+        <button
+          className="order-refresh"
+          disabled={busy}
+          onClick={result.retry}
+        >
           Cập nhật trạng thái
         </button>
       </div>
+      {message && (
+        <p role="status" className="order-message">
+          {message}
+        </p>
+      )}
+      <VendorOrderActions
+        key={order.status}
+        order={order}
+        busy={busy}
+        submit={(run, target) => void submit(run, target)}
+      />
       <div className="order-detail-layout">
         <div className="order-snapshot">
           <h2>Món khách đã đặt</h2>

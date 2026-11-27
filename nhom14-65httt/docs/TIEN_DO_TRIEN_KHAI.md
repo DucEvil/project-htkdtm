@@ -356,6 +356,12 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Danh sách 10 đơn/trang, gọi limit11 để dò trang kế tiếp, không tạo tổng giả. Chi tiết hiển thị tên/giá snapshot, tổng máy chủ, địa chỉ/tọa độ giao và lịch sử trạng thái. Có tải/rỗng/lỗi/retry và làm mới thủ công; ID sai không gọi API, phản hồi sai ID không hiển thị, đổi tài khoản tải lại dữ liệu.
 - Phần này chỉ đọc đơn; thao tác xác nhận/từ chối/chuẩn bị/giao/hoàn tất sẽ triển khai riêng. Tái sử dụng CSS và component đơn hàng hiện có. Chưa kiểm tra trình duyệt hoặc backend/PostgreSQL thật trong lượt này.
 
+## Chuyển trạng thái đơn vendor F.12.11
+
+- Thêm VendorOrderActions trong chi tiết đơn: pending nhận/từ chối, confirmed chuẩn bị, preparing giao, delivering hoàn tất; đơn kết thúc không có thao tác. Mỗi lần có bước xác nhận, từ chối yêu cầu lý do trim 1–500 ký tự. Hoàn tất nhắc xác nhận giao hàng và thanh toán COD.
+- Khóa gửi lặp và làm mới trong khi PATCH. Chỉ ghi nhận thao tác sau response đúng đơn/quán/trạng thái đích; sau cả thành công hoặc lỗi đều GET lại để đối chiếu. Không tự gửi lại PATCH, không cập nhật trạng thái lạc quan. GET lỗi ẩn các thao tác đến khi tải lại thành công; đổi tài khoản/trang bỏ phản hồi muộn.
+- Sửa liên kết quay lại ở lỗi đơn vendor về đúng /vendor/orders. Tái sử dụng API và quy tắc backend hiện có; chưa kiểm chứng UI trên trình duyệt/backend thật trong lượt này.
+
 ## Dọn bản nháp cục bộ
 
 - Theo yêu cầu người dùng, chỉ dọn bản nháp khi bản chính tương ứng đã được tích hợp, kiểm thử, commit và không có thay đổi chưa commit.

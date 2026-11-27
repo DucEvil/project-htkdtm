@@ -37,7 +37,11 @@ function OrderList() {
       {result.loading ? (
         <p role="status">Đang tải đơn hàng…</p>
       ) : result.error ? (
-        <OrderError error={result.error} retry={result.retry} />
+        <OrderError
+          error={result.error}
+          retry={result.retry}
+          listPath="/vendor/orders"
+        />
       ) : (
         result.data && (
           <>

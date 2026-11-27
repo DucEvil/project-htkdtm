@@ -215,6 +215,10 @@ Thành phần chung ở `components/menu/CatalogPicker.tsx`, `StopSellingDialog.
 
 `/vendor/orders` và `/vendor/orders/:id` dùng API vendor với RoleGuard, mở từ tài khoản chủ quán. Danh sách 10 mục/trang dùng limit11 để dò trang sau; chi tiết dùng snapshot tên/giá, tổng tiền, địa chỉ/tọa độ giao và OrderTimeline. Có làm mới thủ công, loading/rỗng/lỗi/retry, kiểm tra ID và bỏ dữ liệu cũ khi đổi tài khoản. Dùng lại stylesheet đơn hàng customer; chưa có polling hoặc các nút chuyển trạng thái vendor. Các ghi chú trước đây về chưa có UI xử lý đơn vẫn áp dụng cho thao tác ghi; phần đọc đã có ở mốc này. Chưa kiểm chứng trình duyệt/backend thật trong lượt này.
 
+## Xử lý đơn của quán — F.12.11
+
+Chi tiết đơn vendor có nhận/từ chối pending, bắt đầu chuẩn bị confirmed, giao preparing và hoàn tất delivering. Các nút chỉ hiện cho bước hợp lệ, đều cần xác nhận; từ chối yêu cầu lý do trim 1–500 ký tự. PATCH khóa gửi lặp/làm mới; kết quả phải đúng ID, quán và trạng thái đích. Sau thành công hoặc lỗi đều đọc lại GET, không tự lặp PATCH. Nếu đọc lại lỗi, chỉ cho tải lại dữ liệu trước khi thao tác tiếp. Đơn kết thúc không có nút ghi; chưa có polling. Chưa kiểm chứng trình duyệt/backend thật trong lượt này.
+
 ## Auth đã triển khai
 
 | Route | Nội dung hiện có |
