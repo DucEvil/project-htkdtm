@@ -40,6 +40,13 @@ export default function AccountPage() {
           </Link>
         </div>
       )}
+      {user.role === "vendor" && (
+        <div className="button-row">
+          <Link className="button" to="/vendor/profile">
+            Quản lý hồ sơ quán
+          </Link>
+        </div>
+      )}
     </section>
   );
 }

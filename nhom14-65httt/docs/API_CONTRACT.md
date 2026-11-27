@@ -6,7 +6,7 @@ Frontend đã có types và tám hàm gọi GET công khai cho quán, thực đ�
 
 F.11.2 bổ sung bảy hàm API frontend khẩu vị, đơn COD và đánh giá theo các endpoint backend bên dưới; xem [API khách hàng frontend](../src/frontend/README.md#api-nghiệp-vụ-khách-hàng-đã-chuẩn-bị--f112). Chúng yêu cầu phiên đăng nhập; payload/key của đơn giữ nguyên khi thử lại. Khẩu vị, checkout, đơn và đánh giá đã nối giao diện ở F.12.1/F.12.5–F.12.7.
 
-F.11.3 bổ sung 15 hàm API frontend cho hồ sơ quán, thực đơn và xử lý đơn vendor; xem [API chủ quán frontend](../src/frontend/README.md#api-chủ-quán-đã-chuẩn-bị--f113). Quán được backend xác định từ membership; DELETE món chỉ ngừng bán và trả 204. Chưa có giao diện vendor.
+F.11.3 bổ sung 15 hàm API frontend cho hồ sơ quán, thực đơn và xử lý đơn vendor; xem [API chủ quán frontend](../src/frontend/README.md#api-chủ-quán-đã-chuẩn-bị--f113). Quán được backend xác định từ membership; DELETE món chỉ ngừng bán và trả 204. F.12.8 đã có giao diện hồ sơ vendor; thực đơn và xử lý đơn vendor chưa có UI.
 
 F.11.4 bổ sung 11 hàm API frontend admin cho duyệt/tạm ngừng quán và CRUD món chuẩn/nguyên liệu; xem [API quản trị frontend](../src/frontend/README.md#api-quản-trị-đã-chuẩn-bị--f114). Các hàm yêu cầu phiên đăng nhập, backend kiểm tra role admin; danh sách quán hỗ trợ bộ lọc status. Chưa có giao diện quản trị.
 
@@ -144,7 +144,7 @@ Giao diện đăng ký yêu cầu đọc/đồng ý nội dung điều khoản v
 
 ## Hồ sơ quán và duyệt quán — F.10.1
 
-Prefix chung vẫn là `/api/v1`. Đây là phần API backend; màn hình hồ sơ/duyệt quán sẽ triển khai ở F.12. Endpoint thực đơn và tìm kiếm được mô tả ở F.10.2–F.10.3 bên dưới.
+Prefix chung vẫn là `/api/v1`. Đây là phần API backend; hồ sơ vendor đã nối ở F.12.8, màn hình duyệt admin chưa có. Endpoint thực đơn và tìm kiếm được mô tả ở F.10.2–F.10.3 bên dưới.
 
 | Method | Đường dẫn | Quyền | Kết quả |
 | :--- | :--- | :--- | :--- |

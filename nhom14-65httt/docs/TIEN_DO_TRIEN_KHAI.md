@@ -19,7 +19,7 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | F.8 — backend | Đăng ký, đăng nhập, JWT, refresh và guard | Đã có API, 84 kiểm thử auth và tích hợp giao diện |
 | F.8 — frontend | AuthContext, useAuth, API client và trang/layout | Đã có auth; giao diện được hoàn thiện theo Material Design 3 |
 | F.9 | Kiểm thử auth | Backend 84 ca; frontend 54 ca unit/UI và bốn kịch bản E2E đạt |
-| F.10.1 | Hồ sơ quán vendor, duyệt/tạm ngừng admin và quán công khai | Đã có tám thao tác API, 92 kiểm thử mới; chưa có giao diện quản lý quán |
+| F.10.1 | Hồ sơ quán vendor, duyệt/tạm ngừng admin và quán công khai | Có tám thao tác API, 92 kiểm thử backend; hồ sơ vendor ở F.12.8, duyệt admin chưa có UI |
 | F.10.2 | Thực đơn vendor, catalog admin và món công khai | Đã có 17 thao tác API, 167 kiểm thử mới; chưa có giao diện quản lý thực đơn |
 | F.10.3 | Tìm món/quán theo chữ, Haversine và phạm vi giao | Có hai GET công khai, 99 kiểm thử backend; SearchPage ở F.12.2, bản đồ chưa tích hợp |
 | F.10.4 | Quy tắc chuyển trạng thái và lịch sử đơn | Có state machine/service và 167 kiểm thử, đã nối API F.10.5 |
@@ -29,7 +29,7 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | F.10.8 | Tiếp nhận sự kiện tương tác | Có POST batch customer, 31 kiểm thử mới; chưa có API sinh gợi ý/UI |
 | F.11.1 | Kiểu dữ liệu và API client công khai frontend | Có tám hàm đọc quán/món/danh mục/tìm kiếm, SearchPage dùng API ở F.12.2 |
 | F.11.2 | API client nghiệp vụ khách hàng | Có bảy hàm khẩu vị/đơn COD/đánh giá, UI đã nối ở F.12.1 và F.12.5–F.12.7 |
-| F.11.3 | API client chủ quán | Có 15 hàm hồ sơ/thực đơn/xử lý đơn và 34 kiểm thử mới; chưa có màn hình F.12 |
+| F.11.3 | API client chủ quán | Có 15 hàm hồ sơ/thực đơn/xử lý đơn; hồ sơ đã nối UI F.12.8, thực đơn/đơn chưa có UI |
 | F.11.4 | API client quản trị | Có 11 hàm duyệt/tạm ngừng quán, món chuẩn/nguyên liệu và 28 kiểm thử mới; chưa có màn hình F.12 |
 | F.12.1 | Màn hình khẩu vị customer | Có route /onboarding/taste, đọc/lưu, validation, bỏ qua; 13 ca unit/UI và hai kịch bản trình duyệt mới |
 | F.12.2 | Chọn vị trí và tìm món/quán | Có /search, LocationContext/useLocation/LocationPicker, định vị hoặc tọa độ thủ công; chưa có MapView/geocoding |
@@ -38,8 +38,9 @@ Các nhãn Phase 1.1–1.7 dưới đây là cách chia nhỏ **bước 5 của 
 | F.12.5 | Checkout COD và chống gửi trùng | Có /checkout customer, CheckoutForm/useIdempotency, xác nhận địa chỉ/tọa độ, gửi API và link theo dõi đơn |
 | F.12.6 | Lịch sử/chi tiết đơn customer | Có /orders và /orders/:id, phân trang/snapshot/timeline, polling và hủy pending; đánh giá ở F.12.7 |
 | F.12.7 | Đánh giá món sau mua | Có ReviewForm trong đơn completed, sao/nhận xét/validation và POST; chưa có API đọc lại/sửa/xóa review |
+| F.12.8 | Hồ sơ quán vendor | Có /vendor/profile, tạo/xem/sửa, trạng thái duyệt và nhận đơn; chưa có thực đơn/đơn vendor |
 | F.10 còn lại | Các nghiệp vụ khác | Tiếp tục tách từng module để commit |
-| Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Có backend nghiệp vụ, frontend API, khẩu vị/tìm kiếm/thực đơn/giỏ/checkout/đơn/đánh giá customer; vendor/admin chưa có UI |
+| Phase 2 | Nghiệp vụ giao dịch, vendor/admin và giao diện | Có backend nghiệp vụ, frontend API, UI customer và hồ sơ vendor; thực đơn/đơn vendor và admin chưa có UI |
 | Phase 3 | AI, tracking và dữ liệu | Đã có model/API nhận tracking; AI, ETL và KPI chưa triển khai |
 | Phase 4 | ETL, BI, Power BI và đánh giá | Chưa đưa vào mã nguồn hiện tại |
 | Phase 5 | Tích hợp, kiểm thử và bàn giao | Chưa thực hiện |
@@ -332,6 +333,13 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Chọn sao bằng radio native, nhãn/focus/bàn phím, counter, validation theo trường, ref chống gửi lặp và disabled khi đang gửi/lỗi tải trạng thái. Lỗi mạng/422 giữ câu trả lời; 403/404/ORDER_NOT_COMPLETED khóa gửi tiếp, yêu cầu tải lại để kiểm tra quyền/trạng thái.
 - Chỉ thông báo lưu khi response review hợp lệ đúng order/món. 409 REVIEW_ALREADY_EXISTS chuyển trạng thái trung lập, không giả sao/nhận xét cũ. Chưa có GET/sửa/xóa review; reload có thể hiện form lại cho tới khi POST báo trùng. Không lưu câu trả lời vào storage/tracking.
 - 297 kiểm thử frontend đạt (271 trước + 26 mới), hai Playwright reviews mới và hai orders đạt với Edge/API kiểm soát. Đã xem ảnh mobile/desktop, không tràn ngang 360/390/768/1280px, xác nhận radio keyboard và nhiều form độc lập. TypeScript/lint/format/build/diff check đạt; chưa kiểm tra UI review với backend/PostgreSQL thật; chưa stage/commit/push.
+
+## Hồ sơ quán vendor F.12.8
+
+- Sau commit đánh giá món, thêm vendor/ProfilePage tại /vendor/profile, link từ tài khoản vendor và returnTo login. Quán suy từ membership API, không cho chọn ID; giữ /vendor làm tài khoản hiện có.
+- GET/POST/PUT theo schema đã có, validation tọa độ/giờ/bán kính/tên/địa chỉ, xử lý giờ cả ngày/qua đêm, lỗi theo trường và ref ngăn gửi lặp. Chỉ 404 NOT_FOUND mở tạo mới. Pending/suspended không bật nhận đơn; approved bật chủ động. Kiểm tra trạng thái giữ chỉnh sửa khác, 409 chưa duyệt khóa cờ nhận đơn đến khi kiểm tra lại.
+- Tạo mất phản hồi/response sai hoặc đã linked yêu cầu GET kiểm tra trước khi POST tiếp, không giả lưu thành công. PUT lỗi giữ draft; đổi tài khoản không dùng hồ sơ cũ. Không đổi schema/backend hoặc thêm geocoding; thực đơn/đơn vendor và admin làm riêng.
+- 321 kiểm thử frontend đạt (297 trước + 24 mới), hai Playwright vendorProfile đạt với Edge/API kiểm soát, ảnh không tràn ngang 360/390/768/1280px. TypeScript/lint/format/build/diff check đạt. Chưa chạy UI profile với backend/PostgreSQL thật. Bộ E2E auth cũ gọi kèm không đạt do ECONNREFUSED backend 127.0.0.1:8000; đã dừng và không ghi nhận auth được kiểm chứng mới. Chưa stage/commit/push.
 
 ## Dọn bản nháp cục bộ
 

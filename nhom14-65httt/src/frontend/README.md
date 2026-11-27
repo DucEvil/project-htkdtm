@@ -49,7 +49,7 @@ Checkout sau này phải tạo UUID v4 cho session/key, giữ cùng `idempotency
 
 ## API chủ quán đã chuẩn bị — F.11.3
 
-`src/api/vendor.ts` có 15 hàm gọi API hiện có của vendor, tái sử dụng token/refresh/lỗi của ApiClient. Types quản lý nằm trong `types/restaurant.ts`, `types/menu.ts` và dùng chung `OrderDetail` ở `types/order.ts`. Chưa có trang quản lý hồ sơ, thực đơn hoặc xử lý đơn.
+`src/api/vendor.ts` có 15 hàm gọi API hiện có của vendor, tái sử dụng token/refresh/lỗi của ApiClient. Types quản lý nằm trong `types/restaurant.ts`, `types/menu.ts` và dùng chung `OrderDetail` ở `types/order.ts`. Hồ sơ đã nối trang vendor ở F.12.8; quản lý thực đơn và xử lý đơn vendor chưa có UI.
 
 | Hàm | Method và đường dẫn dưới `/api/v1/vendor` | Kết quả |
 | :--- | :--- | :--- |
@@ -183,6 +183,20 @@ Chỉ hiện đã lưu sau response ReviewOut hợp lệ đúng order/menu item,
 
 297 kiểm thử frontend đạt (271 trước + 26 mới); hai Playwright reviews mới và hai orders đạt với Edge/API kiểm soát. Bao phủ chỉ completed, đúng payload/món, validation/focus, độc lập nhiều form, khóa gửi lặp, lỗi giữ nội dung/422/409, response không hợp lệ và bỏ phản hồi sau unmount. Đã xem ảnh desktop/mobile, không tràn ngang 360/390/768/1280px, chọn sao bằng bàn phím. TypeScript/lint/format/build đạt; chưa chạy UI review với backend/PostgreSQL thật.
 
+## Hồ sơ quán dành cho vendor — F.12.8
+
+Vendor mở `/vendor/profile` từ **Quản lý hồ sơ quán** tại `/vendor`. Route có RoleGuard, login hỗ trợ quay lại đúng đường dẫn; `/vendor` vẫn là trang tài khoản. Backend suy quán từ membership, UI không nhận ID quán để chọn mục tiêu. Đổi tài khoản hủy/bỏ phản hồi cũ và tải lại hồ sơ.
+
+`pages/vendor/ProfilePage.tsx` gọi GET `/vendor/restaurant`. Chỉ 404 NOT_FOUND nghiệp vụ mở form tạo; lỗi mạng/HTTP 404 khác có retry và không bị hiểu là chưa có quán. Form tên 1–160, địa chỉ 1–500 ký tự, tọa độ hữu hạn trong giới hạn, bán kính (0,50] km, giờ HH:MM Việt Nam; giờ bằng nhau là cả ngày, qua nửa đêm được hỗ trợ. Chưa geocode địa chỉ. `vendorProfileValidation.ts` chuẩn hóa/kiểm tra và ánh xạ dữ liệu máy chủ.
+
+POST tạo quán gửi hồ sơ, không gửi status/owner/id/cờ nhận đơn. Quán mới chờ duyệt và không nhận đơn. PUT yêu cầu đủ trường hồ sơ và accepting_orders; chỉ approved mới bật được. Pending/suspended vẫn sửa thông tin với cờ nhận đơn false. Có nút kiểm tra trạng thái duyệt từ GET, giữ các chỉnh sửa khác chưa lưu; quán vừa approved không tự bật nhận đơn. Nếu PUT trả RESTAURANT_NOT_APPROVED, UI tắt/khóa cờ nhận đơn và yêu cầu đọc lại trạng thái, không tự suy quán đang pending hay suspended.
+
+Có loading/lỗi/retry, lỗi theo trường, focus ô sai, ref khóa gửi lặp và giữ dữ liệu khi lưu lỗi. Chỉ báo lưu sau response hồ sơ hợp lệ. Tạo quán lỗi mạng/5xx/response sai hoặc RESTAURANT_ALREADY_LINKED khóa POST tiếp, có nút kiểm tra hồ sơ đã liên kết: GET thấy quán thì chuyển sang sửa, GET xác nhận chưa có mới cho tạo tiếp. Backend membership UNIQUE là chốt chống tạo trùng; UI không giả thành công từ lỗi. PUT thử lại cùng nội dung có tính thay thế hồ sơ, không tạo quán mới.
+
+Không lưu nháp vào storage; reload làm mất chỉnh sửa chưa lưu. Chưa có giao diện duyệt admin, quản lý thực đơn/đơn vendor hoặc dashboard. CSS `profile.css` đồng bộ màu/font, focus, vùng chạm, card 24–28px và bố cục thích ứng.
+
+321 kiểm thử frontend đạt (297 trước + 24 mới), hai Playwright vendorProfile đạt với Edge/API kiểm soát. Bao phủ tạo/sửa đủ payload, pending/suspended/approved, GET/retry, dữ liệu lỗi giữ nguyên, 422, 409 chưa duyệt, tạo mất phản hồi/already linked, quyền và đổi tài khoản. Đã xem ảnh desktop/mobile, không tràn ngang 360/390/768/1280px; TypeScript/lint/format/build đạt. Chưa chạy UI profile với backend/PostgreSQL thật. Lượt gọi kèm E2E auth cũ không đạt vì backend 127.0.0.1:8000 không chạy (ECONNREFUSED); đã dừng bộ đó và kiểm tra riêng vendor bằng API kiểm soát, không coi đây là kết quả auth E2E mới.
+
 ## Auth đã triển khai
 
 | Route | Nội dung hiện có |
@@ -199,6 +213,7 @@ Chỉ hiện đã lưu sau response ReviewOut hợp lệ đúng order/menu item,
 | `/checkout` | Customer: địa chỉ/tọa độ, gửi đơn COD, retry chống trùng và ghi nhận kết quả máy chủ |
 | `/orders`, `/orders/:id` | Customer: danh sách phân trang, snapshot, tiến trình cập nhật và hủy pending có xác nhận |
 | `/vendor`, `/admin` | Thông tin tài khoản có guard vai trò tương ứng; chưa có dashboard nghiệp vụ |
+| `/vendor/profile` | Vendor: tạo/xem/sửa hồ sơ, trạng thái duyệt, giờ/phạm vi giao và bật/tắt nhận đơn |
 | `/forbidden`, route không tồn tại | Thông báo không đủ quyền/trang 404 |
 
 API theo [contract auth](../../docs/API_CONTRACT.md). Mật khẩu giữ nguyên khi gửi, không lưu vào storage; role đăng ký chỉ có customer/vendor. Form có nhãn, autocomplete, validation, trạng thái chờ và khóa gửi lặp. Không thêm đăng nhập xã hội hoặc khôi phục mật khẩu khi backend chưa hỗ trợ.

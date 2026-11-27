@@ -13,6 +13,7 @@ import CartPage from "./pages/customer/CartPage";
 import CheckoutPage from "./pages/customer/CheckoutPage";
 import OrderListPage from "./pages/customer/OrderListPage";
 import OrderDetailPage from "./pages/customer/OrderDetailPage";
+import VendorProfilePage from "./pages/vendor/ProfilePage";
 import { CartProvider } from "./contexts/CartContext";
 
 export default function AppRouter() {
@@ -32,6 +33,7 @@ export default function AppRouter() {
           </Route>
           <Route element={<RoleGuard roles={["vendor"]} />}>
             <Route path="vendor" element={<AccountPage />} />
+            <Route path="vendor/profile" element={<VendorProfilePage />} />
           </Route>
           <Route element={<RoleGuard roles={["customer"]} />}>
             <Route path="checkout" element={<CheckoutPage />} />

@@ -29,6 +29,7 @@ export function safeReturnTo(value: unknown, fallback: string): string {
     ![
       "/account",
       "/vendor",
+      "/vendor/profile",
       "/admin",
       "/onboarding/taste",
       "/checkout",

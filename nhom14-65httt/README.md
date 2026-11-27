@@ -18,7 +18,7 @@ Frontend F.11.1 đã có types và tám hàm gọi API đọc quán, món, danh 
 
 F.11.2 bổ sung types và bảy hàm gọi API khách hàng: khẩu vị, đơn COD và đánh giá món đã mua. Dùng phiên đăng nhập hiện có, giữ key khi gửi lại đơn; các màn hình nghiệp vụ sẽ tích hợp ở F.12.
 
-F.11.3 bổ sung types quản lý và 15 hàm API chủ quán cho hồ sơ, thực đơn và xử lý đơn. Xem [API vendor frontend](src/frontend/README.md#api-chủ-quán-đã-chuẩn-bị--f113); màn hình vendor chưa tích hợp.
+F.11.3 bổ sung types quản lý và 15 hàm API chủ quán cho hồ sơ, thực đơn và xử lý đơn. Xem [API vendor frontend](src/frontend/README.md#api-chủ-quán-đã-chuẩn-bị--f113); hồ sơ vendor đã có ở /vendor/profile (F.12.8), thực đơn và xử lý đơn vendor chưa có UI.
 
 F.11.4 bổ sung 11 hàm API quản trị để duyệt/tạm ngừng quán và quản lý món chuẩn/nguyên liệu, kèm types và kiểm thử. Xem [API admin frontend](src/frontend/README.md#api-quản-trị-đã-chuẩn-bị--f114); giao diện quản trị sẽ tích hợp ở bước 12.
 

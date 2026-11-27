@@ -27,7 +27,7 @@ Dependency `get_current_user`, `require_role(*roles)`, `require_vendor_owner` c�
 
 Service tính giờ mở theo `Asia/Ho_Chi_Minh`, hỗ trợ qua đêm và quy ước hai giờ bằng nhau là 24 giờ. Response có `is_open` và `can_receive_orders` (approved + cờ nhận đơn + giờ mở), chưa bao gồm điều kiện vị trí khách/khả dụng món. DB vẫn giữ TIME địa phương và không có cột tính toán mới. Quán pending/suspended bị ẩn ở công khai nhưng chủ quán vẫn xem/sửa hồ sơ của mình với cờ nhận đơn false.
 
-Ghi dữ liệu có rollback và khóa hàng khi DB hỗ trợ; kiểm thử SQLite tạm chưa chứng minh cạnh tranh/khóa trên PostgreSQL. Không thay models hoặc migration `001`; giao diện hồ sơ/duyệt quán sẽ triển khai theo F.12.
+Ghi dữ liệu có rollback và khóa hàng khi DB hỗ trợ; kiểm thử SQLite tạm chưa chứng minh cạnh tranh/khóa trên PostgreSQL. Không thay models hoặc migration `001`; hồ sơ vendor đã có UI F.12.8, giao diện duyệt admin chưa triển khai.
 
 ## API thực đơn, món chuẩn và nguyên liệu
 
