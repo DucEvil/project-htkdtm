@@ -2,6 +2,27 @@
 
 Đã có frontend auth F.8 theo thiết kế cấu trúc: đăng ký/đăng nhập, AuthContext/useAuth, API client, AppShell/Navbar/Footer và RoleGuard. Giao diện gọi API backend thật; chưa có chức năng tìm món, đặt hàng hoặc dashboard quán/admin.
 
+## API công khai đã chuẩn bị — F.11.1
+
+Các module `src/api/restaurants.ts`, `menu.ts`, `search.ts` dùng chung `ApiClient` hiện có. Kiểu response ở `src/types/restaurant.ts`, `menu.ts`, `search.ts`, phân trang dùng `Page<T>` và `PaginationQuery` ở `common.ts`; đã đối chiếu schema backend F.10.1–F.10.3. Đây là lớp gọi API để màn hình ở F.12 sử dụng; chưa có SearchPage hoặc trang thực đơn.
+
+| Hàm | Endpoint GET dưới `/api/v1` | Kết quả |
+| :--- | :--- | :--- |
+| `listRestaurants` | `/restaurants/` | `Page<RestaurantPublic>` |
+| `getRestaurant` | `/restaurants/{id}` | `RestaurantPublic` |
+| `getRestaurantMenu` | `/restaurants/{id}/menu` | `MenuItemPublic[]` |
+| `getMenuItem` | `/menu-items/{id}` | `MenuItemPublic` |
+| `listCanonicalDishes` | `/canonical-dishes` | `Page<CanonicalDishPublic>` |
+| `listIngredients` | `/ingredients` | `Page<IngredientPublic>` |
+| `searchDishes` | `/search/dishes` | `Page<DishSearchResult>` |
+| `searchRestaurants` | `/search/restaurants` | `Page<RestaurantSearchResult>` |
+
+Hàm danh sách nhận `{ offset?, limit? }`; tìm kiếm nhận `{ lat, lng, q?, radius?, offset?, limit? }`. Vị trí bắt buộc, radius/distance theo km, giá món nguyên VNĐ. Bỏ trường tùy chọn để dùng mặc định backend; query mã hóa bằng URLSearchParams, giữ tọa độ/offset bằng 0. Tất cả hàm nhận tùy chọn `{ signal }` ở đối số cuối để hủy request cũ. Không ghi vị trí/từ khóa vào storage.
+
+Các request công khai đặt `authenticated: false`, dùng được khi chưa đăng nhập và không gửi token dù có phiên. Lỗi nghiệp vụ giữ nguyên `ApiError` (status/code/details) để màn hình xử lý; hủy request trả AbortError. Backend tiếp tục kiểm tra giới hạn, quyền công khai và tình trạng món/quán. TypeScript mô tả hợp đồng lúc biên dịch, chưa kiểm tra cấu trúc JSON khi chạy.
+
+Kiểm thử `tests/publicApi.test.ts` đi qua API client thật với fetch thay thế: tám đường dẫn, query tiếng Việt/ký tự đặc biệt, phân trang, bỏ token, lỗi 404 và hủy tìm kiếm. Toàn bộ 69 kiểm thử frontend đạt (54 trước + 15 mới); TypeScript, ESLint, Prettier và production build đạt. E2E giao diện auth giữ kết quả mốc trước, chưa kiểm thử màn hình nghiệp vụ.
+
 Nội dung dưới đây là đặc tả định hướng, bám theo [đề cương](../../docs/De_cuong_Vi_Viet.docx) (mục 4, 5.3, 6, 7, 8). Phần công nghệ và lệnh chạy đã có được ghi riêng ở mục 6; các đề xuất cho chức năng chưa triển khai cần được chốt theo [thiết kế cấu trúc](../../docs/THIET_KE_CAU_TRUC.md).
 
 Phụ trách dự kiến xem tại [danhsachnhom.md](../../danhsachnhom.md).

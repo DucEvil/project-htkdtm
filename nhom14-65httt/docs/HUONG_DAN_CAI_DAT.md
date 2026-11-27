@@ -76,6 +76,8 @@ Docker chưa được kiểm chứng trong phiên phát triển này vì máy kh
 
 ## Kiểm tra
 
+Mốc F.11.1: **69 kiểm thử frontend đạt**, gồm 15 ca API công khai mới và 54 ca trước. TypeScript, ESLint, Prettier và Vite production build đạt. Các ca mới dùng fetch thay thế để kiểm tra URL/query, token, lỗi và hủy request; chưa có màn hình nghiệp vụ để chạy E2E. Chạy `npm test` và `npm run build` từ `src/frontend/`. Trong phiên này chạy Vitest/Vite trực tiếp bằng Node hiện có vì lệnh npm test gặp lỗi nạp native binding từ môi trường; không đổi dependencies hoặc lockfile.
+
 Mốc F.10.8: **1133 kiểm thử backend đạt**, gồm 31 ca API tracking mới và 1102 ca trước. Ruff/format đạt. Kiểm thử dùng SQLite tạm để kiểm tra quyền, ngữ cảnh sự kiện, idempotency, hiển thị trước tương tác, cửa sổ thời gian và rollback batch. PostgreSQL thực tế chưa kiểm chứng.
 
 POST `/api/v1/tracking/events` nhận batch 1–100 sự kiện từ customer theo [API contract F.10.8](API_CONTRACT.md#ghi-nhận-sự-kiện-tương-tác--f108). Để thử `impression`/`click`/`feedback`, cần có RecommendationRequest và RecommendationImpression đúng tài khoản/phiên/món từ luồng tạo gợi ý; luồng đó chưa có API nên hiện kiểm thử tự tạo dữ liệu trong SQLite tạm. Sự kiện phiên và `add_to_cart` không có request không cần dữ liệu gợi ý. Không dùng UUID request mẫu trong tài liệu như dữ liệu tồn tại sẵn.

@@ -2,6 +2,8 @@
 
 Tài liệu hiện mô tả auth F.8 và các API quán, thực đơn, tìm kiếm, đơn COD, đánh giá, khẩu vị, tracking trong F.10. OpenAPI tại `http://localhost:8000/docs` phản ánh request/response đang chạy.
 
+Frontend đã có types và tám hàm gọi GET công khai cho quán, thực đơn, danh mục, tìm kiếm ở F.11.1; xem [bảng hàm API frontend](../src/frontend/README.md#api-công-khai-đã-chuẩn-bị--f111). Chúng dùng chung API client auth nhưng đặt `authenticated: false`; màn hình nghiệp vụ sẽ được nối ở F.12.
+
 ## Quy ước chung
 
 Nghiệp vụ đơn hàng dùng state machine E.2 và API COD ở F.10.5 bên dưới. Xem [README backend](../src/backend/README.md#chuyển-trạng-thái-và-lịch-sử-đơn) về quyền sở hữu và transaction.

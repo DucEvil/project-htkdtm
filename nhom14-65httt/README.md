@@ -14,6 +14,8 @@ Phần đơn hàng đã có API COD, snapshot giá, chống gửi lặp và chuy
 
 Customer có thể lưu năm câu trả lời khẩu vị qua API F.10.7; bỏ qua không tạo hồ sơ. API F.10.8 tiếp nhận batch sự kiện tương tác và ghi nhận hiển thị thực tế; luồng sinh gợi ý và giao diện khai báo khẩu vị/tracking sẽ tích hợp sau.
 
+Frontend F.11.1 đã có types và tám hàm gọi API đọc quán, món, danh mục, tìm kiếm, chuẩn bị cho các trang khách hàng F.12. Xem [README frontend](src/frontend/README.md#api-công-khai-đã-chuẩn-bị--f111); chưa có giao diện tìm kiếm/thực đơn.
+
 ## Vấn đề và mục tiêu
 
 Hỗ trợ khách lựa chọn món Việt phù hợp khẩu vị và điều kiện phục vụ, thực hiện đặt món trong cùng website; kết nối dữ liệu tương tác với đơn hàng để chủ quán hiểu nhu cầu và chất lượng phục vụ. Các giả thuyết về khó khăn lựa chọn sẽ được kiểm chứng bằng khảo sát.
