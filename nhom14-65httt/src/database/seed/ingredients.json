@@ -1,0 +1,70 @@
+{
+  "allergen_categories": [
+    {
+      "code": "peanut",
+      "name": "Đậu phộng / Lạc",
+      "severity": "high",
+      "description": "Dị ứng phổ biến, thường xuất hiện trong nước chấm, gỏi, mì Quảng"
+    },
+    {
+      "code": "seafood",
+      "name": "Hải sản (Tôm, Cua, Mực)",
+      "severity": "high",
+      "description": "Nguyên liệu đạm biển, nước dùng hải sản"
+    },
+    {
+      "code": "beef",
+      "name": "Thịt bò",
+      "severity": "medium",
+      "description": "Kiêng do khẩu vị, sức khỏe hoặc tôn giáo"
+    },
+    {
+      "code": "pork",
+      "name": "Thịt lợn (heo)",
+      "severity": "medium",
+      "description": "Kiêng do tôn giáo (Hồi giáo) hoặc khẩu vị ăn kiêng"
+    },
+    {
+      "code": "egg",
+      "name": "Trứng",
+      "severity": "medium",
+      "description": "Trứng gà, trứng vịt, trứng cút"
+    },
+    {
+      "code": "dairy",
+      "name": "Sữa & Chế phẩm sữa",
+      "severity": "medium",
+      "description": "Sữa tươi, bơ, phô mai, sữa đặc"
+    },
+    {
+      "code": "gluten",
+      "name": "Gluten (Bột mì)",
+      "severity": "medium",
+      "description": "Có trong mì sợi vàng, vỏ bánh mì, một số loại xì dầu"
+    }
+  ],
+  "common_ingredients": [
+    { "id": "ing_rice", "name": "Gạo / Cơm", "category": "grain" },
+    { "id": "ing_pho_noodle", "name": "Bánh phở", "category": "noodle" },
+    { "id": "ing_bun_noodle", "name": "Bún tươi", "category": "noodle" },
+    { "id": "ing_bread", "name": "Bánh mì", "category": "bakery", "contains_allergens": ["gluten"] },
+    { "id": "ing_beef", "name": "Thịt bò", "category": "meat", "contains_allergens": ["beef"] },
+    { "id": "ing_pork", "name": "Thịt lợn", "category": "meat", "contains_allergens": ["pork"] },
+    { "id": "ing_chicken", "name": "Thịt gà", "category": "poultry" },
+    { "id": "ing_shrimp", "name": "Tôm", "category": "seafood", "contains_allergens": ["seafood"] },
+    { "id": "ing_fish", "name": "Cá", "category": "seafood", "contains_allergens": ["seafood"] },
+    { "id": "ing_squid", "name": "Mực", "category": "seafood", "contains_allergens": ["seafood"] },
+    { "id": "ing_egg", "name": "Trứng", "category": "dairy_egg", "contains_allergens": ["egg"] },
+    { "id": "ing_tofu", "name": "Đậu phụ", "category": "plant_protein" },
+    { "id": "ing_peanut", "name": "Lạc / Đậu phộng", "category": "nut", "contains_allergens": ["peanut"] },
+    { "id": "ing_fish_sauce", "name": "Nước mắm", "category": "condiment", "contains_allergens": ["seafood"] },
+    { "id": "ing_shrimp_paste", "name": "Mắm tôm", "category": "condiment", "contains_allergens": ["seafood"] },
+    { "id": "ing_chili", "name": "Ớt", "category": "spice" },
+    { "id": "ing_black_pepper", "name": "Tiêu đen", "category": "spice" },
+    { "id": "ing_ginger", "name": "Gừng", "category": "spice" },
+    { "id": "ing_garlic", "name": "Tỏi", "category": "allium" },
+    { "id": "ing_onion", "name": "Hành tây / Hành lá", "category": "allium" },
+    { "id": "ing_herbs", "name": "Rau thơm (Húng quế, Ngò gai, Kinh giới)", "category": "vegetable" },
+    { "id": "ing_coconut_milk", "name": "Nước cốt dừa", "category": "plant_fat" }
+  ]
+}
