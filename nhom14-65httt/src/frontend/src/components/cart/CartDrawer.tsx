@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../../hooks/useCart";
 import { formatPrice } from "../../utils/catalog";
-import QuantityControl from "./QuantityControl";
+import CartItem from "./CartItem";
 import "./drawer.css";
 
 export default function CartDrawer({ onClose }: { onClose: () => void }) {
@@ -56,32 +56,15 @@ export default function CartDrawer({ onClose }: { onClose: () => void }) {
           <ul>
             {cart.items.map((item) => (
               <li key={item.menu_item_id}>
-                <h3>
-                  <Link
-                    to={`/menu-items/${item.menu_item_id}`}
-                    onClick={onClose}
-                  >
-                    {item.name}
-                  </Link>
-                </h3>
-                <p>{formatPrice(item.price)} / phần</p>
-                <QuantityControl
-                  value={item.quantity}
-                  name={item.name}
-                  onChange={(quantity) =>
+                <CartItem
+                  compact
+                  item={item}
+                  onNavigate={onClose}
+                  onQuantityChange={(quantity) =>
                     cart.setQuantity(item.menu_item_id, quantity)
                   }
+                  onRemove={() => cart.remove(item.menu_item_id)}
                 />
-                <div className="cart-drawer-line-total">
-                  <strong>{formatPrice(item.price * item.quantity)}</strong>
-                  <button
-                    type="button"
-                    aria-label={`Xóa món ${item.name}`}
-                    onClick={() => cart.remove(item.menu_item_id)}
-                  >
-                    Xóa món
-                  </button>
-                </div>
               </li>
             ))}
           </ul>

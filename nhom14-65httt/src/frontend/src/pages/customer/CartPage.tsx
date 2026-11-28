@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useCart } from "../../hooks/useCart";
-import QuantityControl from "../../components/cart/QuantityControl";
+import CartItem from "../../components/cart/CartItem";
 import { formatPrice } from "../../utils/catalog";
 
 export default function CartPage() {
@@ -39,33 +39,14 @@ export default function CartPage() {
           <div className="cart-layout">
             <div className="cart-lines">
               {cart.items.map((item) => (
-                <article className="cart-line" key={item.menu_item_id}>
-                  <div className="cart-line-title">
-                    <h2>
-                      <Link to={`/menu-items/${item.menu_item_id}`}>
-                        {item.name}
-                      </Link>
-                    </h2>
-                    <p>{formatPrice(item.price)} / phần</p>
-                  </div>
-                  <QuantityControl
-                    value={item.quantity}
-                    onChange={(quantity) =>
-                      cart.setQuantity(item.menu_item_id, quantity)
-                    }
-                    name={item.name}
-                  />
-                  <div className="cart-line-total">
-                    <strong>{formatPrice(item.price * item.quantity)}</strong>
-                    <button
-                      type="button"
-                      onClick={() => cart.remove(item.menu_item_id)}
-                      aria-label={`Xóa món ${item.name}`}
-                    >
-                      Xóa món
-                    </button>
-                  </div>
-                </article>
+                <CartItem
+                  key={item.menu_item_id}
+                  item={item}
+                  onQuantityChange={(quantity) =>
+                    cart.setQuantity(item.menu_item_id, quantity)
+                  }
+                  onRemove={() => cart.remove(item.menu_item_id)}
+                />
               ))}
               <Link
                 className="cart-continue"
