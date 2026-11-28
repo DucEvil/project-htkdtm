@@ -381,6 +381,13 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - 368 unit/UI đạt, hai Playwright adminRestaurants đạt với Edge/API kiểm soát (một ca mới), TypeScript/lint/build đạt. Chưa kiểm chứng backend/PostgreSQL thật. Chưa stage/commit/push.
 - Theo yêu cầu người dùng, cần báo rõ khi hoàn tất toàn bộ giao diện. Hiện chưa hoàn tất: CRUD món chuẩn/nguyên liệu và các màn hình khác trong Markdown cần tiếp tục đối chiếu; dashboard/thống kê/gợi ý/đánh giá còn phụ thuộc các bước API/dữ liệu sau.
 
+## Danh mục nguyên liệu admin F.12.15
+
+- Thêm /admin/ingredients, IngredientCatalogPage, liên kết tài khoản admin và returnTo login. Danh sách 12 mục/trang dùng total của API, thêm/sửa tên trim/chữ thường 1–100 ký tự, chỉ gửi name; không cho client đặt cờ mô phỏng.
+- Xóa có xác nhận, backend giữ nguyên liệu còn được tham chiếu và trả 409. Sau DELETE đọc lại danh sách cả khi lỗi; không tự gửi lại. POST mất phản hồi/5xx/response không hợp lệ khóa gửi, giữ tên và cho tải lại danh mục đối chiếu trước khi chủ động mở form mới. PUT lỗi giữ dữ liệu chỉnh sửa. Đổi tài khoản/rời trang bỏ phản hồi cũ; khóa mutation lặp.
+- 368 kiểm thử hồi quy đạt; hai Playwright adminIngredients mới đạt với Edge/API kiểm soát, gồm CRUD/409/chuẩn hóa/validation và POST mất phản hồi. Không tràn ngang 360/390/768/1280px; đã xem ảnh mobile. TypeScript/lint/build đạt; chưa kiểm chứng backend/PostgreSQL thật. Chưa stage/commit/push.
+- Giao diện chưa hoàn tất toàn bộ; tiếp theo quản lý món chuẩn rồi đối chiếu các màn hình còn lại theo thiết kế.
+
 ## Dọn bản nháp cục bộ
 
 - Theo yêu cầu người dùng, chỉ dọn bản nháp khi bản chính tương ứng đã được tích hợp, kiểm thử, commit và không có thay đổi chưa commit.
