@@ -437,6 +437,13 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Đây là dashboard vận hành, chưa có thống kê doanh thu/KPI hoặc StatsPage vì chưa có API tương ứng. /vendor vẫn là trang tài khoản. Giao diện toàn bộ chưa hoàn tất; bảng thiếu F.12.17 được cập nhật bởi mốc này cho phần dashboard vendor vận hành.
 - 378 unit/UI hồi quy và hai Playwright vendorDashboard mới đạt với Edge/API kiểm soát, không tràn ngang 360/390/768/1280px, đã xem ảnh mobile. TypeScript/lint/build đạt; chưa kiểm chứng backend/PostgreSQL thật. Chưa stage/commit/push.
 
+## Tổng quan quản trị F.12.21
+
+- Thêm admin/DashboardPage.tsx tại /admin/dashboard, RoleGuard/returnTo và link từ tài khoản admin. Bốn ô tổng quán, quán pending, món chuẩn, nguyên liệu đọc total từ API tương ứng với limit1; không lấy items.length làm tổng. Số liệu bao gồm mô phỏng nếu có và tải độc lập, không cam kết cùng một thời điểm giao dịch.
+- Mỗi ô có tải/lỗi/retry và liên kết quản lý hoạt động cả khi số liệu lỗi. Total sai kiểu/âm không được biến thành 0. Đổi tài khoản hủy/bỏ dữ liệu cũ; không có mutation. Link xét duyệt mở danh sách và hướng dẫn chọn bộ lọc pending.
+- 378 kiểm thử hồi quy, hai Playwright adminDashboard mới đạt với Edge/API kiểm soát; không tràn ngang 360/390/768/1280px. TypeScript/lint/build đạt; chưa kiểm chứng backend/PostgreSQL thật. Chưa stage/commit/push.
+- Tổng quan quán/danh mục admin đã có; chưa có KPI doanh thu/người dùng/chất lượng dữ liệu. Toàn bộ giao diện chưa hoàn tất, các phần API phụ thuộc và bản đồ trong rà soát F.12.17 còn phải triển khai.
+
 ## Dọn bản nháp cục bộ
 
 - Theo yêu cầu người dùng, chỉ dọn bản nháp khi bản chính tương ứng đã được tích hợp, kiểm thử, commit và không có thay đổi chưa commit.

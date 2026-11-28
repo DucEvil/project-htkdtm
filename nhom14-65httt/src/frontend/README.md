@@ -271,6 +271,12 @@ CartPage và CartDrawer cùng dùng `components/cart/CartItem.tsx` để hiển 
 
 378 unit/UI hồi quy và hai Playwright vendorDashboard đạt với API kiểm soát; không tràn ngang 360/390/768/1280px, TypeScript/lint/build đạt. Chưa kiểm chứng backend/PostgreSQL thật.
 
+## Tổng quan quản trị — F.12.21
+
+`/admin/dashboard` mở từ tài khoản admin, có RoleGuard/returnTo. Bốn ô đọc total của danh sách quán (tất cả/pending), món chuẩn và nguyên liệu với limit1. Tải/lỗi/retry độc lập, số liệu không hợp lệ báo lỗi; không dùng số mục của trang làm tổng hoặc coi lỗi là 0. Các số được đọc riêng, có thể khác thời điểm và bao gồm dữ liệu mô phỏng. Link quản lý luôn hoạt động; link xét duyệt hướng dẫn chọn bộ lọc trong danh sách quán. Không có thống kê doanh thu/người dùng/chất lượng dữ liệu.
+
+378 kiểm thử hồi quy và hai Playwright adminDashboard đạt với API kiểm soát; không tràn ngang 360/390/768/1280px, TypeScript/lint/build đạt. Chưa kiểm chứng backend/PostgreSQL thật.
+
 ## Auth đã triển khai
 
 | Route | Nội dung hiện có |

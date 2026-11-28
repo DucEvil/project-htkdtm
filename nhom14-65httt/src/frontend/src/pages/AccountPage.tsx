@@ -42,6 +42,9 @@ export default function AccountPage() {
       )}
       {user.role === "admin" && (
         <div className="button-row">
+          <Link className="button" to="/admin/dashboard">
+            Tổng quan quản trị
+          </Link>
           <Link className="button secondary" to="/admin/dishes">
             Danh mục món chuẩn
           </Link>

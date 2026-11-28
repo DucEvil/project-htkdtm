@@ -21,6 +21,7 @@ import VendorMenuPage from "./pages/vendor/MenuManagePage";
 import VendorMenuItemPage from "./pages/vendor/MenuItemPage";
 import { CartProvider } from "./contexts/CartContext";
 import AdminRestaurantManagePage from "./pages/admin/RestaurantManagePage";
+import AdminDashboardPage from "./pages/admin/DashboardPage";
 import IngredientCatalogPage from "./pages/admin/IngredientCatalogPage";
 import DishCatalogPage from "./pages/admin/DishCatalogPage";
 
@@ -63,6 +64,7 @@ export default function AppRouter() {
           </Route>
           <Route element={<RoleGuard roles={["admin"]} />}>
             <Route path="admin" element={<AccountPage />} />
+            <Route path="admin/dashboard" element={<AdminDashboardPage />} />
             <Route path="admin/dishes" element={<DishCatalogPage />} />
             <Route
               path="admin/ingredients"
