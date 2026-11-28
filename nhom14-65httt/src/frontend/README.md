@@ -237,6 +237,12 @@ Danh sách admin đã có duyệt pending/suspended và tạm ngừng pending/ap
 
 368 unit/UI và hai Playwright adminRestaurants đạt với API kiểm soát; TypeScript/lint/build đạt. Chưa kiểm chứng backend/PostgreSQL thật.
 
+## Danh mục nguyên liệu admin — F.12.15
+
+Route `/admin/ingredients` có RoleGuard và link từ tài khoản admin. Danh sách phân trang 12 mục, total từ máy chủ; thêm/sửa chỉ gửi tên chuẩn hóa trim/chữ thường, giới hạn 1–100 ký tự. Xóa có xác nhận, 409 giữ nguyên liệu đang được tham chiếu. Không chỉnh cờ mô phỏng. Sau DELETE thành công/lỗi tải lại danh sách, không tự gửi lại mutation. Tạo mất phản hồi hoặc lỗi chưa rõ kết quả khóa gửi và yêu cầu tải lại/đối chiếu trước khi chủ động mở form mới; không giả thành công. Lỗi giữ dữ liệu; reload mất nháp. Món chuẩn sẽ triển khai riêng.
+
+368 kiểm thử hồi quy đạt, hai Playwright adminIngredients đạt với API kiểm soát; không tràn ngang 360/390/768/1280px, TypeScript/lint/build đạt. Chưa chạy backend/PostgreSQL thật. Chạy `npx playwright test e2e/adminIngredients.spec.ts` với dev server và biến E2E_BASE_URL/E2E_BROWSER_CHANNEL như các mốc trước.
+
 ## Auth đã triển khai
 
 | Route | Nội dung hiện có |
