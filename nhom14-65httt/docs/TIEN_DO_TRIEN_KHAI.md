@@ -425,6 +425,11 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - 378 kiểm thử hồi quy đạt; ba Playwright cart đạt với Edge/API kiểm soát, gồm một ca ngăn kéo mới. Đã xem ảnh mobile, không tràn ngang trong ngăn kéo ở 360/390/768/1280px; TypeScript/lint/build đạt. Chưa kiểm chứng backend thật; chưa stage/commit/push.
 - CartDrawer trong bảng rà soát F.12.17 đã hoàn thành; CartItem chưa tách riêng. Toàn bộ giao diện vẫn chưa hoàn tất, các mục bản đồ/dashboard/API phụ thuộc còn như bảng rà soát.
 
+## CartItem dùng chung F.12.19
+
+- Tách components/cart/CartItem.tsx theo thiết kế, dùng cho CartPage và CartDrawer. Component nhận dòng giỏ/callback, dùng QuantityControl chung, định dạng cùng giá quan sát/tổng dòng và cùng nhãn nút xóa. Chế độ compact dùng heading h3 trong ngăn kéo, trang giỏ dùng h2; link trong ngăn kéo đóng modal trước khi chuyển trang.
+- Giữ CartContext và các quy tắc giỏ một quán hiện có. Ba Playwright cart đạt với Edge/API kiểm soát; typecheck/lint/build đạt. Không thay API hoặc thêm dependencies. Chưa stage/commit/push; toàn bộ giao diện vẫn chưa hoàn tất, các mục phụ thuộc API và bản đồ còn như bảng F.12.17.
+
 ## Dọn bản nháp cục bộ
 
 - Theo yêu cầu người dùng, chỉ dọn bản nháp khi bản chính tương ứng đã được tích hợp, kiểm thử, commit và không có thay đổi chưa commit.

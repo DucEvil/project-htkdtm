@@ -261,6 +261,10 @@ Nút **Xem giỏ nhanh** trong Navbar mở CartDrawer cho khách/customer. Dialo
 
 378 unit/UI hồi quy và ba Playwright cart đạt (một ca drawer mới), TypeScript/lint/build đạt. API kiểm soát trong Playwright; kiểm tra không tràn ngang 360/390/768/1280px và đã xem ảnh mobile. Chưa kiểm chứng backend thật trong lượt này.
 
+## Dòng giỏ hàng dùng chung — F.12.19
+
+CartPage và CartDrawer cùng dùng `components/cart/CartItem.tsx` để hiển thị tên/giá/số lượng/tổng dòng, chuyển chi tiết và xóa. Component nhận callback từ nơi dùng, không tạo state giỏ riêng. Compact dùng heading h3 trong drawer và đóng drawer khi mở chi tiết; trang giỏ dùng h2. CartItem đã được tách, thay thế ghi chú chưa tách ở các mốc cũ. Ba Playwright cart, typecheck/lint/build đạt; kiểm thử trình duyệt dùng API kiểm soát.
+
 ## Auth đã triển khai
 
 | Route | Nội dung hiện có |
