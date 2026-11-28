@@ -430,6 +430,13 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - Tách components/cart/CartItem.tsx theo thiết kế, dùng cho CartPage và CartDrawer. Component nhận dòng giỏ/callback, dùng QuantityControl chung, định dạng cùng giá quan sát/tổng dòng và cùng nhãn nút xóa. Chế độ compact dùng heading h3 trong ngăn kéo, trang giỏ dùng h2; link trong ngăn kéo đóng modal trước khi chuyển trang.
 - Giữ CartContext và các quy tắc giỏ một quán hiện có. Ba Playwright cart đạt với Edge/API kiểm soát; typecheck/lint/build đạt. Không thay API hoặc thêm dependencies. Chưa stage/commit/push; toàn bộ giao diện vẫn chưa hoàn tất, các mục phụ thuộc API và bản đồ còn như bảng F.12.17.
 
+## Tổng quan vận hành chủ quán F.12.20
+
+- Thêm vendor/DashboardPage.tsx tại /vendor/dashboard, link từ tài khoản vendor và returnTo login. Dùng GET hồ sơ private và RoleGuard, đổi tài khoản tải lại; kiểm tra response, loading/lỗi/làm mới. Chỉ 404 NOT_FOUND mở hướng dẫn tạo hồ sơ; lỗi mạng không bị hiểu là chưa có quán.
+- Hiển thị trạng thái duyệt, khả năng nhận đơn do máy chủ trả, tên/địa chỉ/giờ Việt Nam (cả ngày/qua đêm)/bán kính. Hướng dẫn pending/suspended/tắt nhận đơn/ngoài giờ; liên kết hồ sơ, thực đơn, đơn hàng luôn có để xử lý đơn cũ khi tạm ngừng. Không tự bật nhận đơn hoặc gửi mutation.
+- Đây là dashboard vận hành, chưa có thống kê doanh thu/KPI hoặc StatsPage vì chưa có API tương ứng. /vendor vẫn là trang tài khoản. Giao diện toàn bộ chưa hoàn tất; bảng thiếu F.12.17 được cập nhật bởi mốc này cho phần dashboard vendor vận hành.
+- 378 unit/UI hồi quy và hai Playwright vendorDashboard mới đạt với Edge/API kiểm soát, không tràn ngang 360/390/768/1280px, đã xem ảnh mobile. TypeScript/lint/build đạt; chưa kiểm chứng backend/PostgreSQL thật. Chưa stage/commit/push.
+
 ## Dọn bản nháp cục bộ
 
 - Theo yêu cầu người dùng, chỉ dọn bản nháp khi bản chính tương ứng đã được tích hợp, kiểm thử, commit và không có thay đổi chưa commit.

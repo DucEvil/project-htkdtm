@@ -55,6 +55,9 @@ export default function AccountPage() {
       )}
       {user.role === "vendor" && (
         <div className="button-row">
+          <Link className="button" to="/vendor/dashboard">
+            Tổng quan quán
+          </Link>
           <Link className="button" to="/vendor/profile">
             Quản lý hồ sơ quán
           </Link>

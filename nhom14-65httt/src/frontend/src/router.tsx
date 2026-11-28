@@ -14,6 +14,7 @@ import CheckoutPage from "./pages/customer/CheckoutPage";
 import OrderListPage from "./pages/customer/OrderListPage";
 import OrderDetailPage from "./pages/customer/OrderDetailPage";
 import VendorProfilePage from "./pages/vendor/ProfilePage";
+import VendorDashboardPage from "./pages/vendor/DashboardPage";
 import VendorOrderManagePage from "./pages/vendor/OrderManagePage";
 import VendorOrderDetailPage from "./pages/vendor/OrderDetailPage";
 import VendorMenuPage from "./pages/vendor/MenuManagePage";
@@ -40,6 +41,7 @@ export default function AppRouter() {
           </Route>
           <Route element={<RoleGuard roles={["vendor"]} />}>
             <Route path="vendor" element={<AccountPage />} />
+            <Route path="vendor/dashboard" element={<VendorDashboardPage />} />
             <Route path="vendor/profile" element={<VendorProfilePage />} />
             <Route path="vendor/orders" element={<VendorOrderManagePage />} />
             <Route
