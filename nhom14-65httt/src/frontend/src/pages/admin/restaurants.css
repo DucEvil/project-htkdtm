@@ -26,6 +26,13 @@
   min-height: 48px;
   font: inherit;
 }
+.admin-restaurant-card .admin-summary-count {
+  font-size: 40px;
+  line-height: 1.2;
+  font-weight: 600;
+  color: #315f47;
+  margin: 20px 0;
+}
 .admin-restaurants {
   max-width: 1180px;
   margin: 24px auto 72px;
