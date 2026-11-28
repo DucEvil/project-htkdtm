@@ -44,6 +44,57 @@ test.beforeEach(async ({ page }) => {
   );
 });
 
+test("giỏ nhanh đồng bộ số lượng, Escape trả focus và responsive", async ({
+  page,
+}, info) => {
+  await page.goto("/menu-items/9");
+  await page.getByRole("button", { name: "Thêm vào giỏ" }).click();
+  const trigger = page.getByRole("button", { name: "Xem giỏ nhanh" });
+  await trigger.click();
+  const drawer = page.getByRole("dialog", { name: "Giỏ hàng nhanh" });
+  await expect(
+    drawer.getByRole("button", { name: "Đóng giỏ hàng" }),
+  ).toBeFocused();
+  await drawer
+    .getByRole("button", { name: `Tăng số lượng ${dish.name}` })
+    .click();
+  await expect(drawer.getByText(/Tạm tính \(2 phần\)/)).toBeVisible();
+  for (const width of [360, 390, 768, 1280]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.evaluate(() => document.fonts.ready);
+    expect(
+      await drawer.evaluate(
+        (element) => element.scrollWidth <= element.clientWidth,
+      ),
+    ).toBe(true);
+    await page.screenshot({
+      path: info.outputPath(`cart-drawer-${width}.png`),
+      fullPage: true,
+    });
+  }
+  await page.keyboard.press("Escape");
+  await expect(drawer).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+  await expect(
+    page.getByRole("link", { name: "Giỏ hàng (2)", exact: true }),
+  ).toBeVisible();
+  await trigger.click();
+  await drawer.getByRole("link", { name: "Xem giỏ và đặt hàng" }).click();
+  await expect(drawer).toHaveCount(0);
+  await expect(
+    page.getByRole("heading", { name: "Giỏ hàng của bạn" }),
+  ).toBeVisible();
+  await trigger.click();
+  await drawer.getByRole("button", { name: `Xóa món ${dish.name}` }).click();
+  await expect(
+    drawer.getByText("Giỏ hàng đang trống.", { exact: true }),
+  ).toBeVisible();
+  await drawer.getByRole("button", { name: "Đóng giỏ hàng" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Giỏ hàng đang trống" }),
+  ).toBeVisible();
+});
+
 test("thêm/xóa/đổi số lượng và xác nhận đổi quán với bàn phím", async ({
   page,
 }) => {

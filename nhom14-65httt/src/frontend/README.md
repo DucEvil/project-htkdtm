@@ -255,6 +255,12 @@ Xóa có xác nhận, 409 giữ món còn được tham chiếu; sau DELETE đ�
 
 Xem bảng đối chiếu tại [tiến độ F.12.17](../../docs/TIEN_DO_TRIEN_KHAI.md#rà-soát-giao-diện-và-xử-lý-lỗi-render-f1217). Giao diện chưa hoàn tất toàn bộ: còn CartDrawer/bản đồ, dashboard/thống kê, quản lý user/chất lượng dữ liệu và gợi ý/đánh giá ở các bước sau.
 
+## Giỏ hàng nhanh — F.12.18
+
+Nút **Xem giỏ nhanh** trong Navbar mở CartDrawer cho khách/customer. Dialog dùng cùng CartContext, cho đổi số lượng/xóa, xem tạm tính và sang /cart để đặt hàng; không tạo giỏ hay storage riêng. Có giỏ trống, nhắc giá cần kiểm tra lại và giỏ chỉ giữ trong lần mở trang. Escape/đóng trả focus, khóa cuộn nền khi mở; đổi route/tài khoản đóng drawer. Link Giỏ hàng hiện có vẫn hoạt động. CartDrawer đã hoàn thành, thay thế ghi chú chưa có ở các mốc cũ; CartItem chưa tách riêng.
+
+378 unit/UI hồi quy và ba Playwright cart đạt (một ca drawer mới), TypeScript/lint/build đạt. API kiểm soát trong Playwright; kiểm tra không tràn ngang 360/390/768/1280px và đã xem ảnh mobile. Chưa kiểm chứng backend thật trong lượt này.
+
 ## Auth đã triển khai
 
 | Route | Nội dung hiện có |
