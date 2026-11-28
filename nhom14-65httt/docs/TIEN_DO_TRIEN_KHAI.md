@@ -444,6 +444,28 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - 378 kiểm thử hồi quy, hai Playwright adminDashboard mới đạt với Edge/API kiểm soát; không tràn ngang 360/390/768/1280px. TypeScript/lint/build đạt; chưa kiểm chứng backend/PostgreSQL thật. Chưa stage/commit/push.
 - Tổng quan quán/danh mục admin đã có; chưa có KPI doanh thu/người dùng/chất lượng dữ liệu. Toàn bộ giao diện chưa hoàn tất, các phần API phụ thuộc và bản đồ trong rà soát F.12.17 còn phải triển khai.
 
+## Hạ tầng PostgreSQL và kiểm thử kết nối (1.2.1–1.2.3)
+
+Hoàn thiện cấu hình an toàn cho PostgreSQL local trên Docker Compose và bổ sung kiểm thử tích hợp kết nối PostgreSQL 16 thật (giữ nguyên các mốc F.5–F.12 đã ghi nhận):
+
+- **Commit `a4554ed`** (`fix(nhom14-65httt): rang buoc cong postgres vao localhost`) – File: `docker-compose.yml`. Giới hạn cổng publish của service `db` thành `127.0.0.1:${POSTGRES_PORT:-5432}:5432`, giữ khả năng tùy chỉnh `POSTGRES_PORT` và giữ nguyên kết nối nội bộ `db:5432`.
+- **Commit `548b0b6`** (`fix(nhom14-65httt): yeu cau cau hinh mat khau postgres`) – File: `docker-compose.yml`, `.env.example`. Loại bỏ fallback mật khẩu `changeme` trong Compose bằng `${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}`, để trống `POSTGRES_PASSWORD=` kèm hướng dẫn trong `.env.example`, giữ nguyên volume `pgdata` và không sửa `.env` thực tế.
+- **Commit `5a32ea6`** (`feat(nhom14-65httt): bo sung kiem thu ket noi PostgreSQL thuc te`) – File: `src/backend/pyproject.toml`, `src/backend/tests/test_postgresql_connection.py`. Đăng ký pytest marker `postgresql` và bổ sung 8 test case opt-in (`RUN_POSTGRES_TESTS=1`) chỉ dùng truy vấn đọc: kiểm tra dialect `postgresql`/`psycopg2`, kết nối thật, `SELECT 1`, phiên bản major 16 (`server_version_num`), `SessionLocal`, vòng đời `get_db` gọi `Session.close` (luồng bình thường và khi có ngoại lệ), và rollback transaction đọc.
+
+### Kết quả kiểm thử đã xác nhận
+
+- Xác thực cấu hình Compose bằng `docker-compose config --quiet` (v5.5.1): thoát `0` khi có `POSTGRES_PASSWORD` hợp lệ; thoát `1` với thông báo `required variable POSTGRES_PASSWORD is missing a value: POSTGRES_PASSWORD is required` khi thiếu hoặc để trống mật khẩu trong file env.
+- `pytest --markers` xác nhận marker `@pytest.mark.postgresql` đã được đăng ký.
+- `python -m pytest tests/test_postgresql_connection.py -q -rs` (không đặt `RUN_POSTGRES_TESTS=1`): **8 skipped**.
+- `RUN_POSTGRES_TESTS=1 python -m pytest tests/test_postgresql_connection.py -v` trong môi trường sandbox của Agent (không có quyền mở kết nối tới Docker engine và cổng 5432): **1 passed** (`test_engine_uses_postgresql_dialect`), **7 failed** (`OperationalError: Permission denied`), xác nhận khi opt-in bị lỗi kết nối thì test fail rõ ràng, không skip và không fallback SQLite.
+- `ruff check` và `ruff format --check` trên `tests/test_postgresql_connection.py`: đạt (`All checks passed!`, `1 file already formatted`).
+
+### Nội dung chưa kiểm chứng và bước tiếp theo
+
+- **Chưa kiểm chứng trong môi trường Agent:** chưa xác nhận 8/8 test PostgreSQL pass trên PostgreSQL 16 đang chạy bằng Docker Desktop (do hạn chế quyền truy cập Docker engine và cổng TCP 5432 trong sandbox); chưa hoàn tất chạy lại toàn bộ regression `pytest tests/ -m "not postgresql" -q` trong lượt này.
+- **Không đánh đồng phạm vi:** bộ test kết nối chỉ đọc **không** chứng minh đã nghiệm thu toàn bộ stack Docker Compose, Alembic migration trên PostgreSQL thật, khóa hàng cạnh tranh, race condition hay tính nguyên tử của giao dịch đơn hàng.
+- **Bước tiếp theo:** chạy xác nhận 8/8 test PostgreSQL và toàn bộ regression trên máy Windows (Git Bash) với Docker Desktop đang chạy theo [hướng dẫn cài đặt](HUONG_DAN_CAI_DAT.md#khởi-chạy-postgresql-với-docker-desktop-trên-windows-git-bash) và [README backend](../src/backend/README.md#postgresql-integration-tests); sau đó tiếp tục kiểm chứng Alembic migration trên PostgreSQL thật và các hạng mục hạ tầng kế tiếp.
+
 ## Dọn bản nháp cục bộ
 
 - Theo yêu cầu người dùng, chỉ dọn bản nháp khi bản chính tương ứng đã được tích hợp, kiểm thử, commit và không có thay đổi chưa commit.

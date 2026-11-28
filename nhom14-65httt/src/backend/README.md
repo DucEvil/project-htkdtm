@@ -221,6 +221,32 @@ python -m alembic check
 
 Khi revision đã được commit/áp dụng, thay đổi schema bằng revision kế tiếp thay vì sửa hoặc sinh lại `001`. Xem hướng dẫn cài đặt để chạy migration local/Docker. [ERD](../../docs/ERD.md) và [từ điển dữ liệu](../../docs/TU_DIEN_DU_LIEU.md) ở F.7 đối chiếu đủ 15 bảng, các cột và ràng buộc hiện có.
 
+## PostgreSQL Integration Tests
+
+Bộ kiểm thử tự động hiện có trong `tests/` chủ yếu dùng SQLite tạm để chạy nhanh và độc lập. Để kiểm chứng kết nối thực tế tới PostgreSQL 16 local (xem [hướng dẫn chạy PostgreSQL bằng Docker](../../docs/HUONG_DAN_CAI_DAT.md#khởi-chạy-postgresql-với-docker-desktop-trên-windows-git-bash)), backend bổ sung `tests/test_postgresql_connection.py` tái sử dụng trực tiếp `app.database.engine`, `SessionLocal`, `get_db` và cấu hình `app.config.settings`.
+
+- **Pytest marker:** `postgresql` đã được đăng ký trong `pyproject.toml` (`[tool.pytest.ini_options]`).
+- **Cơ chế opt-in:** toàn bộ test trong file chỉ chạy khi biến môi trường `RUN_POSTGRES_TESTS=1`. Nếu chưa đặt hoặc đặt giá trị khác `1`, tất cả test PostgreSQL sẽ bị **skip** với lý do rõ ràng để không làm hỏng luồng kiểm thử local thông thường.
+- **Hành vi khi có lỗi:** khi đã bật `RUN_POSTGRES_TESTS=1`, nếu dialect không phải PostgreSQL, host không thuộc `localhost`/`127.0.0.1`/`::1`, hoặc không kết nối/xác thực được tới PostgreSQL, test sẽ **fail** rõ ràng — không skip để che giấu lỗi và không âm thầm fallback về SQLite.
+- **Phạm vi và an toàn dữ liệu:** 8 test case hiện tại chỉ thực hiện truy vấn đọc (`SELECT 1`, `SHOW server_version_num`), kiểm tra phiên bản PostgreSQL major 16, kiểm tra `SessionLocal`, xác minh `get_db` gọi `Session.close` ở cả luồng bình thường lẫn khi phát sinh ngoại lệ, và kiểm tra rollback transaction đọc giúp session dùng lại được. Không ghi dữ liệu, không đổi schema và không chạy Alembic.
+- **Giới hạn:** bộ test này **chưa** kiểm thử tính nguyên tử của đơn hàng, race condition, khóa hàng cạnh tranh hay rollback dữ liệu ghi trên PostgreSQL.
+
+Chạy từ **Git Bash** (sau khi đã khởi động PostgreSQL và cấu hình `.env`):
+
+```bash
+cd nhom14-65httt/src/backend
+source .venv/Scripts/activate
+
+python -m pytest tests/test_postgresql_connection.py -q -rs
+
+RUN_POSTGRES_TESTS=1 python -m pytest tests/test_postgresql_connection.py -v
+
+python -m pytest tests/ -m "not postgresql" -q
+
+python -m ruff check tests/test_postgresql_connection.py
+python -m ruff format --check tests/test_postgresql_connection.py
+```
+
 ## Phạm vi dự kiến
 
 - Xác thực và phân quyền khách hàng, chủ quán, quản trị viên.

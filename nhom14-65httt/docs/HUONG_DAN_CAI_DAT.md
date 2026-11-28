@@ -56,23 +56,67 @@ Mở `/register` để tạo customer/vendor, sau đó đăng nhập ở `/login
 
 ## Chạy bằng Docker
 
-Từ thư mục nhóm, sau khi copy `.env.example` thành `.env`:
+### Khởi chạy PostgreSQL với Docker Desktop trên Windows (Git Bash)
 
-```powershell
+Mở **Docker Desktop** trên Windows và chờ engine sẵn sàng. Từ thư mục nhóm `nhom14-65httt/` trong **Git Bash**:
+
+1. Tạo `.env` từ `.env.example` nếu chưa có (không ghi đè `.env` đã cấu hình):
+
+```bash
+[ -f .env ] || cp .env.example .env
+```
+
+2. Mở `.env` và điền giá trị thực cho các biến bắt buộc (không dùng mật khẩu thật trong tài liệu và không commit `.env`):
+   - `POSTGRES_PASSWORD`: **bắt buộc không được để trống**. `docker-compose.yml` không còn fallback `changeme` mà yêu cầu `${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}`, nên Compose sẽ báo lỗi ngay nếu biến bị thiếu hoặc rỗng.
+   - `SECRET_KEY`: giữ nguyên khóa đã tạo ở mục [Cấu hình khóa JWT](#cấu-hình-khóa-jwt) hoặc tạo khóa mới đủ mạnh nếu thiết lập lần đầu.
+
+3. Hiểu rõ cấu hình mạng, hostname và cổng:
+   - Service `db` publish cổng theo dạng `127.0.0.1:${POSTGRES_PORT:-5432}:5432`, chỉ lắng nghe trên máy local (`127.0.0.1`), không mở ra mạng ngoài, đồng thời vẫn cho phép đổi cổng host qua `POSTGRES_PORT`.
+   - Phần trước dấu `:` (`${POSTGRES_PORT:-5432}`) là cổng publish trên máy host (Windows); phần sau dấu `:` (`5432`) là cổng PostgreSQL cố định bên trong container và mạng nội bộ Docker.
+   - Khi chạy **backend local** (ngoài Docker), backend dùng `POSTGRES_HOST=localhost` và cổng `POSTGRES_PORT` trong `.env`. Khi chạy **backend trong Docker**, `docker-compose.yml` tự ghi đè `POSTGRES_HOST=db` và `POSTGRES_PORT=5432` để kết nối qua mạng nội bộ Docker.
+   - **Lưu ý ghi đè biến môi trường shell:** Docker Compose ưu tiên biến môi trường trong shell hơn file `.env` khi nội suy. Nếu shell đang đặt `POSTGRES_PASSWORD` khác với `.env`, container `db` và container `backend` (đọc `env_file: .env`) có thể dùng hai mật khẩu khác nhau. Kiểm tra bằng `echo "${POSTGRES_PASSWORD:+shell_var_is_set}"` và `unset POSTGRES_PASSWORD` nếu cần.
+
+4. Kiểm tra cấu hình và khởi động riêng PostgreSQL:
+
+```bash
+docker compose version
+docker compose config --quiet
+docker compose up -d db
+docker compose ps db
+docker compose port db 5432
+docker compose exec -T db pg_isready
+```
+
+`docker compose port db 5432` cần trả về địa chỉ bắt đầu bằng `127.0.0.1:`. Lưu ý rằng `pg_isready` chỉ xác nhận tiến trình PostgreSQL đang sẵn sàng nhận kết nối TCP/socket, **không** thay thế kiểm thử xác thực credentials hay kết nối SQLAlchemy. Để kiểm chứng kết nối thực tế từ ứng dụng, xem mục [PostgreSQL Integration Tests](../src/backend/README.md#postgresql-integration-tests).
+
+### An toàn dữ liệu và persistent volume
+
+- Service `db` lưu dữ liệu trong persistent volume `pgdata` (`/var/lib/postgresql/data`).
+- PostgreSQL chỉ thiết lập mật khẩu tài khoản mặc định ở lần khởi tạo volume đầu tiên. Việc sửa `POSTGRES_PASSWORD` trong `.env` sau đó **không** tự động đổi mật khẩu của tài khoản đã tồn tại trong database.
+- Khi gặp lỗi xác thực mật khẩu, không xóa volume như cách xử lý thông thường; cần đối chiếu lại mật khẩu hiện dùng của DB hoặc đổi mật khẩu có chủ đích bên trong PostgreSQL nếu muốn giữ dữ liệu.
+- Phân biệt lệnh dừng container:
+  - `docker compose down`: dừng và xóa container/network, **giữ nguyên** volume `pgdata` và dữ liệu database.
+  - `docker compose down -v`: xóa cả volume được khai báo; **cảnh báo: lệnh này có thể xóa toàn bộ dữ liệu database** trong `pgdata`.
+
+### Khởi chạy toàn bộ stack (DB, backend, frontend)
+
+Từ thư mục nhóm, sau khi đã cấu hình `.env` hợp lệ:
+
+```bash
 docker compose up --build
 ```
 
-Compose chạy PostgreSQL 16, backend ở cổng 8000 và frontend ở cổng 5173. Backend dùng hostname `db`; Vite proxy tới `backend:8000` trong mạng Docker. Mở terminal khác tại thư mục nhóm để tạo/kiểm tra schema:
+Compose chạy PostgreSQL 16, backend ở cổng 8000 và frontend ở cổng 5173. Backend dùng hostname `db`; Vite proxy tới `backend:8000` trong mạng Docker. Backend **không** tự động chạy migration khi khởi động. Mở terminal khác tại thư mục nhóm để tạo/kiểm tra schema bằng Alembic:
 
-```powershell
+```bash
 docker compose exec backend python -m alembic upgrade head
 docker compose exec backend python -m alembic current
 docker compose exec backend python -m alembic check
 ```
 
-Nếu có Make, các lệnh tương ứng là `make migrate`, `make migrate-status`, `make migrate-check`. Chưa chạy `make seed` hoặc `make etl` vì các module đó chưa được tích hợp. Backend không tự chạy migration lúc khởi động.
+Nếu có Make, các lệnh tương ứng là `make migrate`, `make migrate-status`, `make migrate-check`. Chưa chạy `make seed` hoặc `make etl` vì các module đó chưa được tích hợp.
 
-Docker chưa được kiểm chứng trong phiên phát triển này vì máy không có Docker CLI trong PATH. Cần thử lại trên máy có Docker Desktop trước khi đánh dấu nghiệm thu.
+Lưu ý nghiệm thu: cấu hình Docker Compose và bộ kiểm thử kết nối PostgreSQL đã được bổ sung, nhưng chạy đầy đủ stack Docker Compose và nghiệm thu Alembic migration trên PostgreSQL 16 thực tế cần được kiểm chứng trực tiếp trên máy có Docker Desktop trước khi đánh dấu hoàn tất.
 
 ## Kiểm tra
 
