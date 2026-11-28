@@ -388,6 +388,13 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - 368 kiểm thử hồi quy đạt; hai Playwright adminIngredients mới đạt với Edge/API kiểm soát, gồm CRUD/409/chuẩn hóa/validation và POST mất phản hồi. Không tràn ngang 360/390/768/1280px; đã xem ảnh mobile. TypeScript/lint/build đạt; chưa kiểm chứng backend/PostgreSQL thật. Chưa stage/commit/push.
 - Giao diện chưa hoàn tất toàn bộ; tiếp theo quản lý món chuẩn rồi đối chiếu các màn hình còn lại theo thiết kế.
 
+## Danh mục món chuẩn admin F.12.16
+
+- Thêm DishCatalogPage tại /admin/dishes, liên kết từ tài khoản admin và returnTo login. Danh sách 12 mục/trang, thêm/sửa tên, vùng miền, cách chế biến, mức cay 0–3, nguyên liệu tham khảo, nhãn và source_id tùy chọn. PUT gửi đầy đủ bảy trường, source_id trống gửi null, không gửi is_simulated.
+- Validation theo giới hạn backend: tên180, vùng/cách chế biến40, nguồn120, danh sách tối đa100 dòng và mỗi mục100 ký tự. Nguyên liệu tham khảo chuyển chữ thường; thành phần thực tế của quán vẫn riêng biệt. Xóa có xác nhận, lỗi 409 giữ mục đang được tham chiếu. POST chưa rõ kết quả khóa gửi/cho đối chiếu; lỗi sửa giữ dữ liệu.
+- 375 kiểm thử frontend đạt (368 trước + 7 validation mới), một Playwright adminDishes đạt với Edge/API kiểm soát: tạo/sửa đủ payload và xóa còn được dùng. Không tràn ngang 360/1280px, TypeScript/lint/build đạt. Chưa kiểm chứng backend/PostgreSQL thật; chưa stage/commit/push.
+- Chưa đánh dấu toàn bộ giao diện hoàn tất. Cần rà soát các màn hình/component còn thiếu trong Markdown, đặc biệt dashboard/thống kê, bản đồ, gợi ý và đánh giá phụ thuộc API/dữ liệu các bước sau.
+
 ## Dọn bản nháp cục bộ
 
 - Theo yêu cầu người dùng, chỉ dọn bản nháp khi bản chính tương ứng đã được tích hợp, kiểm thử, commit và không có thay đổi chưa commit.

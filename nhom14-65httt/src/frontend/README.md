@@ -243,6 +243,12 @@ Route `/admin/ingredients` có RoleGuard và link từ tài khoản admin. Danh 
 
 368 kiểm thử hồi quy đạt, hai Playwright adminIngredients đạt với API kiểm soát; không tràn ngang 360/390/768/1280px, TypeScript/lint/build đạt. Chưa chạy backend/PostgreSQL thật. Chạy `npx playwright test e2e/adminIngredients.spec.ts` với dev server và biến E2E_BASE_URL/E2E_BROWSER_CHANNEL như các mốc trước.
 
+## Danh mục món chuẩn admin — F.12.16
+
+`/admin/dishes` có RoleGuard, liên kết tài khoản admin, danh sách phân trang và tạo/sửa/xóa món chuẩn. Form tên, vùng miền, cách chế biến, mức cay0–3, nguyên liệu tham khảo/nhãn mỗi dòng một mục, source_id tùy chọn. Validation theo schema backend; PUT gửi đủ bảy trường, nguồn trống gửi null. Không sửa cờ mô phỏng. Nguyên liệu tham khảo không thay nguyên liệu thực tế của quán.
+
+Xóa có xác nhận, 409 giữ món còn được tham chiếu; sau DELETE đọc lại danh sách. Lỗi giữ form, POST mất phản hồi/5xx khóa gửi và cho đối chiếu danh sách trước khi chủ động tạo tiếp. Chưa có lưu nháp qua reload. 375 kiểm thử frontend và một Playwright adminDishes đạt; TypeScript/lint/build đạt. Kiểm tra không tràn ngang 360/1280px; API được kiểm soát trong Playwright, chưa kiểm chứng backend/PostgreSQL thật. Chạy `npx playwright test e2e/adminDishes.spec.ts` với dev server và biến E2E như các mốc trước.
+
 ## Auth đã triển khai
 
 | Route | Nội dung hiện có |
