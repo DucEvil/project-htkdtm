@@ -13,6 +13,19 @@
 .admin-restaurant-confirm p {
   margin: 0;
 }
+.admin-restaurants textarea {
+  width: 100%;
+  min-height: 110px;
+  resize: vertical;
+  font: inherit;
+  padding: 12px;
+  border: 1px solid #69776a;
+  border-radius: 12px;
+}
+.admin-restaurants select {
+  min-height: 48px;
+  font: inherit;
+}
 .admin-restaurants {
   max-width: 1180px;
   margin: 24px auto 72px;

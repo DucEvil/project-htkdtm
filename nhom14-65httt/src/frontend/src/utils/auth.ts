@@ -36,6 +36,7 @@ export function safeReturnTo(value: unknown, fallback: string): string {
       "/admin",
       "/admin/restaurants",
       "/admin/ingredients",
+      "/admin/dishes",
       "/onboarding/taste",
       "/checkout",
       "/orders",
