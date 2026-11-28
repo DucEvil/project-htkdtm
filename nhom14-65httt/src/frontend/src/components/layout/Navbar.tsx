@@ -1,4 +1,6 @@
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import CartDrawer from "../cart/CartDrawer";
 import { useAuth } from "../../hooks/useAuth";
 import { roleHome, roleLabels } from "../../utils/auth";
 import { useCart } from "../../hooks/useCart";
@@ -7,6 +9,12 @@ export default function Navbar() {
   const { user, signOut, status } = useAuth();
   const { count } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [drawer, setDrawer] = useState<string | null>(null);
+  const drawerKey = `${location.key}-${user?.id ?? "guest"}`;
+  useEffect(() => {
+    setDrawer(null);
+  }, [drawerKey]);
   function logout() {
     signOut();
     navigate("/login", { replace: true });
@@ -25,6 +33,15 @@ export default function Navbar() {
         </NavLink>
         <NavLink to="/search">Tìm món, quán</NavLink>
         <NavLink to="/cart">Giỏ hàng{count > 0 ? ` (${count})` : ""}</NavLink>
+        {(!user || user.role === "customer") && (
+          <button
+            className="nav-action"
+            aria-haspopup="dialog"
+            onClick={() => setDrawer(drawerKey)}
+          >
+            Xem giỏ nhanh
+          </button>
+        )}
         {user?.role === "customer" && <NavLink to="/orders">Đơn hàng</NavLink>}
         {user ? (
           <>
@@ -44,6 +61,7 @@ export default function Navbar() {
           <span className="nav-muted">Đang kết nối tài khoản</span>
         )}
       </nav>
+      {drawer === drawerKey && <CartDrawer onClose={() => setDrawer(null)} />}
     </header>
   );
 }

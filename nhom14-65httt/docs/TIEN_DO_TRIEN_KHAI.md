@@ -418,6 +418,13 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 
 **Chưa hoàn tất toàn bộ giao diện.** Phần có thể tiếp tục độc lập là CartDrawer và hoàn thiện/tách component chung; các dashboard, quản lý user/chất lượng dữ liệu, gợi ý/đánh giá cần nối các bước backend tương ứng. Không dựng số liệu giả để coi màn hình hoàn tất. Tiếp tục báo người dùng khi toàn bộ phạm vi giao diện được hoàn thành và kiểm chứng.
 
+## Giỏ hàng dạng ngăn kéo F.12.18
+
+- Thêm components/cart/CartDrawer.tsx và drawer.css, mở qua nút Xem giỏ nhanh ở Navbar cho khách/customer, giữ link trang giỏ hiện có. Dùng cùng CartContext, QuantityControl, giá quan sát và quy tắc một quán; sửa số lượng/xóa cập nhật đồng bộ, có giỏ rỗng và link sang /cart để đặt hàng.
+- Dialog native giữ focus trong modal, Escape/đóng trả focus, khóa cuộn nền và phục hồi khi đóng. Điều hướng hoặc đổi tài khoản đóng ngăn kéo; không lưu thêm storage hoặc tự gửi đơn. Thông báo giỏ trong bộ nhớ và giá cần được kiểm tra lại vẫn hiện rõ.
+- 378 kiểm thử hồi quy đạt; ba Playwright cart đạt với Edge/API kiểm soát, gồm một ca ngăn kéo mới. Đã xem ảnh mobile, không tràn ngang trong ngăn kéo ở 360/390/768/1280px; TypeScript/lint/build đạt. Chưa kiểm chứng backend thật; chưa stage/commit/push.
+- CartDrawer trong bảng rà soát F.12.17 đã hoàn thành; CartItem chưa tách riêng. Toàn bộ giao diện vẫn chưa hoàn tất, các mục bản đồ/dashboard/API phụ thuộc còn như bảng rà soát.
+
 ## Dọn bản nháp cục bộ
 
 - Theo yêu cầu người dùng, chỉ dọn bản nháp khi bản chính tương ứng đã được tích hợp, kiểm thử, commit và không có thay đổi chưa commit.
