@@ -14,6 +14,9 @@ select = ["E", "F", "I", "N", "W", "UP"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+    "postgresql: kiểm thử tích hợp PostgreSQL thật, chỉ chạy khi đặt RUN_POSTGRES_TESTS=1",
+]
 
 [tool.mypy]
 python_version = "3.11"
