@@ -395,6 +395,29 @@ Không tạo file `.pbix` rỗng thay cho sản phẩm Power BI và không đán
 - 375 kiểm thử frontend đạt (368 trước + 7 validation mới), một Playwright adminDishes đạt với Edge/API kiểm soát: tạo/sửa đủ payload và xóa còn được dùng. Không tràn ngang 360/1280px, TypeScript/lint/build đạt. Chưa kiểm chứng backend/PostgreSQL thật; chưa stage/commit/push.
 - Chưa đánh dấu toàn bộ giao diện hoàn tất. Cần rà soát các màn hình/component còn thiếu trong Markdown, đặc biệt dashboard/thống kê, bản đồ, gợi ý và đánh giá phụ thuộc API/dữ liệu các bước sau.
 
+## Rà soát giao diện và xử lý lỗi render F.12.17
+
+- Thêm common/ErrorBoundary và RouteErrorBoundary. Boundary nội dung nằm trong AppShell, bên dưới các provider, giữ navigation và trạng thái bên ngoài khi trang lỗi render. Boundary ngoài App bảo vệ lỗi ở auth/provider/layout. Có mở lại nội dung theo thao tác người dùng và về trang chủ; không hiển thị exception/stack trong UI, không tự gửi lại API ghi. Lỗi event handler/async vẫn do từng luồng xử lý.
+- Nhắc kiểm tra kết quả nếu vừa gửi đơn/lưu và cảnh báo mất chỉnh sửa form chưa lưu. Boundary ngoài có thể làm mất trạng thái bộ nhớ trong cây bị tháo; không cam kết giữ giỏ nếu provider cũng lỗi. Route mới reset boundary theo location.key.
+
+### Đối chiếu giao diện còn lại sau F.12.17
+
+| Nhóm trong Markdown | Hiện trạng và phần cần tiếp tục |
+| :--- | :--- |
+| Auth, khẩu vị, tìm kiếm, quán/món, giỏ/checkout, đơn/review customer | Có luồng chính; HomePage hiện là landing, chưa phải trang Top 5 gợi ý |
+| Hồ sơ/thực đơn/nguyên liệu/đơn vendor | Có luồng chính; nguyên liệu thực tế tích hợp form món, chưa có IngredientPage độc lập |
+| Admin duyệt quán, món chuẩn và nguyên liệu | Có CRUD/duyệt; RestaurantManagePage đảm nhiệm chức năng RestaurantApprovalPage |
+| Dashboard vendor/admin và StatsPage | Chưa có; trang /vendor và /admin hiện là tài khoản/liên kết tác vụ, không phải dashboard số liệu; cần API thống kê |
+| UserManagePage | Chưa có UI/API quản lý người dùng admin |
+| DataQualityPage | Chưa có UI/API chất lượng dữ liệu; phụ thuộc bước dữ liệu/ETL |
+| MapView, AddressFallback | Có LocationPicker và nhập tọa độ thủ công; chưa có bản đồ/geocoding/chỉ đường |
+| CartDrawer, CartItem | Có CartPage và QuantityControl; chưa có ngăn kéo giỏ, chưa tách CartItem |
+| Component menu/order/common | Một số danh sách/thẻ/error/confirm được triển khai inline hoặc dưới tên khác; cần cân nhắc tách dùng chung, không đánh dấu có đủ file nguyên bản |
+| Recommendation*, useTracking, EvaluationPage, BlindEvalForm | Chưa có; thuộc F.15–F.17, cần API gợi ý/đánh giá và dữ liệu |
+| NotFoundPage | Nội dung 404 hiện inline trong router, chưa có file riêng |
+
+**Chưa hoàn tất toàn bộ giao diện.** Phần có thể tiếp tục độc lập là CartDrawer và hoàn thiện/tách component chung; các dashboard, quản lý user/chất lượng dữ liệu, gợi ý/đánh giá cần nối các bước backend tương ứng. Không dựng số liệu giả để coi màn hình hoàn tất. Tiếp tục báo người dùng khi toàn bộ phạm vi giao diện được hoàn thành và kiểm chứng.
+
 ## Dọn bản nháp cục bộ
 
 - Theo yêu cầu người dùng, chỉ dọn bản nháp khi bản chính tương ứng đã được tích hợp, kiểm thử, commit và không có thay đổi chưa commit.

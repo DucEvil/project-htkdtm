@@ -249,6 +249,12 @@ Route `/admin/ingredients` có RoleGuard và link từ tài khoản admin. Danh 
 
 Xóa có xác nhận, 409 giữ món còn được tham chiếu; sau DELETE đọc lại danh sách. Lỗi giữ form, POST mất phản hồi/5xx khóa gửi và cho đối chiếu danh sách trước khi chủ động tạo tiếp. Chưa có lưu nháp qua reload. 375 kiểm thử frontend và một Playwright adminDishes đạt; TypeScript/lint/build đạt. Kiểm tra không tràn ngang 360/1280px; API được kiểm soát trong Playwright, chưa kiểm chứng backend/PostgreSQL thật. Chạy `npx playwright test e2e/adminDishes.spec.ts` với dev server và biến E2E như các mốc trước.
 
+## Khôi phục sau lỗi render — F.12.17
+
+`common/ErrorBoundary` hiển thị thông báo tiếng Việt, mở lại nội dung hoặc về trang chủ khi component lỗi render/lifecycle. `RouteErrorBoundary` bao quanh Outlet bên trong AppShell, reset theo điều hướng và giữ provider/giỏ ở bên ngoài khi chỉ trang lỗi. Boundary ngoài App trong main.tsx bảo vệ lỗi auth/provider/layout; trường hợp này trạng thái bộ nhớ trong cây bị tháo có thể mất. Không gửi exception ra UI hay tự retry mutation; lỗi API/async/event handler vẫn được xử lý tại từng luồng. Có nhắc kiểm tra kết quả giao dịch trước khi gửi lại.
+
+Xem bảng đối chiếu tại [tiến độ F.12.17](../../docs/TIEN_DO_TRIEN_KHAI.md#rà-soát-giao-diện-và-xử-lý-lỗi-render-f1217). Giao diện chưa hoàn tất toàn bộ: còn CartDrawer/bản đồ, dashboard/thống kê, quản lý user/chất lượng dữ liệu và gợi ý/đánh giá ở các bước sau.
+
 ## Auth đã triển khai
 
 | Route | Nội dung hiện có |

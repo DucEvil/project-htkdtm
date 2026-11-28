@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import { LocationProvider } from "../../contexts/LocationContext";
+import RouteErrorBoundary from "../common/RouteErrorBoundary";
 
 export default function AppShell() {
   return (
@@ -12,7 +13,9 @@ export default function AppShell() {
         </a>
         <Navbar />
         <main id="main-content" tabIndex={-1}>
-          <Outlet />
+          <RouteErrorBoundary>
+            <Outlet />
+          </RouteErrorBoundary>
         </main>
         <Footer />
       </div>
