@@ -30,6 +30,7 @@ export function safeReturnTo(value: unknown, fallback: string): string {
       "/account",
       "/vendor",
       "/vendor/profile",
+      "/vendor/dashboard",
       "/vendor/menu",
       "/vendor/orders",
       "/vendor/menu/new",

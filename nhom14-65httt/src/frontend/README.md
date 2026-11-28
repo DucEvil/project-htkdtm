@@ -265,6 +265,12 @@ Nút **Xem giỏ nhanh** trong Navbar mở CartDrawer cho khách/customer. Dialo
 
 CartPage và CartDrawer cùng dùng `components/cart/CartItem.tsx` để hiển thị tên/giá/số lượng/tổng dòng, chuyển chi tiết và xóa. Component nhận callback từ nơi dùng, không tạo state giỏ riêng. Compact dùng heading h3 trong drawer và đóng drawer khi mở chi tiết; trang giỏ dùng h2. CartItem đã được tách, thay thế ghi chú chưa tách ở các mốc cũ. Ba Playwright cart, typecheck/lint/build đạt; kiểm thử trình duyệt dùng API kiểm soát.
 
+## Tổng quan vận hành chủ quán — F.12.20
+
+`/vendor/dashboard` mở từ tài khoản vendor, có RoleGuard/returnTo login, dùng GET hồ sơ quán để hiển thị trạng thái duyệt/nhận đơn, giờ và phạm vi giao. Chỉ NOT_FOUND nghiệp vụ hướng dẫn tạo hồ sơ; lỗi khác cho làm mới. Liên kết hồ sơ/thực đơn/đơn hàng giữ khả năng xử lý đơn cũ khi quán tạm ngừng. Không tự bật nhận đơn, không tạo số liệu thống kê từ một trang danh sách. /vendor vẫn là tài khoản; StatsPage/doanh thu/KPI chưa có vì cần API thống kê.
+
+378 unit/UI hồi quy và hai Playwright vendorDashboard đạt với API kiểm soát; không tràn ngang 360/390/768/1280px, TypeScript/lint/build đạt. Chưa kiểm chứng backend/PostgreSQL thật.
+
 ## Auth đã triển khai
 
 | Route | Nội dung hiện có |
